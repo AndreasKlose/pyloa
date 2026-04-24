@@ -1,0 +1,1193 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.plane package &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=26111179" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyloa.net package" href="pyloa.net.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pyloa.plane package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.planesolver">pyloa.plane.planesolver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver"><code class="docutils literal notranslate"><span class="pre">PlaneSolver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.assigned"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.assigned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.cg_iter"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.cg_iter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.cpuTime"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.cpuTime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.customers"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.customers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.distance"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.facilities"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.facilities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.lowBound"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.lowBound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.max_distance"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.max_distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.max_weighted_distance"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.max_weighted_distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.mipSolver"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.mipSolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.mip_nodes"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.mip_nodes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.mip_time"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.mip_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.miqcp_strategy"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.miqcp_strategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.optTol"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.optTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.plot"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.pricing_method"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.pricing_method</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.prob_name"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.prob_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.set_data"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.set_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.solve"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.timeLimit"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.timeLimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.wallTime"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.wallTime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.weighted_distance"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.weighted_distance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.planesolver.PlaneSolver.weights"><code class="docutils literal notranslate"><span class="pre">PlaneSolver.weights</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.parser">pyloa.plane.parser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.parser.read_points"><code class="docutils literal notranslate"><span class="pre">read_points()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.parser.return_lola"><code class="docutils literal notranslate"><span class="pre">return_lola()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.weber">pyloa.plane.weber module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.weber.limitedDist"><code class="docutils literal notranslate"><span class="pre">limitedDist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.weber.solveWeber"><code class="docutils literal notranslate"><span class="pre">solveWeber()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.loc_alloc">pyloa.plane.loc_alloc module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.loc_alloc.locAlloc"><code class="docutils literal notranslate"><span class="pre">locAlloc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.loc_alloc.pmedian_heuristic"><code class="docutils literal notranslate"><span class="pre">pmedian_heuristic()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.loc_alloc.twoFacility"><code class="docutils literal notranslate"><span class="pre">twoFacility()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.loc_alloc.weber_vns"><code class="docutils literal notranslate"><span class="pre">weber_vns()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.weber_cg">pyloa.plane.weber_cg module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.weber_cg.Master"><code class="docutils literal notranslate"><span class="pre">Master</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Master.add_column"><code class="docutils literal notranslate"><span class="pre">Master.add_column()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Master.end"><code class="docutils literal notranslate"><span class="pre">Master.end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Master.itr"><code class="docutils literal notranslate"><span class="pre">Master.itr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Master.ncols"><code class="docutils literal notranslate"><span class="pre">Master.ncols</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Master.solve"><code class="docutils literal notranslate"><span class="pre">Master.solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Master.solve_as_IP"><code class="docutils literal notranslate"><span class="pre">Master.solve_as_IP()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.weber_cg.Pricing"><code class="docutils literal notranslate"><span class="pre">Pricing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Pricing.end"><code class="docutils literal notranslate"><span class="pre">Pricing.end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Pricing.price_out"><code class="docutils literal notranslate"><span class="pre">Pricing.price_out()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.plane.weber_cg.Pricing.prices"><code class="docutils literal notranslate"><span class="pre">Pricing.prices</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.weber_cg.colgen"><code class="docutils literal notranslate"><span class="pre">colgen()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.weber_cg.set_optTol"><code class="docutils literal notranslate"><span class="pre">set_optTol()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.center">pyloa.plane.center module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.center.charalambous"><code class="docutils literal notranslate"><span class="pre">charalambous()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.center.elzinga_hearn"><code class="docutils literal notranslate"><span class="pre">elzinga_hearn()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.center.growRadius"><code class="docutils literal notranslate"><span class="pre">growRadius()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.center.welzl"><code class="docutils literal notranslate"><span class="pre">welzl()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.mip">pyloa.plane.mip module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.mip.SOCPcenter"><code class="docutils literal notranslate"><span class="pre">SOCPcenter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.mip.SOCPweber"><code class="docutils literal notranslate"><span class="pre">SOCPweber()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.mip.pcenter_mipq"><code class="docutils literal notranslate"><span class="pre">pcenter_mipq()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.mip.weber_mipq"><code class="docutils literal notranslate"><span class="pre">weber_mipq()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pyloa.plane package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pyloa.plane.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyloa-plane-package">
+<h1>pyloa.plane package<a class="headerlink" href="#pyloa-plane-package" title="Link to this heading"></a></h1>
+<p>Methods for solving location problems in Euclidian plane</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-pyloa.plane.planesolver">
+<span id="pyloa-plane-planesolver-module"></span><h2>pyloa.plane.planesolver module<a class="headerlink" href="#module-pyloa.plane.planesolver" title="Link to this heading"></a></h2>
+<p>Module plane.planesolver</p>
+<p>Implements a class for solving a planar minisum or minimax
+location problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.plane.planesolver.</span></span><span class="sig-name descname"><span class="pre">PlaneSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geospatial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/planesolver.html#PlaneSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for addressing a planar location problem</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.assigned">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assigned</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.assigned" title="Link to this definition"></a></dt>
+<dd><p>Return assignment of customer locations to facility (indices)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.cg_iter">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cg_iter</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.cg_iter" title="Link to this definition"></a></dt>
+<dd><p>Return maximal number of column generation iteration
+to be done within the column generation method for
+the multi-source Weber problem.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.cpuTime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cpuTime</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.cpuTime" title="Link to this definition"></a></dt>
+<dd><p>Return CPU time in seconds</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.customers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">customers</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.customers" title="Link to this definition"></a></dt>
+<dd><p>Return the customer point coordinates</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">distance</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.distance" title="Link to this definition"></a></dt>
+<dd><p>Return sum of (unweighted distances to nearest facility in a solution</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.facilities">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">facilities</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.facilities" title="Link to this definition"></a></dt>
+<dd><p>Return array of the p facility coordinates</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.lowBound">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lowBound</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.lowBound" title="Link to this definition"></a></dt>
+<dd><p>Return lower bound on objective value (only for multi-source Weber if 
+solved by column generation)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.max_distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_distance</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.max_distance" title="Link to this definition"></a></dt>
+<dd><p>Return maximal (unweighted) distances to nearest facility in a solution</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.max_weighted_distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_weighted_distance</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.max_weighted_distance" title="Link to this definition"></a></dt>
+<dd><p>Return maximal weighted distances to nearest facility in a solution</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.mipSolver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipSolver</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.mipSolver" title="Link to this definition"></a></dt>
+<dd><p>Return the MIP solver’s name used for solving MIPs.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.mip_nodes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mip_nodes</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.mip_nodes" title="Link to this definition"></a></dt>
+<dd><p>Return number of branch-and-cut tree nodes enumerated</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.mip_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mip_time</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.mip_time" title="Link to this definition"></a></dt>
+<dd><p>Return Cplex solver computation time (wall time) in seconds</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.miqcp_strategy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">miqcp_strategy</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.miqcp_strategy" title="Link to this definition"></a></dt>
+<dd><p>Return the MIP solver’s MIQCP solving strategy.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.optTol">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">optTol</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.optTol" title="Link to this definition"></a></dt>
+<dd><p>Return the relative optimality tolerance value to 
+be used within the column generation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/planesolver.html#PlaneSolver.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot solution</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.pricing_method">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pricing_method</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.pricing_method" title="Link to this definition"></a></dt>
+<dd><p>Return the method to solve the pricing problem within
+a column generation for the multi-source Weber problem.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.prob_name">
+<span class="sig-name descname"><span class="pre">prob_name</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.prob_name" title="Link to this definition"></a></dt>
+<dd><p>Name of data file or None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.set_data">
+<span class="sig-name descname"><span class="pre">set_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geospatial</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/planesolver.html#PlaneSolver.set_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.set_data" title="Link to this definition"></a></dt>
+<dd><p>Pass data to this instance of a planar location problem</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minisum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/planesolver.html#PlaneSolver.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.solve" title="Link to this definition"></a></dt>
+<dd><p>Solves an instance of a planar location problem.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl>
+<dt>p<span class="classifier">int </span></dt><dd><p>Number of facility locations to find (default=1)</p>
+</dd>
+<dt>minisum<span class="classifier">bool</span></dt><dd><p>If True, the minisum location problem (Fermat-Weber,
+or multi-source Weber) is solved; otherwise the
+1-center (p=1) or p-center problem is solved.
+(default=True)</p>
+</dd>
+<dt>method<span class="classifier">str </span></dt><dd><p>Determines the method to be applied for solving
+the problem. Note that method need to be specified
+except if Drezner’s method for solving the 
+Fermat-Weber problem should be applied. The following
+methods are available:</p>
+<ol class="arabic">
+<li><p>For the Fermat-Weber problem (p=1, minisum=True)</p>
+<blockquote>
+<div><ul>
+<li><p>‘Drezner’     : Drezner’s method (Default method)</p></li>
+<li><p>‘Ostresh-val’ : Ostresh’s method with step size parameter lambda set to value</p>
+<blockquote>
+<div><p>For example, Ostresh-2. If val is not specified, the step size parameter is set to 2.</p>
+</div></blockquote>
+</li>
+<li><p>‘Weiszfeld’   : Weiszfeld’s method (same as Ostresh-1)</p></li>
+<li><p>‘SOCP’        : Solves the problem using Cplex’s solver for 2nd order cone problems</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>For the 1-center problem in plane</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>‘PrimDual’    : a primal dual convex optimization method</p></li>
+<li><p>‘Elzinga’     : Elzinga and Hearn’s method (can only be applied if all weights are identical)</p></li>
+<li><p>‘Charalambous’: Charalambous’ method</p></li>
+<li><p>‘Welzl’       : Welzl’ method</p></li>
+<li><p>‘SOCP’        : Solve as 2nd order cone using Cplex</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<p>The default is Elzinga for equal weights and Charalambous
+otherwise.</p>
+<ol class="arabic" start="3">
+<li><p>For the multi-source Weber and planar p-center problem:</p>
+<blockquote>
+<div><ul>
+<li><p>‘LOCA-num’: Location allocation heuristic.</p>
+<blockquote>
+<div><p>If num is specified, then num is the number of times the procedure 
+is repeated with different random initial solutions.</p>
+<p>If num is not specified clustering methods are used get initial solutions.</p>
+</div></blockquote>
+</li>
+<li><p>‘pmedian’ : p-median heuristic for the multi-source Weber problem</p></li>
+<li><p>‘VNS’     : variable neighbourhood search heuristic</p>
+<blockquote>
+<div><p>A local search procedures that tries to improve some current solution. 
+If no initial solution has already been obtained, LOCA is used to this end.</p>
+</div></blockquote>
+</li>
+<li><p>‘ColGen’  : column generation procedure</p></li>
+<li><p>‘MIPQ’    : Uses Cplex to solve the problem when modelled as 2nd order cone MIP</p></li>
+<li><p>‘Ostresh’ : Ostresh’s method for the two-Weber problem</p>
+<blockquote>
+<div><p>Exact method for the case of p=2.</p>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+<p>If no method is specified, the default is applied, which
+is LOCA if p &gt; 2 and Ostresh for p=2.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.timeLimit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeLimit</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.timeLimit" title="Link to this definition"></a></dt>
+<dd><p>Return the MIP solver’s time limit (seconds) available
+for solving a MIQCP.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.wallTime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wallTime</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.wallTime" title="Link to this definition"></a></dt>
+<dd><p>Return CPU time in seconds</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.weighted_distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weighted_distance</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.weighted_distance" title="Link to this definition"></a></dt>
+<dd><p>Return sum of weighted distances to nearest facility in a solution</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.planesolver.PlaneSolver.weights">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#pyloa.plane.planesolver.PlaneSolver.weights" title="Link to this definition"></a></dt>
+<dd><p>Return the customer point weights</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.plane.parser">
+<span id="pyloa-plane-parser-module"></span><h2>pyloa.plane.parser module<a class="headerlink" href="#module-pyloa.plane.parser" title="Link to this heading"></a></h2>
+<p>Module plane.parser of package pyloa:
+Read data of a planar location problem.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.parser.read_points">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.parser.</span></span><span class="sig-name descname"><span class="pre">read_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/parser.html#read_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.parser.read_points" title="Link to this definition"></a></dt>
+<dd><p>Read data for a planar location problem either from a csv file
+or from a TSP data file from TSPlib (library of TSP test instances).</p>
+<p>If the data file is a csv file, columns have to be separated by ‘;’. 
+The file’s columns have to be named as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">;</span> <span class="n">Y</span><span class="p">;</span> <span class="n">long</span><span class="p">;</span> <span class="n">lat</span><span class="p">;</span> <span class="n">weight</span><span class="p">;</span> <span class="n">address</span> 
+</pre></div>
+</div>
+<p>where the data belonging to</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>X,Y       : are floats that give the Euclidean coordinates</p></li>
+<li><p>long, lat : are floats giving longitude and latitude</p></li>
+<li><p>weight    : are floats giving the positive weight of the points</p></li>
+<li><p>address   : are strings in quotes that give the address names</p></li>
+</ul>
+</div></blockquote>
+<p>Not all of the above data need to be given in the file:</p>
+<ol class="arabic simple">
+<li><p>It is possible to just give address names. Then geopy is
+used to find longitudes and latitudes, which are then
+converted to Euclidean coordinates.</p></li>
+<li><p>If the address names are not given, then at least the
+Euclidean coordinates (X,Y) or the geographic coordinates
+(long, lat) need to be present.</p></li>
+<li><p>If no weight data are given, all weights are assumed to equal 1</p></li>
+</ol>
+<p>If the file’s extension is “.tsp”, the data file is expected to be
+a tsp file. In that case, it need to be a file from the TSP library
+that also shows coordinate information.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_file<span class="classifier">string</span></dt><dd><p>path and file name of the data file</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>Y[i] contains Euclidean coordinates of the i-th customer point,
+i=0,…,m-1</p>
+</dd>
+<dt>w<span class="classifier">numpy array of int or float</span></dt><dd><p>weights of the m customer points</p>
+</dd>
+<dt>names<span class="classifier">list of string</span></dt><dd><p>name/address of each customer point</p>
+</dd>
+</dl>
+</section>
+<section id="remark">
+<h3>Remark<a class="headerlink" href="#remark" title="Link to this heading"></a></h3>
+<p>If available or generated from address data, the longitude/latitude data and
+address names are stored in the global variables __lo, __la, __names</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.parser.return_lola">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.parser.</span></span><span class="sig-name descname"><span class="pre">return_lola</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">with_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/parser.html#return_lola"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.parser.return_lola" title="Link to this definition"></a></dt>
+<dd><p>Return longitude and latitude data of the points read in. If
+with_names is True, also the address names are returned.</p>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.plane.weber">
+<span id="pyloa-plane-weber-module"></span><h2>pyloa.plane.weber module<a class="headerlink" href="#module-pyloa.plane.weber" title="Link to this heading"></a></h2>
+<p>Module plane.weber of package pyloa:
+Methods for solving the Fermat-Weber problem.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.weber.limitedDist">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber.</span></span><span class="sig-name descname"><span class="pre">limitedDist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber.html#limitedDist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber.limitedDist" title="Link to this definition"></a></dt>
+<dd><p>Solves the single Weber problem with limited distances, which
+is to minimize the function g(X) where</p>
+<blockquote>
+<div><p>g(X) = sum_i w(i) min{ || X-Y(i)||, D(i) }</p>
+</div></blockquote>
+<p>Reference: Drezner, Z. (1984). The Planar Two-Center and 
+Two-Median Problems. Transportation Science 8, 351–361.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>Y[i] i stores the coordinates of the i-th customer point,
+i = 0,…,m-1</p>
+</dd>
+<dt>w<span class="classifier">numpy array of float or int</span></dt><dd><p>customer weights</p>
+</dd>
+<dt>max_dists<span class="classifier">list or numpy array of float or int </span></dt><dd><p>max_dists[i] is the limited distance that applies for
+customer point i.</p>
+</dd>
+<dt>screen<span class="classifier">str</span></dt><dd><p>If ‘on’, the result of the current iteration is printed to “stdout”</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>objval<span class="classifier">float</span></dt><dd><p>Objective value of the optimal solution</p>
+</dd>
+<dt>X<span class="classifier">numpy array of two float</span></dt><dd><p>The coordinates of the optimal location</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.weber.solveWeber">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber.</span></span><span class="sig-name descname"><span class="pre">solveWeber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Drezner'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xlst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber.html#solveWeber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber.solveWeber" title="Link to this definition"></a></dt>
+<dd><p>Solves instances of the single Weber problem with customer 
+point set Y and customer weight vector w.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>Y[i] i stores the coordinates of the i-th customer point,
+i = 0,…,m-1</p>
+</dd>
+<dt>w<span class="classifier">numpy array of float or int</span></dt><dd><p>customer weights</p>
+</dd>
+<dt>l<span class="classifier">float</span></dt><dd><p>Parameter for adjusting step length in Ostresh’s method,
+default value is 1, which is equivalent to Weiszfeld’s method.</p>
+</dd>
+<dt>method<span class="classifier">str</span></dt><dd><p>Solution method to apply, i.e. Weiszfeld, Ostresh or
+Drezner. Note that parameter l only need to be supplied 
+for Ostresh’s method and then should be different from 1.</p>
+</dd>
+<dt>screen<span class="classifier">str</span></dt><dd><p>If ‘on’, the result of the current iteration is printed to “stdout”</p>
+</dd>
+<dt>Xlst<span class="classifier">None or an empty list</span></dt><dd><p>If not None, then Xlst is assumed to be an empyt list on input. On 
+output it will contain the list of the solutions X=(x1,x2) generated 
+in each iteration.</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>obj<span class="classifier">float</span></dt><dd><p>The objective value of the optimal solution</p>
+</dd>
+<dt>X<span class="classifier">numpy array of two float</span></dt><dd><p>The optimal location of the facility</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.plane.loc_alloc">
+<span id="pyloa-plane-loc-alloc-module"></span><h2>pyloa.plane.loc_alloc module<a class="headerlink" href="#module-pyloa.plane.loc_alloc" title="Link to this heading"></a></h2>
+<p>Module plane.loc_alloc of package pyloa:
+Methods for solving the multi-source Weber and planar p-center
+problem mostly relying on location-allocation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.loc_alloc.locAlloc">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.loc_alloc.</span></span><span class="sig-name descname"><span class="pre">locAlloc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minisum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initLA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/loc_alloc.html#locAlloc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.loc_alloc.locAlloc" title="Link to this definition"></a></dt>
+<dd><p>Applies Cooper’s location allocation heuristic using different
+initial solutions and returns the best one found.</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
+</dd>
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">None or a numpy array of m float or int</span></dt><dd><p>positive customer weights (if None weights will be set to 1)</p>
+</dd>
+<dt>minisum<span class="classifier">bool</span></dt><dd><p>If True, a multi-source Weber problem is solved. Otherwise,
+a planar p-center problem.</p>
+</dd>
+<dt>initLA<span class="classifier">string</span></dt><dd><p>method to be applied for finding initial solution.
+Currently the following two options can be chosen.
+(i) ‘random’ means a random initial solution at the 
+customer points
+(ii) ‘cluster’ means initial solution from clustering
+using the kmeans as well as hierarchical methods 
+based on complete, single linkage and Ward’s method</p>
+</dd>
+<dt>repeat<span class="classifier">int</span></dt><dd><p>number of times location-allocation is repeated with
+different start solution (only applies if initLA=’random’)</p>
+</dd>
+<dt>screen: string</dt><dd><p>If ‘on’, the result of the current iteration is printed 
+to “stdout”</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>bestObj<span class="classifier">float</span></dt><dd><p>the objective value (as a float) of the solution</p>
+</dd>
+<dt>Xbest<span class="classifier">px2 numpy array of float</span></dt><dd><p>the solution’s p facility locations,</p>
+</dd>
+<dt>a<span class="classifier">list of int</span></dt><dd><p>the assignment of customer points to the facilities,
+i.e., a[i]=j if point Y[i] is assigned to facility at 
+location X[j]</p>
+</dd>
+<dt>itr<span class="classifier">int</span></dt><dd><p>the total number of location-allocation iterations.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.loc_alloc.pmedian_heuristic">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.loc_alloc.</span></span><span class="sig-name descname"><span class="pre">pmedian_heuristic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minisum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/loc_alloc.html#pmedian_heuristic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.loc_alloc.pmedian_heuristic" title="Link to this definition"></a></dt>
+<dd><p>p-median heuristic for the multi-source Weber problem. We
+first solve a p-median problem using a MIP solver in order to cluster
+the customer set. The optimal locations for each cluster are
+then used as starting point for the location-allocation method.</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
+</dd>
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">None or a numpy array of m float or int</span></dt><dd><p>positive customer weights (if None all weights are set to 1)</p>
+</dd>
+<dt>minisum<span class="classifier">bool</span></dt><dd><p>If True, a multi-source Weber problem is solved; otherwise
+a planar p-center problem</p>
+</dd>
+<dt>screen: </dt><dd><p>If ‘on’, Cplex’s intermediate output on the state of
+the computations are printed to the screen.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<p>objv : float</p>
+<p>Xsol : px2 numpy array of float</p>
+<dl class="simple">
+<dt>a<span class="classifier">list of int  </span></dt><dd><p>the assignment of customer points to the facilities,
+i.e., a[i]=j if point Y[i] is assigned to facility at 
+location X[j]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.loc_alloc.twoFacility">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.loc_alloc.</span></span><span class="sig-name descname"><span class="pre">twoFacility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minisum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/loc_alloc.html#twoFacility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.loc_alloc.twoFacility" title="Link to this definition"></a></dt>
+<dd><p>Solves the two-facility Weber or 2-center problem by investigating all
+possible partitions of the customer set in two non-overlapping
+convex hulls.</p>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">None or numpy array of m float or int</span></dt><dd><p>positive customer weights (if None all weights are set to 1)</p>
+</dd>
+<dt>minisum<span class="classifier">bool </span></dt><dd><p>If True, a 2-Weber is solved; otherwise a 2-center problem</p>
+</dd>
+<dt>screen<span class="classifier">str </span></dt><dd><p>If ‘on’, intermediate output on the state of the computations 
+is printed to the screen.</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>objv<span class="classifier">float  </span></dt><dd><p>The solution’s objective value</p>
+</dd>
+<dt>X<span class="classifier">2x2 numpy array of float</span></dt><dd><p>X[0] and X[1] are the coordinate vectors of the two facility
+locations</p>
+</dd>
+<dt>a<span class="classifier">list of int</span></dt><dd><p>the assignment of customer points to the facilities,
+i.e., a[i]=j if point Y[i] is assigned to facility at 
+location X[j], j=0 or 1</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.loc_alloc.weber_vns">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.loc_alloc.</span></span><span class="sig-name descname"><span class="pre">weber_vns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minisum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/loc_alloc.html#weber_vns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.loc_alloc.weber_vns" title="Link to this definition"></a></dt>
+<dd><p>Variable neighbourhood search for respectively the multi-source 
+Weber and planar p-center problem in the realm of the VNS suggested 
+by Brimberg et al. (2000). Let k be the neighbourhood size. In each 
+iteration, the method tries to find an improved solution by picking 
+k customer points and locating facilities on these k customer points. 
+We choose the k customers with a probability proportional to the 
+weighted distance to their nearest facility. In exchange of locating 
+a facility at a selected customer point, the currently open facility 
+closest to that customer is closed.</p>
+<p>Reference: Brimberg et al. (2000). Improvements and comparison of 
+heuristics for solving the multi-source Weber problem. Operations 
+Research 48: 444-460.</p>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
+</dd>
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">None or numpy array of m float or int</span></dt><dd><p>positive customer weights (if None all weights are set to 1)</p>
+</dd>
+<dt>X<span class="classifier">None or px2 numpy array of float</span></dt><dd><p>If not none, X is the initial solution with X[j] specifying
+the two coordinates of the j-th facility, j=0,…,p-1.</p>
+</dd>
+<dt>minisum<span class="classifier">bool</span></dt><dd><p>If True, a multi-source Weber problem is solved; otherwise
+a planar p-center problem.</p>
+</dd>
+<dt>screen<span class="classifier">str </span></dt><dd><p>If ‘on’, Cplex’s intermediate output on the state of
+the computations are printed to the screen.</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<p>objv : float</p>
+<p>X : px2 numpy array of float</p>
+<dl class="simple">
+<dt>a<span class="classifier">list of int</span></dt><dd><p>the assignment of customer points to the facilities,
+i.e., a[i]=j if point Y[i] is assigned to facility at 
+location X[j]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.plane.weber_cg">
+<span id="pyloa-plane-weber-cg-module"></span><h2>pyloa.plane.weber_cg module<a class="headerlink" href="#module-pyloa.plane.weber_cg" title="Link to this heading"></a></h2>
+<p>Module plane.weber_cg of package pyloa:
+Column generation for solving the multi-source Weber problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Master">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber_cg.</span></span><span class="sig-name descname"><span class="pre">Master</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'on'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Master"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Master" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for handling the master problem</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Master.add_column">
+<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Master.add_column"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Master.add_column" title="Link to this definition"></a></dt>
+<dd><p>Add a generated column (i.e. customer subset) 
+as a column to the master problem.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Master.end">
+<span class="sig-name descname"><span class="pre">end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Master.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Master.end" title="Link to this definition"></a></dt>
+<dd><p>Free the LP/MIP model</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Master.itr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">itr</span></span><a class="headerlink" href="#pyloa.plane.weber_cg.Master.itr" title="Link to this definition"></a></dt>
+<dd><p>Number of times master problem has been solved.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Master.ncols">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ncols</span></span><a class="headerlink" href="#pyloa.plane.weber_cg.Master.ncols" title="Link to this definition"></a></dt>
+<dd><p>Number of columns currently in the master</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Master.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Master.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Master.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the current LP master program. Return
+the master program’s objective value and the
+dual values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Master.solve_as_IP">
+<span class="sig-name descname"><span class="pre">solve_as_IP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Master.solve_as_IP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Master.solve_as_IP" title="Link to this definition"></a></dt>
+<dd><p>Solve the final master as an integer program.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Pricing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber_cg.</span></span><span class="sig-name descname"><span class="pre">Pricing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_mip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Pricing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Pricing" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class handling the pricing problem</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Pricing.end">
+<span class="sig-name descname"><span class="pre">end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Pricing.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Pricing.end" title="Link to this definition"></a></dt>
+<dd><p>Free up space associated with the MIP pricing model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Pricing.price_out">
+<span class="sig-name descname"><span class="pre">price_out</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#Pricing.price_out"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.Pricing.price_out" title="Link to this definition"></a></dt>
+<dd><p>Solves the pricing problem and returns the smallest
+reduced cost and corresponding column</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.Pricing.prices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prices</span></span><a class="headerlink" href="#pyloa.plane.weber_cg.Pricing.prices" title="Link to this definition"></a></dt>
+<dd><p>Return the current pricing vector/array.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.colgen">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber_cg.</span></span><span class="sig-name descname"><span class="pre">colgen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mip_pricing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#colgen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.colgen" title="Link to this definition"></a></dt>
+<dd><p>Solve multi-source Weber problem by means of column generation.</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>p<span class="classifier">intLB, objv, Xsol, a, itr</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
+</dd>
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">None or numpy array of m float or int</span></dt><dd><p>positive customer weights (if None, all weights are set to 1)</p>
+</dd>
+<dt>mip_pricing<span class="classifier">bool</span></dt><dd><p>If True, the pricing problem is solved using as a MIQCP using
+the MIP solver. Otherwise, it is solved as a Weber problem with 
+limited distances by means of Drezner’s algorithm.</p>
+</dd>
+<dt>max_iter<span class="classifier">int or float</span></dt><dd><p>Maximal number of column generation iterations (solving a
+restricted linear master problem) to be applied.</p>
+</dd>
+<dt>screen: </dt><dd><p>If ‘on’, intermediate output on the state of the computations 
+is printed to stdout.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>objv<span class="classifier">float</span></dt><dd><p>objective value of the best solution found</p>
+</dd>
+<dt>lbnd<span class="classifier">float</span></dt><dd><p>lower bound from the LP relaxation of the set-covering problem</p>
+</dd>
+<dt>Xsol<span class="classifier">px2 numpy array of float</span></dt><dd><p>the p facility’s coordinates</p>
+</dd>
+<dt>a<span class="classifier">list of int</span></dt><dd><p>the assignment of customer points to the facilities,
+i.e., a[i]=j if point Y[i] is assigned to facility at 
+location X[j]</p>
+</dd>
+<dt>itr<span class="classifier">int</span></dt><dd><p>number of iterations performed</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.weber_cg.set_optTol">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber_cg.</span></span><span class="sig-name descname"><span class="pre">set_optTol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#set_optTol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.set_optTol" title="Link to this definition"></a></dt>
+<dd><p>Set/return the relative optimality tolerance to be applied.</p>
+</dd></dl>
+
+<p id="module-pyloa.plane">Module pyloa.plane: Methods for minisum and minimax location problems in plane</p>
+</section>
+<section id="module-pyloa.plane.center">
+<span id="pyloa-plane-center-module"></span><h2>pyloa.plane.center module<a class="headerlink" href="#module-pyloa.plane.center" title="Link to this heading"></a></h2>
+<p>Module plane.center of package pyloa:
+Methods for the 1-center problem in Euclidian plane.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.center.charalambous">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.center.</span></span><span class="sig-name descname"><span class="pre">charalambous</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xlst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/center.html#charalambous"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.center.charalambous" title="Link to this definition"></a></dt>
+<dd><p>Charalambous’ (1982) method for solving the weighted 1-centre
+problem in the plane.</p>
+<p>Reference: Charalambous, C. (1982). Extension of the Elzinga-Hearn
+Algorithm to the Weighted Case. Operations Research 30:591–594.</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">numpy array of m int or float</span></dt><dd><p>positive customer weights</p>
+</dd>
+<dt>screen: str</dt><dd><p>if ‘on’, information on solution process is printed</p>
+</dd>
+<dt>Xlst<span class="classifier">None or a list of pairs of float, optional</span></dt><dd><p>If not None, the intermediate center solutions are appended
+to the list Xlst.</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>UB<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
+</dd>
+<dt>X<span class="classifier">numpy array of two float</span></dt><dd><p>coordinates of the center as a</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.center.elzinga_hearn">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.center.</span></span><span class="sig-name descname"><span class="pre">elzinga_hearn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xlst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/center.html#elzinga_hearn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.center.elzinga_hearn" title="Link to this definition"></a></dt>
+<dd><p>Elzinga and Hearn’s method to determine the minimal covering
+circle of m points in Euclidian plane.</p>
+<p>Reference: Elzinga, J. and Hearn, D. W. (1972).  Geometrical 
+Solutions of Some Minimax Location Problems.Transportation 
+Science 6:370–394.</p>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>screen<span class="classifier">str, optional </span></dt><dd><p>If ‘on’, then progress of the algorithm is displayed on screen.</p>
+</dd>
+<dt>Xlst<span class="classifier">None or a list of pairs of float, optional</span></dt><dd><p>If not None, the intermediate center solutions are appended
+to the list Xlst.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>R<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
+</dd>
+<dt>X<span class="classifier">numpy array of two float</span></dt><dd><p>coordinates of the center found</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.center.growRadius">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.center.</span></span><span class="sig-name descname"><span class="pre">growRadius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xlst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/center.html#growRadius"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.center.growRadius" title="Link to this definition"></a></dt>
+<dd><p>Solves the weighted 1-center problem in plane by growing the
+“radius” until all points are covered. The method starts
+by selecting two initial points for which the 1-center problem
+is solved. Then additional uncovered points are included and
+the adjusted 1-center problem on a small subset of points is
+solved. The method continues this way until all points are
+covered.</p>
+<section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">numpy array of m int or float</span></dt><dd><p>positive customer weights</p>
+</dd>
+<dt>screen: str</dt><dd><p>if ‘on’, information on solution process is printed</p>
+</dd>
+<dt>Xlst<span class="classifier">list of tuple of float or None</span></dt><dd><p>if not none, the points found in each “iteration”
+are stored in this list.</p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>UB<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
+</dd>
+<dt>X<span class="classifier">numpy array of two float </span></dt><dd><p>coordinates of the center as a</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.center.welzl">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.center.</span></span><span class="sig-name descname"><span class="pre">welzl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/center.html#welzl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.center.welzl" title="Link to this definition"></a></dt>
+<dd><p>Welzl’s recursive algorithm for computing the covering circle.
+The algorithm’s simple idea is as follows. Let P be the list
+of points we have to cover. Let B denote the basis, that is
+the set of (up to three) points whose covering circle determines
+the complete solution and which thus lie on the circle’s boundary. 
+Initially, let B be empty. Choose then a point p from P and let S 
+be the solution for point set P-{p}. If point p is covered we’re 
+done. Otherwise, point p need to be one of those points on the 
+circle’s boundary and we add p to B. If B comprises three points, 
+the circle is uniquely determined. Otherwise, we try to find the 
+smallest enclosing circle of point set P-{p} with points B+{p} on 
+the boundary.</p>
+<p>Reference: Emo Welzl (1991). Smallest enclosing disks (balls and 
+ellipsoids). In Maurer, H., ed., New Results and New Trends in 
+Computer Science. Lecture Notes in Computer Science, Vol. 555, 
+Springer-Verlag, pp. 359–370, doi:10.1007/BFb0038202.</p>
+<section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">numpy array of m int or float</span></dt><dd><p>positive customer weights</p>
+</dd>
+<dt>screen: str</dt><dd><p>if ‘on’, information on solution process is printed</p>
+</dd>
+</dl>
+</section>
+<section id="id23">
+<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>UB<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
+</dd>
+<dt>X<span class="classifier">numpy array of two float</span></dt><dd><p>coordinates of the center as a</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.plane.mip">
+<span id="pyloa-plane-mip-module"></span><h2>pyloa.plane.mip module<a class="headerlink" href="#module-pyloa.plane.mip" title="Link to this heading"></a></h2>
+<p>Module plane.mip of package pyloa:
+2nd order cone (MIP) models of planar location problems solved
+by means of Cplex’s or GuRoBi’s solver.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.mip.SOCPcenter">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.mip.</span></span><span class="sig-name descname"><span class="pre">SOCPcenter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/mip.html#SOCPcenter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.mip.SOCPcenter" title="Link to this definition"></a></dt>
+<dd><p>Solve the weighted 1-center problem as a quadratically 
+constrained continuous convex optimization problem using 
+a MIP solver. For reasons of numerical stability, we normalize 
+the weights w by dividing it by the average weight.</p>
+<section id="id24">
+<h3>Parameters<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">numpy array of m int or float</span></dt><dd><p>positive customer weights</p>
+</dd>
+<dt>screen: str</dt><dd><p>if ‘on’, information on solution process is printed</p>
+</dd>
+</dl>
+</section>
+<section id="id25">
+<h3>Returns<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>r<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
+</dd>
+<dt>X<span class="classifier">numpy array of two float</span></dt><dd><p>coordinates of the center as a</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.mip.SOCPweber">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.mip.</span></span><span class="sig-name descname"><span class="pre">SOCPweber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/mip.html#SOCPweber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.mip.SOCPweber" title="Link to this definition"></a></dt>
+<dd><p>Solves the Fermat-Weber problem as a 2nd order cone problem
+using Cplex’s solver.</p>
+<section id="id26">
+<h3>Parameters<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">None or numpy array of m float or int</span></dt><dd><p>positive customer weights (if None all weights are set to 1)</p>
+</dd>
+<dt>screen<span class="classifier">str </span></dt><dd><p>If ‘on’, intermediate output on the state of
+the computations are printed to the screen.</p>
+</dd>
+</dl>
+</section>
+<section id="id27">
+<h3>Returns<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>objv<span class="classifier">float</span></dt><dd><p>Sum of weighted distances to the optimal facility location</p>
+</dd>
+<dt>X<span class="classifier">px2 numpy array of float</span></dt><dd><p>Coordinates of the optimal facility location</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.mip.pcenter_mipq">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.mip.</span></span><span class="sig-name descname"><span class="pre">pcenter_mipq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeLim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/mip.html#pcenter_mipq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.mip.pcenter_mipq" title="Link to this definition"></a></dt>
+<dd><p>Formulates the planar p-center problem as a quadratically
+constrained MIP and solves it using a MIP solver.</p>
+<section id="id28">
+<h3>Parameters<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
+</dd>
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">numpy array of m float or int</span></dt><dd><p>positive customer weights</p>
+</dd>
+<dt>screen: str</dt><dd><p>If ‘on’, the MIP solver shows intermediate output on the state of
+the computations are printed to the screen.</p>
+</dd>
+<dt>strategy<span class="classifier">int </span></dt><dd><p>Strategy the MIP solver should apply to solve the problem:</p>
+<ul class="simple">
+<li><p>0 -&gt; decide automatically</p></li>
+<li><p>1 -&gt; solve the quadratic continuous relaxtion for obtaining lower bounds</p></li>
+<li><p>2 -&gt; use conical cuts</p></li>
+</ul>
+</dd>
+<dt>timeLim<span class="classifier">float </span></dt><dd><p>Time limit (seconds) to be used for the MIQCP solver</p>
+</dd>
+</dl>
+</section>
+<section id="id29">
+<h3>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>objv<span class="classifier">float</span></dt><dd><p>objective value of the optimal solution (smallest
+weighted distance to the nearest center point)</p>
+</dd>
+<dt>Xsol<span class="classifier">px2 numpy array of float</span></dt><dd><p>Xsol[j] gives the two coordinates of the j-th center point</p>
+</dd>
+<dt>a<span class="classifier">list of int</span></dt><dd><p>the assignment of customer points to the centers,
+i.e., a[i]=j if point Y[i] is assigned to the center at 
+location X[j]</p>
+</dd>
+<dt>tim<span class="classifier">float</span></dt><dd><p>Computation time in seconds</p>
+</dd>
+<dt>nnodes<span class="classifier">int</span></dt><dd><p>number of B&amp;B tree nodes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.mip.weber_mipq">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.mip.</span></span><span class="sig-name descname"><span class="pre">weber_mipq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timLim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/mip.html#weber_mipq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.mip.weber_mipq" title="Link to this definition"></a></dt>
+<dd><p>Formulates the multi-source Weber problem as a quadratically
+constrained MIP and solves it using a MIP solver.</p>
+<section id="id30">
+<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
+</dd>
+<dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
+</dd>
+<dt>w<span class="classifier">None or numpy array of m float or int</span></dt><dd><p>positive customer weights (if None all weights are set to 1)</p>
+</dd>
+<dt>screen: </dt><dd><p>If ‘on’, intermediate output on the state of
+the computations are printed to the screen.</p>
+</dd>
+<dt>strategy<span class="classifier">int </span></dt><dd><p>strategy Cplex or GuRoBi applies to solve the the problem:</p>
+<ul class="simple">
+<li><p>1 -&gt; solve the quadratic continuous relaxation</p></li>
+<li><p>2 -&gt; use conical cuts (or outer approximation)</p></li>
+<li><p>0 -&gt; decide automatically</p></li>
+</ul>
+</dd>
+<dt>timeLim<span class="classifier">float </span></dt><dd><p>Time limit (seconds) to be used for the MIQCP solver</p>
+</dd>
+</dl>
+</section>
+<section id="id31">
+<h3>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<p>objv : float</p>
+<p>Xsol : px2 numpy array of float</p>
+<dl class="simple">
+<dt>a<span class="classifier">list of int</span></dt><dd><p>the assignment of customer points to the facilities,
+i.e., a[i]=j if point Y[i] is assigned to facility at 
+location X[j]</p>
+</dd>
+<dt>tim<span class="classifier">float</span></dt><dd><p>Computation time in seconds</p>
+</dd>
+<dt>nnodes<span class="classifier">int</span></dt><dd><p>number of B&amp;B tree nodes</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyloa.net.html" class="btn btn-neutral float-right" title="pyloa.net package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

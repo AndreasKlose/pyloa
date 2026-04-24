@@ -1,0 +1,560 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.net.netprob &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.net.netprob</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.net.netprob</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module net.net_prob of package pyloa:</span>
+<span class="sd">    Base class for a network location problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">basename</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">timeit</span><span class="w"> </span><span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.net.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_graph</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_mipSolver</span>
+
+<span class="c1">#--------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="NetProblem">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.netprob.NetProblem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NetProblem</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for a network location problem.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dstmat</span><span class="o">=</span><span class="s1">&#39;matrix&#39;</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                  <span class="n">dmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an instance of a network location problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------   </span>
+<span class="sd">        * fname : str, optional  </span>
+<span class="sd">            None or name of the input file or problem instance to be solved.</span>
+<span class="sd">            If None, it is assumed that the data are provided via arguments</span>
+<span class="sd">            d, w, and p. Otherwise, fname is either the name (including the</span>
+<span class="sd">            path) of a text file keeping the data or the problem instance</span>
+<span class="sd">            to be taken from Beasley&#39;s OR Library. Default: None  </span>
+<span class="sd">        * dstmat : str  </span>
+<span class="sd">            This argument is only relevant if fname is not None. It specifies</span>
+<span class="sd">            how the distances should be stored. Possible values are &#39;matrix&#39;,</span>
+<span class="sd">            &#39;dict&#39; or &#39;vector&#39;. See the parameter &#39;d&#39; for further explanations.  </span>
+<span class="sd">        * orlib : bool, optional  </span>
+<span class="sd">            True if the data file originates from Beasley&#39;s OR Library.</span>
+<span class="sd">            Default: False  </span>
+<span class="sd">        * d : None or numpy array of int/float or dictionary of int/float or a </span>
+<span class="sd">            function  </span>
+<span class="sd">            If fname is None, then d need to keep the distances between</span>
+<span class="sd">            the m nodes of the graph and the n &lt;= m nodes where facilities</span>
+<span class="sd">            can be established.  </span>
+<span class="sd">            1. If the set of facility nodes and customer nodes is identical</span>
+<span class="sd">               and thus the matrix of distances symmetric, d can be one</span>
+<span class="sd">               of the following:  </span>
+<span class="sd">                1. d is a numpy (mxn), n=m, array of int or float and</span>
+<span class="sd">                    d[i,j]=d[j,i] the distance between nodes i and j,</span>
+<span class="sd">                    d[i,i]=0.  </span>
+<span class="sd">                2. d is a dictionary of length m*(m-1)//2 and d[(i,j)] gives </span>
+<span class="sd">                    the distance between nodes i and j for i=1,...,m-1 and </span>
+<span class="sd">                    j = 0,..., i-1.  </span>
+<span class="sd">                3. d is a numpy array of size m*(m-1)//2. The distance</span>
+<span class="sd">                    between nodes i (i=1,...,m-1) and j (j=0,...,i-1) must</span>
+<span class="sd">                    then be stored in d[ i*(i-1)//2 + j ].  </span>
+<span class="sd">                4. d is a function, so that d(i,j) returns the distance</span>
+<span class="sd">                    beween nodes i (i=1,...,m-1) and j (j=0,...,i-1).  </span>
+<span class="sd">            2. Set of customer and facility nodes are not identical.  </span>
+<span class="sd">               In this case d need to be a numpy mxn matrix just as</span>
+<span class="sd">               under (1.1).  </span>
+<span class="sd">        * dmax : None or numpy array of int or float  </span>
+<span class="sd">            dmax[i] specifies the maximal distance for customer node i</span>
+<span class="sd">            in maximal covering location           </span>
+<span class="sd">        * m : int  </span>
+<span class="sd">            Number of customers nodes. Need only to be specified if d</span>
+<span class="sd">            is a function!!!  </span>
+<span class="sd">        * n : int  </span>
+<span class="sd">            Number of facility nodes (n &lt;= m). Need only to be specified if</span>
+<span class="sd">            d is a function!!!  </span>
+<span class="sd">        * w : None or a numpy array of positive int  </span>
+<span class="sd">            If None, all weights are set to one. Otherwise, w must be a numpy </span>
+<span class="sd">            array of int and w[i] is the weight of node i=0,...,m-1.  </span>
+<span class="sd">        * p : None or int  </span>
+<span class="sd">            The number of facilities to locate </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prob_name</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of data file or None&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">p</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of facilities to locate on the graph&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of (customer) vertices of the graph&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of possible facility vertices of the graph&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_w</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Weights of the m customer nodes&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span> <span class="o">=</span> <span class="kc">None</span>  
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determines the distance between customer and facility nodes&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span> <span class="o">=</span> <span class="n">dmax</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximal distances to be observed in maximal covering location&quot;&quot;&quot;</span>
+               
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Will equal the largest weighted distance for each vertice i&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function returning a numpy array that gives for each customer</span>
+<span class="sd">           node its weighted distance to the nearest facility from </span>
+<span class="sd">           a given list S of established facilities&quot;&quot;&quot;</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_coverage</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function return amount of demand covered by a list S of open facilities&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dst_type</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Data type of the single distances, i.e. float or int&quot;&quot;&quot;</span>
+               
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model of an underlying integer programming problem&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__y</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Binary location variables in MIP model&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__x</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allocation variables in MIP model&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__z</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Covering or Elloumi z-variables in MIP model&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__silent</span> <span class="o">=</span> <span class="kc">False</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If False, solvers will send log-output to stdout&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List of facility node indices in a solution&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assigned</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;assigned[i] gives the nearest facility node to node i in a solution&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function returning as a list that for each customer node gives</span>
+<span class="sd">           the nearest facility from a given set S of facilities&quot;&quot;&quot;</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Total weighted distance in a solution&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lower (or upper) bound on optimal objective value&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Any iteration counter&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stime</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start time of a solution procedure&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctime</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computation time (CPU and Walltime) required to solve a problem instance&quot;&quot;&quot;</span> 
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mip_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computation time (walltime seconds) spent in the MIP solver&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mip_work</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deterministic computation time. For Cplex this is the total amout</span>
+<span class="sd">        of CPU ticks. For GuRoBi one work unit is about one second on single</span>
+<span class="sd">        thread.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodeCount</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of nodes processed in total when solving with a MIP solver&quot;&quot;&quot;</span> 
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span> <span class="o">=</span> <span class="kc">False</span> 
+        
+        <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">dmax</span><span class="o">=</span><span class="n">dmax</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>                    
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">p</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">dmax</span> <span class="o">=</span> <span class="n">read_graph</span><span class="p">(</span> <span class="n">fname</span><span class="p">,</span> <span class="n">dmatrix</span><span class="o">=</span><span class="n">dstmat</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="n">orlib</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span> <span class="n">d</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">dmax</span><span class="o">=</span><span class="n">dmax</span> <span class="p">)</span>
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="NetProblem.reset">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.netprob.NetProblem.reset">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Nullify the problem&#39;s data, solution values, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prob_name</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_w</span> <span class="o">=</span> <span class="kc">None</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span> <span class="o">=</span> <span class="kc">None</span>  
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_coverage</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dst_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__y</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__x</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__z</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">assigned</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stime</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctime</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mip_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mip_work</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodeCount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span> <span class="o">=</span> <span class="kc">False</span>  </div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+   
+<div class="viewcode-block" id="NetProblem.set_data">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.netprob.NetProblem.set_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pass data to this instance of a network location problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters  </span>
+<span class="sd">        ----------   </span>
+<span class="sd">        * d : Numpy array of int/float or dictionary of int/float or a function  </span>
+<span class="sd">            d keeps the distances between the m nodes of the graph and the </span>
+<span class="sd">            n &lt;= m nodes where facilities can be established. </span>
+<span class="sd">             </span>
+<span class="sd">            1. If the set of facility nodes and customer nodes is identical</span>
+<span class="sd">               and thus the matrix of distances symmetric, d can be one</span>
+<span class="sd">               of the following:</span>
+<span class="sd">               </span>
+<span class="sd">               1. d is a numpy (mxn), n=m, array of int or float and</span>
+<span class="sd">                  d[i,j]=d[j,i] the distance between nodes i and j,</span>
+<span class="sd">                  d[i,i]=0.</span>
+<span class="sd">               2. d is a dictionary of length m*(m-1)//2 and d[(i,j)] gives </span>
+<span class="sd">                  the distance between nodes i and j for i=1,...,m-1 and </span>
+<span class="sd">                  j = 0,..., i-1. </span>
+<span class="sd">               3. d is a numpy array of size m*(m-1)//2. The distance</span>
+<span class="sd">                  between nodes i (i=1,...,m-1) and j (j=0,...,i-1) must</span>
+<span class="sd">                  then be stored in d[ i*(i-1)//2 + j ]. </span>
+<span class="sd">               4. d is a function, so that d(i,j) returns the distance</span>
+<span class="sd">                  beween nodes i (i=1,...,m-1) and j (j=0,...,i-1).  </span>
+<span class="sd">            </span>
+<span class="sd">            2. Set of customer and facility nodes are not identical.</span>
+<span class="sd">               In this case d need to be a numpy mxn matrix just as</span>
+<span class="sd">               under (1.1).</span>
+<span class="sd">                     </span>
+<span class="sd">        * p : int  </span>
+<span class="sd">            The number of facilities to locate  </span>
+<span class="sd">            </span>
+<span class="sd">        * w : None or a numpy array of positive int  </span>
+<span class="sd">            If None, all weights are set to one. Otherwise, w must be a numpy </span>
+<span class="sd">            array of int and w[i] is the weight of node i=0,...,m-1.  </span>
+<span class="sd">            </span>
+<span class="sd">        * dmax : None or numpy array of int or float  </span>
+<span class="sd">            dmax[i] specifies the maximal distance for customer node i</span>
+<span class="sd">            in maximal covering location  </span>
+<span class="sd">            </span>
+<span class="sd">        * m, n : int  </span>
+<span class="sd">            In case that d is a function, m and n need to be specified.</span>
+<span class="sd">            m gives the number of customer nodes and n the number of</span>
+<span class="sd">            facility nodes. The function d should then return the </span>
+<span class="sd">            distance between customer node i and facility node j as </span>
+<span class="sd">            d(i,j).                                </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span> <span class="o">=</span> <span class="n">dmax</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span> <span class="o">=</span> <span class="kc">False</span> 
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="n">d</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="n">m</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span> <span class="o">=</span> <span class="n">d</span>  
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span><span class="p">:</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> 
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">+</span><span class="mf">0.25</span> <span class="p">)</span> <span class="o">+</span> <span class="mf">0.51</span> <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict_dist</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">==</span><span class="nb">dict</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sparse_dist</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="p">)</span> <span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">w</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dst_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">)</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_wdist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[:,</span><span class="n">S</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[:,</span><span class="n">S</span><span class="p">]</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_coverage</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+                                           <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[:,</span><span class="n">S</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_radius</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>                                
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="c1"># This case assumes a symmetric matrix of distances between customer and facility nodes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_wdist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">))</span> \
+                                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dst_type</span> <span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">S</span><span class="p">)</span> \
+                                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dst_type</span> <span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span> <span class="n">S</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> \
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)</span> <span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_radius</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_dist</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_coverage</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">S</span> <span class="p">:</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+                    <span class="nb">sum</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">S</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)</span> <span class="p">)</span></div>
+
+              
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__dict_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return distance between i and j&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span> 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">j</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)]</span>
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__sym_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">j</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="o">+</span> <span class="n">i</span><span class="p">]</span>
+
+    <span class="c1">#---------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_starttime</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize start time of a solving process.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stime</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">(),</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_comptime</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">mip_time</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine time required for solving a problem.</span>
+<span class="sd">        If mip_time is True, it is assumed that the</span>
+<span class="sd">        MIP solver did the computation and its computation </span>
+<span class="sd">        time is accessed.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctime</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">__stime</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">__stime</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">mip_time</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mip_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">runtime</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mip_work</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">dettime</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodeCount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">nodeCount</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipSolver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the MIP solver&#39;s name used for solving MIPs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">set_mipSolver</span><span class="p">(</span> <span class="p">)</span>
+    
+    <span class="nd">@mipSolver</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipSolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solver</span> <span class="p">):</span>
+        <span class="n">set_mipSolver</span><span class="p">(</span><span class="n">solver</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;MIP model of the problem instance&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> 
+    
+    <span class="nd">@model</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle to the MIP model&quot;&quot;&quot;</span> 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> 
+    
+    <span class="nd">@model</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle to the MIP model&quot;&quot;&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="n">value</span> 
+    
+    <span class="nd">@model</span><span class="o">.</span><span class="n">deleter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span> 
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Demand allocation variables x[i,j], where i is a </span>
+<span class="sd">        customer and j a facility node. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x</span>
+    
+    <span class="nd">@x</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Demand allocation variables x[i,j], where i is a </span>
+<span class="sd">        customer and j a facility node.&quot;&quot;&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__x</span> <span class="o">=</span> <span class="n">value</span>  
+    
+    <span class="nd">@x</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Demand allocation variables x[i,j], where i is a </span>
+<span class="sd">        customer and j a facility node.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x</span>     
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Location binary variables y[j] for </span>
+<span class="sd">        j=0,...,n-1 and n number of facility nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span>
+        
+    <span class="nd">@y</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Location binary variables y[j] for </span>
+<span class="sd">        j=0,...,n-1 and n number of facility nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__y</span> <span class="o">=</span> <span class="n">value</span>  
+            
+    <span class="nd">@y</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Location binary variables y[j] for </span>
+<span class="sd">        j=0,...,n-1 and n number of facility nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span>    
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Covering variables in maximal covering location</span>
+<span class="sd">        or variables z in Elloumi formulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__z</span>
+        
+    <span class="nd">@z</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>   
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Covering variables in maximal covering location</span>
+<span class="sd">        or variables z in Elloumi formulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__z</span> <span class="o">=</span> <span class="n">value</span>
+        
+    <span class="nd">@z</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Covering variables in maximal covering location</span>
+<span class="sd">        or variables z in Elloumi formulation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__z</span>    
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">silent</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If silent is True, solution methods do not give log-output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__silent</span> 
+    
+    <span class="nd">@silent</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">silent</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set property silent to True or False.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__silent</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

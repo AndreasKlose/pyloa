@@ -1,0 +1,682 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.plane.planesolver &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.plane.planesolver</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.plane.planesolver</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module plane.planesolver </span>
+<span class="sd">    </span>
+<span class="sd">    Implements a class for solving a planar minisum or minimax</span>
+<span class="sd">    location problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="kn">import</span> <span class="n">basename</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">timeit</span><span class="w"> </span><span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_mipSolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lla2xy</span><span class="p">,</span> <span class="n">euclid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_points</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.weber</span><span class="w"> </span><span class="kn">import</span> <span class="n">solveWeber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.center</span><span class="w"> </span><span class="kn">import</span> <span class="n">elzinga_hearn</span><span class="p">,</span> <span class="n">charalambous</span><span class="p">,</span> <span class="n">welzl</span><span class="p">,</span> <span class="n">growRadius</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.mip</span><span class="w"> </span><span class="kn">import</span> <span class="n">weber_mipq</span><span class="p">,</span> <span class="n">pcenter_mipq</span><span class="p">,</span> <span class="n">SOCPcenter</span><span class="p">,</span> <span class="n">SOCPweber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.loc_alloc</span><span class="w"> </span><span class="kn">import</span> <span class="n">locAlloc</span><span class="p">,</span> <span class="n">pmedian_heuristic</span><span class="p">,</span> <span class="n">weber_vns</span><span class="p">,</span> <span class="n">twoFacility</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.weber_cg</span><span class="w"> </span><span class="kn">import</span> <span class="n">colgen</span><span class="p">,</span> <span class="n">set_optTol</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+
+<span class="c1">#--------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="PlaneSolver">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlaneSolver</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for addressing a planar location problem</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geospatial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an instance of a planar location problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------   </span>
+<span class="sd">        * fname : str, optional  </span>
+<span class="sd">            None or name of the input file or problem instance to be solved.</span>
+<span class="sd">            If None, it is assumed that the data are provided via arguments</span>
+<span class="sd">            Y and w. Otherwise, fname need to be the name (and path if </span>
+<span class="sd">            required) of a text/csv file keeping the data of the problem </span>
+<span class="sd">            instance. See the module plane.parser for information on how</span>
+<span class="sd">            the data file need to look like.</span>
+<span class="sd">        * Y : None or a mx2 numpy array of float  </span>
+<span class="sd">            This argument is only used in case that fname=None. If it is</span>
+<span class="sd">            not None, then Y must contain the in each row the coordinates of </span>
+<span class="sd">            the m customer locations.</span>
+<span class="sd">        * geospatial: bool, optional  </span>
+<span class="sd">            If False (the default), it is assumed that the rows of Y give </span>
+<span class="sd">            coordinates in Euclidian plane. Otherwise, it is assumed</span>
+<span class="sd">            that Y[i,0] gives the longitude and Y[i,1] the latitude</span>
+<span class="sd">            of customer point i. </span>
+<span class="sd">        * w : None or numpy array of m float or int  </span>
+<span class="sd">            This argument is only used if fname=None. In this case,</span>
+<span class="sd">            it gives the array positive customer weights if not None.</span>
+<span class="sd">            If None but fname and Y aren&#39;t, the weights are set to 1 for </span>
+<span class="sd">            all customer points.</span>
+<span class="sd">        * names : None or list/array of str, optional  </span>
+<span class="sd">            Names of the customer points if not None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prob_name</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">fname</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">basename</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Name of data file or None&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span> <span class="o">=</span> <span class="kc">None</span>  
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Array of customer coordinates in Euclidian plane&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="o">=</span> <span class="kc">None</span>  
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Array of customer weights&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;(px2) array of facility coordinates in a solution where p facilities</span>
+<span class="sd">           had to be located&quot;&quot;&quot;</span>
+           
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lo</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Longitude data of customer points if provided&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__la</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Latitude data of customer points if provided&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__names</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Names of customer points if provided&quot;&quot;&quot;</span>
+           
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sum_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The total weighted sum of distances to nearest facility in a solution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__max_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The maximal weighted distance to nearest facility in a solution </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The total (unweighted) sum of distances to the nearest facility in a solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The maximal (unweighted) distance to nearest facility in a solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__lobnd</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Any lower bound on optimal objective function value&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__assigned</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gives for each customer point the index of the nearest facility in self.__X</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stime</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start time of a solution procedure&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ctime</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computation time (CPU and Walltime) required to solve a problem instance&quot;&quot;&quot;</span> 
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__mip_time</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computation time (walltime seconds) spent by the MIP solver&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cg_iter</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximal number of column generation iterations&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pricing_method</span> <span class="o">=</span> <span class="s1">&#39;Drezner&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Time limit to be applied when solving a problem as a MIQCP using </span>
+<span class="sd">        a MIP solver&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Strategy to be used by the MIQCP solver: If 0, the solver decides </span>
+<span class="sd">        automatically; if 1 the quadratic continuous relaxation is used </span>
+<span class="sd">        for obtaining lower bounds; if 2 conical cuts ar used. See also</span>
+<span class="sd">        docplex.mp.model.parameters.mip.strategy.miqcpstrat and </span>
+<span class="sd">        gurobipy.model.params.MIQCPMethod.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__nodes_processed</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of nodes processed in total for solving a problem with the MIP solver&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__geospatial</span> <span class="o">=</span> <span class="kc">False</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Will be True if data do not come from a file and coordinates in the</span>
+<span class="sd">        aray Y are longitude-latitude data&quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">read_points</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> 
+            <span class="k">assert</span> <span class="ow">not</span> <span class="n">Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Unable to read file&quot;</span><span class="o">+</span><span class="n">fname</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">geospatial</span><span class="o">=</span><span class="n">geospatial</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+
+<div class="viewcode-block" id="PlaneSolver.set_data">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.set_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">geospatial</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pass data to this instance of a planar location problem</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__names</span> <span class="o">=</span> <span class="n">names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__geospatial</span> <span class="o">=</span> <span class="n">geospatial</span> 
+        <span class="k">if</span> <span class="n">geospatial</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__lo</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__la</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">origin</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lo</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__la</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">lla2xy</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">origin</span><span class="p">),</span> <span class="n">Y</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">customers</span> <span class="o">=</span> <span class="n">Y</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">w</span>   
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sum_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__max_wdist</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__assigned</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="o">=</span> <span class="kc">None</span> </div>
+
+            
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute total weighted distance, total distance, maximal weighted </span>
+<span class="sd">        distance and maximal distance to nearest facility location.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">weighted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="o">!=</span> <span class="n">W</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="n">euclid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__assigned</span> 
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+                <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span> <span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__assigned</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="n">dists</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="n">euclid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span> <span class="o">=</span> <span class="n">dists</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span> <span class="o">=</span> <span class="n">dists</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sum_wdist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span><span class="n">dists</span><span class="p">)</span> <span class="k">if</span> <span class="n">weighted</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span><span class="o">*</span><span class="n">W</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__max_wdist</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="o">*</span><span class="n">dists</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">if</span> <span class="n">weighted</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span><span class="o">*</span><span class="n">W</span>
+     
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">customers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the customer point coordinates&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span> 
+    
+    <span class="nd">@customers</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">customers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the customer coordinates to the numpy array Y.</span>
+<span class="sd">        Note that Y is an array of 2-dimensional arrays.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span> <span class="o">=</span> <span class="n">Y</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coordinates must be a numpy array of 2-dimensional arrays!&quot;</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the customer point weights&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span>
+    
+    <span class="nd">@weights</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the customer point weights to the array w. Note</span>
+<span class="sd">        that customer weights need to be positive.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">w</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="o">=</span> <span class="n">w</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weights must be a positive numpy array!&quot;</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">weighted_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sum of weighted distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_wdist</span> 
+    
+    <span class="nd">@weighted_distance</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">weighted_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return sum of weighted distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_wdist</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_wdist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_dist</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_wdist</span> 
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sum of (unweighted) distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span> 
+    
+    <span class="nd">@distance</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return sum of (unweighted distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_dist</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sum_dist</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_weighted_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximal weighted distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_wdist</span> 
+    
+    <span class="nd">@max_weighted_distance</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_weighted_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return maximal weighted distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_wdist</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_wdist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_maxdist</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_wdist</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Maximal (unweighted) distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span> 
+    
+    <span class="nd">@max_distance</span><span class="o">.</span><span class="n">getter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">max_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return maximal (unweighted) distances to nearest facility in a solution&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_maxdist</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__max_dist</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lowBound</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return lower bound on objective value (only for multi-source Weber if </span>
+<span class="sd">           solved by column generation)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lobnd</span>    
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">facilities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return array of the p facility coordinates&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> 
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">assigned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return assignment of customer locations to facility (indices)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__assigned</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mip_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return Cplex solver computation time (wall time) in seconds&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mip_time</span> 
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mip_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return number of branch-and-cut tree nodes enumerated&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nodes_processed</span> 
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">cpuTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return CPU time in seconds&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ctime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">wallTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return CPU time in seconds&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ctime</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipSolver</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the MIP solver&#39;s name used for solving MIPs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">set_mipSolver</span><span class="p">(</span> <span class="p">)</span>
+    
+    <span class="nd">@mipSolver</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipSolver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solver</span> <span class="p">):</span>
+        <span class="n">set_mipSolver</span><span class="p">(</span><span class="n">solver</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">timeLimit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the MIP solver&#39;s time limit (seconds) available</span>
+<span class="sd">        for solving a MIQCP.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span> 
+    
+    <span class="nd">@timeLimit</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">timeLimit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the time limit to be applied for the MIQCP solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span> <span class="o">=</span> <span class="n">value</span> 
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">miqcp_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the MIP solver&#39;s MIQCP solving strategy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span> 
+    
+    <span class="nd">@miqcp_strategy</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">miqcp_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the strategy (0, 1, or 2) to be applied for the </span>
+<span class="sd">        MIQCP solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span> <span class="o">=</span> <span class="n">value</span> 
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">cg_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return maximal number of column generation iteration</span>
+<span class="sd">        to be done within the column generation method for</span>
+<span class="sd">        the multi-source Weber problem. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cg_iter</span> 
+    
+    <span class="nd">@cg_iter</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">cg_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the maximal number of column generation iterations</span>
+<span class="sd">        to the given value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cg_iter</span> <span class="o">=</span> <span class="n">value</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">pricing_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the method to solve the pricing problem within</span>
+<span class="sd">        a column generation for the multi-source Weber problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pricing_method</span> 
+    
+    <span class="nd">@pricing_method</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pricing_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use method &#39;value&#39; for solving the pricing problem within</span>
+<span class="sd">        a column generation for the multi-source Weber problem.</span>
+<span class="sd">        value must equal &#39;Drezner&#39; or &#39;MIQCP&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pricing_method</span> <span class="o">=</span> <span class="n">value</span>  
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">optTol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the relative optimality tolerance value to </span>
+<span class="sd">        be used within the column generation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">set_optTol</span><span class="p">()</span>
+    
+    <span class="nd">@optTol</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">optTol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the column generation&#39;s relative optimality</span>
+<span class="sd">        tolerance to the given value </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">set_optTol</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="PlaneSolver.solve">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.solve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solves an instance of a planar location problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p : int </span>
+<span class="sd">            Number of facility locations to find (default=1)</span>
+<span class="sd">        minisum : bool</span>
+<span class="sd">            If True, the minisum location problem (Fermat-Weber,</span>
+<span class="sd">            or multi-source Weber) is solved; otherwise the</span>
+<span class="sd">            1-center (p=1) or p-center problem is solved.</span>
+<span class="sd">            (default=True)</span>
+<span class="sd">        method : str </span>
+<span class="sd">            Determines the method to be applied for solving</span>
+<span class="sd">            the problem. Note that method need to be specified</span>
+<span class="sd">            except if Drezner&#39;s method for solving the </span>
+<span class="sd">            Fermat-Weber problem should be applied. The following</span>
+<span class="sd">            methods are available:</span>
+<span class="sd">            </span>
+<span class="sd">            1. For the Fermat-Weber problem (p=1, minisum=True)</span>
+<span class="sd">            </span>
+<span class="sd">                - &#39;Drezner&#39;     : Drezner&#39;s method (Default method)</span>
+<span class="sd">                - &#39;Ostresh-val&#39; : Ostresh&#39;s method with step size parameter lambda set to value</span>
+<span class="sd">                </span>
+<span class="sd">                                  For example, Ostresh-2. If val is not specified, the step size parameter is set to 2.</span>
+<span class="sd">                - &#39;Weiszfeld&#39;   : Weiszfeld&#39;s method (same as Ostresh-1)</span>
+<span class="sd">                - &#39;SOCP&#39;        : Solves the problem using Cplex&#39;s solver for 2nd order cone problems</span>
+<span class="sd">            </span>
+<span class="sd">            2. For the 1-center problem in plane </span>
+<span class="sd">            </span>
+<span class="sd">                - &#39;PrimDual&#39;    : a primal dual convex optimization method</span>
+<span class="sd">                - &#39;Elzinga&#39;     : Elzinga and Hearn&#39;s method (can only be applied if all weights are identical)</span>
+<span class="sd">                - &#39;Charalambous&#39;: Charalambous&#39; method</span>
+<span class="sd">                - &#39;Welzl&#39;       : Welzl&#39; method</span>
+<span class="sd">                - &#39;SOCP&#39;        : Solve as 2nd order cone using Cplex</span>
+<span class="sd">            </span>
+<span class="sd">            The default is Elzinga for equal weights and Charalambous</span>
+<span class="sd">            otherwise.            </span>
+<span class="sd">                </span>
+<span class="sd">            3. For the multi-source Weber and planar p-center problem:</span>
+<span class="sd">            </span>
+<span class="sd">                - &#39;LOCA-num&#39;: Location allocation heuristic. </span>
+<span class="sd">                </span>
+<span class="sd">                              If num is specified, then num is the number of times the procedure </span>
+<span class="sd">                              is repeated with different random initial solutions.</span>
+<span class="sd">                              </span>
+<span class="sd">                              If num is not specified clustering methods are used get initial solutions.</span>
+<span class="sd">                - &#39;pmedian&#39; : p-median heuristic for the multi-source Weber problem</span>
+<span class="sd">                - &#39;VNS&#39;     : variable neighbourhood search heuristic</span>
+<span class="sd">                              </span>
+<span class="sd">                              A local search procedures that tries to improve some current solution. </span>
+<span class="sd">                              If no initial solution has already been obtained, LOCA is used to this end.   </span>
+<span class="sd">                - &#39;ColGen&#39;  : column generation procedure </span>
+<span class="sd">                - &#39;MIPQ&#39;    : Uses Cplex to solve the problem when modelled as 2nd order cone MIP</span>
+<span class="sd">                - &#39;Ostresh&#39; : Ostresh&#39;s method for the two-Weber problem</span>
+<span class="sd">                </span>
+<span class="sd">                              Exact method for the case of p=2.</span>
+<span class="sd">                           </span>
+<span class="sd">            If no method is specified, the default is applied, which</span>
+<span class="sd">            is LOCA if p &gt; 2 and Ostresh for p=2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>  
+        <span class="n">screen</span> <span class="o">=</span> <span class="s1">&#39;off&#39;</span> <span class="k">if</span> <span class="n">silent</span> <span class="k">else</span> <span class="s1">&#39;on&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__stime</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">(),</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Single facility location problem</span>
+            <span class="k">if</span> <span class="n">minisum</span><span class="p">:</span>
+                <span class="c1"># Solve the Fermat-Weber problem </span>
+                <span class="n">meth</span> <span class="o">=</span> <span class="s1">&#39;drezner&#39;</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">meth</span> <span class="o">=</span> <span class="n">meth</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">meth</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">meth</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="s1">&#39;weis&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;weiszfeld&#39;</span>
+                <span class="k">if</span> <span class="s1">&#39;ostr&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> 
+                    <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;ostresh&#39;</span>
+                    <span class="k">if</span> <span class="n">l</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span>
+                <span class="k">if</span> <span class="s1">&#39;socp&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">SOCPweber</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">solveWeber</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">screen</span> <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Solve the center problem in plane  </span>
+                <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">meth</span> <span class="o">=</span> <span class="s1">&#39;chara&#39;</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">else</span> <span class="s1">&#39;elzinga&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">meth</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s1">&#39;elzin&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">elzinga_hearn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="n">screen</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="s1">&#39;chara&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">charalambous</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span>
+                <span class="k">elif</span> <span class="s1">&#39;welzl&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span> 
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">welzl</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="s1">&#39;prim&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">growRadius</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span>
+                <span class="k">elif</span> <span class="s1">&#39;soc&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span> 
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">SOCPcenter</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Solve multi-facility, that is, a location-allocation problem</span>
+            <span class="n">default_meth</span> <span class="o">=</span> <span class="s1">&#39;loca&#39;</span> <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;Ostresh&#39;</span>
+            <span class="n">meth</span> <span class="o">=</span> <span class="n">default_meth</span> <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">method</span>
+            <span class="n">meth</span> <span class="o">=</span> <span class="n">meth</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">meth</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">meth</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s1">&#39;loca&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">num</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> 
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="n">minisum</span><span class="p">,</span>\
+                                           <span class="n">initLA</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span> <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="n">minisum</span><span class="p">,</span>\
+                                           <span class="n">repeat</span><span class="o">=</span><span class="n">num</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;pmed&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pmedian_heuristic</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">minisum</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span>
+            <span class="k">elif</span> <span class="s1">&#39;vns&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">p_old</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+                <span class="n">X0</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">p</span> <span class="o">!=</span> <span class="n">p_old</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> 
+                <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">weber_vns</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">X0</span><span class="p">,</span> <span class="n">minisum</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span> 
+            <span class="k">elif</span> <span class="s1">&#39;mip&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">minisum</span><span class="p">:</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">tim</span><span class="p">,</span> <span class="n">nnodes</span> <span class="o">=</span> <span class="n">weber_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span>\
+                                                       <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">tim</span><span class="p">,</span> <span class="n">nnodes</span> <span class="o">=</span> <span class="n">pcenter_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span>\
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__mip_time</span> <span class="o">=</span> <span class="n">tim</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">__nodes_processed</span> <span class="o">=</span> <span class="n">nnodes</span>
+            <span class="k">elif</span> <span class="s1">&#39;col&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">minisum</span><span class="p">:</span>
+                <span class="c1">#_, LB, X, a, _ = colgen( p, self.__Y, self.__w, mip_pricing=False, screen=screen)</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">LB</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">colgen</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span>\
+                                         <span class="n">mip_pricing</span> <span class="o">=</span> <span class="s1">&#39;MI&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pricing_method</span><span class="p">,</span>\
+                                         <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__cg_iter</span> <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__lobnd</span> <span class="o">=</span> <span class="n">LB</span> 
+            <span class="k">elif</span> <span class="n">p</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">twoFacility</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">minisum</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span>   
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>            
+            <span class="bp">self</span><span class="o">.</span><span class="n">__ctime</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">__stime</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">__stime</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  
+            <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="o">=</span> <span class="n">X</span>       
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__assigned</span> <span class="o">=</span> <span class="n">a</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__get_dist</span><span class="p">()</span></div>
+
+            
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="PlaneSolver.plot">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot solution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__geospatial</span><span class="p">:</span>
+            <span class="n">plot_points</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="p">,</span> <span class="n">lola</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__lo</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">__la</span><span class="p">),</span> <span class="n">cust_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__names</span> <span class="p">)</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_points</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="p">)</span></div>
+</div>
+
+
+                
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

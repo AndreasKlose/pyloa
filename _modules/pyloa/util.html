@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.util &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Util - Some helper functions/routines used in package pyloa.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">geopy.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">EARTH_RADIUS</span> <span class="k">as</span> <span class="n">__R</span> <span class="c1"># gives 6371.009km</span>
+<span class="k">if</span> <span class="n">geopy</span><span class="o">.</span><span class="n">__version__</span> <span class="o">&lt;</span> <span class="s1">&#39;1.14&#39;</span><span class="p">:</span> 
+    <span class="kn">from</span><span class="w"> </span><span class="nn">geopy.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">vincenty</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">geopy.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">geodesic</span>
+    
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
+
+<span class="n">_ZERO</span> <span class="o">=</span> <span class="mf">1.0E-06</span>
+    
+<span class="c1">#-----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="euclid">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.euclid">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">euclid</span><span class="p">(</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns Eucldean distance between two points X and Y.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X, Y : two numpy arrays of float of dimension 2</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    euclid : float</span>
+<span class="sd">        Euclidean distance between the two points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span> <span class="n">X</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span></div>
+
+
+<span class="c1">#-----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="geo_dist">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.geo_dist">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">geo_dist</span><span class="p">(</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses geopy to obtain the geodesic (that is Vincenty) distance </span>
+<span class="sd">    in km between two points specified by longitude and latitude.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p1, p2 : two numpy arrays of float of dimension 2</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    ------- </span>
+<span class="sd">    geo_dist : float</span>
+<span class="sd">        The geodesic distance between the two points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">geopy</span><span class="o">.</span><span class="n">__version__</span> <span class="o">&lt;</span> <span class="s1">&#39;1.14&#39;</span><span class="p">:</span> <span class="k">return</span><span class="p">(</span> <span class="n">vincenty</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span> <span class="n">geodesic</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="p">)</span><span class="o">.</span><span class="n">km</span> <span class="p">)</span></div>
+
+
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="lla2xy">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.lla2xy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lla2xy</span> <span class="p">(</span> <span class="n">lo</span><span class="p">,</span> <span class="n">la</span><span class="p">,</span> <span class="n">origin</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a point given by longitude and latitude to a cartesian </span>
+<span class="sd">    point relative to the longitude and latitude point of a given </span>
+<span class="sd">    origin.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lo, la: two floats</span>
+<span class="sd">        longitude and latitude of point to convert</span>
+<span class="sd">    origin: numpy array of two float</span>
+<span class="sd">        longitude and latitude of the origin point</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lla2xy: list of two float</span>
+<span class="sd">        The cartesian/euclidean coordinates of the point.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># convert north-south distance from degrees to radians</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">__R</span><span class="o">*</span><span class="p">(</span><span class="n">la</span><span class="o">-</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">;</span>
+
+    <span class="c1"># for x-coordinate, use distance along a line of latitude from the</span>
+    <span class="c1"># point&#39;s longitude to the &quot;origin&#39;&quot; longitude</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">__R</span><span class="o">*</span><span class="p">(</span><span class="n">lo</span> <span class="o">-</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span>
+
+    <span class="k">return</span><span class="p">(</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">]</span> <span class="p">)</span></div>
+
+
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="xy2lla">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.xy2lla">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xy2lla</span><span class="p">(</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">origin</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inverse function of lla2xy. Given the Euclidian point (x,y),</span>
+<span class="sd">    return longitude and latitude by reversing above transformation.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : float  </span>
+<span class="sd">        x-coordinate of the point</span>
+<span class="sd">    y : float  </span>
+<span class="sd">        y-coordinate of the point</span>
+<span class="sd">    origin : numy array or list of two floats  </span>
+<span class="sd">        longitude and latitude of the origin point</span>
+<span class="sd">           </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lo, la : two floats</span>
+<span class="sd">        longitude and latitude corresponding to (x,y)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">la</span> <span class="o">=</span> <span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">__R</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span>
+    <span class="n">lo</span> <span class="o">=</span> <span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">__R</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lo</span><span class="p">,</span> <span class="n">la</span></div>
+
+    
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="all_two_parts">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.all_two_parts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_two_parts</span><span class="p">(</span> <span class="n">Y</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates all possible divisions of the customer point set {y(i)} into</span>
+<span class="sd">    two subsets such that the convex hulls of the two subsets do not</span>
+<span class="sd">    overlap.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        Y[i] specifies the customer i&#39;s coordinates, i=0,...,m-1</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_parts : dict of pairs of lists of int</span>
+<span class="sd">        all_parts[num] is a pair of two lists of int such that the</span>
+<span class="sd">        number of elements in the smaller of the two lists equals the</span>
+<span class="sd">        number num. Note that num is at most (m-1)/2 if m is odd</span>
+<span class="sd">        and m/2 if m is even. If all_parts[num] = P, then the </span>
+<span class="sd">        division of the customer set in the two subsets is P[0] and</span>
+<span class="sd">        P[1]. The smaller of the two sets is thereby always listed</span>
+<span class="sd">        first, i.e. len(P[0]) &lt; len(P[1]). In both parts are of</span>
+<span class="sd">        same length, the part containing the smallest customer index</span>
+<span class="sd">        is listed first, i.e. min(P[0]) &lt; min(P[1]) if len(P[0])==</span>
+<span class="sd">        len(P[1]).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_partits</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_partition</span><span class="p">(</span> <span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span> <span class="n">noise</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the two possible partitions using separating line through</span>
+<span class="sd">        points y1--y2 (rotated slightly around the lines middle point)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Determine line a*y[1] + b*y[0] = c through points y1 and y2</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">y2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">y1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">y1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">y2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">y1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">y1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">y2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span> <span class="n">c</span><span class="o">+</span><span class="n">noise</span><span class="o">*</span><span class="p">(</span><span class="n">y1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">y2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">noise</span><span class="p">,</span> <span class="n">b</span> <span class="p">)</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0E-6</span> <span class="k">else</span> \
+                <span class="p">(</span> <span class="n">c</span><span class="o">+</span><span class="n">noise</span><span class="o">*</span><span class="p">(</span><span class="n">y1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">y2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">noise</span> <span class="p">)</span>
+              
+        <span class="n">left</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">y</span> <span class="p">:</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">I1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">left</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">I2</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="ow">not</span> <span class="n">left</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)))</span> <span class="p">)</span>
+        <span class="n">m1</span><span class="p">,</span> <span class="n">m2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">I2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">m1</span> <span class="o">&lt;</span> <span class="n">m2</span><span class="p">:</span> <span class="k">return</span> <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span>
+        <span class="k">if</span> <span class="n">m2</span> <span class="o">&lt;</span> <span class="n">m1</span><span class="p">:</span> <span class="k">return</span> <span class="n">I2</span><span class="p">,</span> <span class="n">I1</span> 
+        <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">I1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">I2</span><span class="p">):</span> <span class="k">return</span> <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span> 
+        <span class="k">return</span> <span class="n">I2</span><span class="p">,</span> <span class="n">I1</span> 
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_partition</span><span class="p">(</span> <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span> <span class="p">):</span>
+        <span class="c1"># Checks if the customer set partition (I1,I2=I\I1) has already been generated</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">I1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span> 
+                <span class="k">for</span> <span class="n">P</span> <span class="ow">in</span> <span class="n">all_partits</span><span class="p">[</span><span class="n">num</span><span class="p">]:</span> 
+                    <span class="n">found</span> <span class="o">=</span> <span class="n">I1</span> <span class="o">==</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">found</span><span class="p">:</span> <span class="k">break</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span> <span class="n">all_partits</span><span class="p">[</span><span class="n">num</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">I1</span><span class="p">,</span><span class="n">I2</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">all_partits</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="n">I1</span><span class="p">,</span><span class="n">I2</span><span class="p">)]</span>  
+        
+        
+    <span class="k">for</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">eps</span> <span class="ow">in</span> <span class="p">(</span><span class="n">_ZERO</span><span class="p">,</span><span class="o">-</span><span class="n">_ZERO</span> <span class="p">):</span>
+            <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span> <span class="o">=</span> <span class="n">create_partition</span><span class="p">(</span> <span class="n">y1</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">eps</span> <span class="p">)</span>
+            <span class="n">add_partition</span><span class="p">(</span><span class="n">I1</span><span class="p">,</span> <span class="n">I2</span><span class="p">)</span>
+     
+    <span class="k">return</span> <span class="n">all_partits</span> </div>
+
+
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="all_circle_intersections">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.all_circle_intersections">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">all_circle_intersections</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">max_dists</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Let C(i) be the circle of radius max_dists[i] around customer point</span>
+<span class="sd">    Y[i]. This function computes the up to two intersection points </span>
+<span class="sd">    between circles C(i) and C(j) for every customer point pair.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        Y[i] gives the two coordinates of customer point i</span>
+<span class="sd">    max_dists : list or numpy array of float or int </span>
+<span class="sd">        max_dists[i] is the radius of the circle C(i) around point </span>
+<span class="sd">        Y[i]. Usually this radius refers to a maximal distance for </span>
+<span class="sd">        customer i.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    all_intersects : dict</span>
+<span class="sd">         Dictionary where the key refers to the customer pair and</span>
+<span class="sd">         the value to the up to two intersection points. If circles</span>
+<span class="sd">         C(i) and C(j) intersect at the two points P and Q, then</span>
+<span class="sd">         all_intersects[num] is the tuple (P,Q) consisting of</span>
+<span class="sd">         the two points P and Q, which are in turn tuples of</span>
+<span class="sd">         two coordinates. Thereby i = num//m and j=num % m. </span>
+<span class="sd">         If C(i) and C(j) have only a single intersection point P, </span>
+<span class="sd">         then all_intersects[num] is a list (and not a tuple) </span>
+<span class="sd">         consisting of the single point P. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_can_intersect</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
+        <span class="c1"># Returns true if circles C(i) and C(j) have intersection</span>
+        <span class="n">d_ij</span> <span class="o">=</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="c1"># Check if intersection of circle areas is empty</span>
+        <span class="k">if</span> <span class="n">d_ij</span> <span class="o">&gt;</span> <span class="n">max_dists</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">max_dists</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span> <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Check if one circle is contained in the other</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">max_dists</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">max_dists</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">r1</span> <span class="o">&gt;</span> <span class="n">r2</span> <span class="p">:</span> <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">r2</span><span class="p">,</span> <span class="n">r1</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">d_ij</span> <span class="o">+</span> <span class="n">r1</span>  <span class="o">&gt;</span> <span class="n">r2</span> <span class="p">:</span> <span class="k">return</span> <span class="kc">False</span> 
+        <span class="k">return</span> <span class="kc">True</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_circle_intersect</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
+        <span class="c1"># Return the two or the single intersection point(s) of </span>
+        <span class="c1"># circles C(i) and C(j)</span>
+        <span class="n">r1</span><span class="p">,</span> <span class="n">C1</span> <span class="o">=</span> <span class="n">max_dists</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">r2</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="n">max_dists</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        <span class="c1"># Find intersections (cf. Appendix to Chap. 4)</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">euclid</span><span class="p">(</span><span class="n">C1</span><span class="p">,</span><span class="n">C2</span><span class="p">)</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="p">(</span><span class="n">C1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">C2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span> <span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r1</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">ay</span> <span class="o">=</span> <span class="p">(</span><span class="n">C1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">C2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span> <span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r1</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r1</span> <span class="o">+</span> <span class="n">r2</span> <span class="o">-</span> <span class="n">d</span> <span class="o">&lt;</span> <span class="n">_ZERO</span><span class="p">:</span> <span class="k">return</span> <span class="p">[(</span><span class="n">ax</span><span class="p">,</span><span class="n">ay</span><span class="p">)]</span>
+        <span class="n">K</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">((</span><span class="n">r1</span><span class="o">+</span><span class="n">r2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">r1</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span><span class="o">/</span><span class="mi">4</span>
+        <span class="n">bx</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">K</span><span class="o">/</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">by</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">K</span><span class="o">/</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">I1</span> <span class="o">=</span> <span class="p">(</span><span class="n">ax</span> <span class="o">+</span> <span class="n">bx</span><span class="p">,</span> <span class="n">ay</span> <span class="o">-</span> <span class="n">by</span><span class="p">)</span> 
+        <span class="n">I2</span> <span class="o">=</span> <span class="p">(</span><span class="n">ax</span> <span class="o">-</span> <span class="n">bx</span><span class="p">,</span> <span class="n">ay</span> <span class="o">+</span> <span class="n">by</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">I1</span><span class="p">,</span><span class="n">I2</span><span class="p">)</span>
+        
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">all_intersects</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span><span class="mi">2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_can_intersect</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
+            <span class="n">all_intersects</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">m</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">_circle_intersect</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">all_intersects</span></div>
+
+<span class="c1">#----------------------------------------------------------------------</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

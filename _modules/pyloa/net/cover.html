@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.net.cover &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.net.cover</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.net.cover</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module net.cover of package pyloa:</span>
+<span class="sd">    Methods for solving covering location problems.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.net.netprob</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.net.pmedian</span><span class="w"> </span><span class="kn">import</span> <span class="n">PMedian</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="MaxCover">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.cover.MaxCover">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaxCover</span><span class="p">(</span> <span class="n">NetProblem</span> <span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dstmat</span><span class="o">=</span><span class="s1">&#39;matrix&#39;</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                  <span class="n">dmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an instance of the class MaxCover.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------   </span>
+<span class="sd">        See base class NetProblem in module pyloa.net_prob for a description</span>
+<span class="sd">        of the parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        Remark: If the greedy add rocedure is used, it is recommended to let d be </span>
+<span class="sd">            a numpy (mxn)-array. The procedure then relies on numpy operations and </span>
+<span class="sd">            runs many times faster. In case that the fname is not None, the same </span>
+<span class="sd">            is achieved by choosing dstmat=&#39;matrix&#39;.    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">dstmat</span><span class="o">=</span><span class="n">dstmat</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="n">orlib</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+                       
+        <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Objective function value of any solution to the maximal covering location problem&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__z_continuous</span> <span class="o">=</span> <span class="kc">True</span>  
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If True, variables z_i in the mathematical programming formulation </span>
+<span class="sd">        of the maximal covering problem will be declared as continuous variables.&quot;&quot;&quot;</span>
+                       
+    <span class="c1">#---------------------------------------------</span>
+            
+    <span class="k">def</span><span class="w"> </span><span class="nf">__open_all</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines solution to maximal covering if all facility nodes are opened.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assigned</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span> <span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="nb">sum</span> <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_solution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objv</span><span class="p">,</span> <span class="n">S</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register the solution to the maximal covering </span>
+<span class="sd">        problem where S is list of open facilities</span>
+<span class="sd">        and objv the covered demand.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coverage</span> <span class="o">=</span> <span class="n">objv</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="n">S</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">assigned</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned</span><span class="p">(</span> <span class="n">S</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="nb">sum</span> <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="p">)</span> <span class="p">)</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__addProc</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add/greedy heuristic for the maximal covering location problem.</span>
+<span class="sd">        In each iteration, open that facility covering the largest number</span>
+<span class="sd">        of yet uncovered demand.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Iter   Objective value&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
+    
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">dmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_starttime</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__open_all</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span><span class="p">:</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">objv</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                <span class="n">closed</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">num</span><span class="p">:]</span>
+                <span class="n">dem_covered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">U</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[</span><span class="n">U</span><span class="p">][:,</span><span class="n">closed</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span><span class="p">[</span><span class="n">U</span><span class="p">])</span> <span class="p">)</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dem_covered</span><span class="p">)</span>
+                <span class="n">objv</span> <span class="o">+=</span> <span class="n">dem_covered</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="n">num</span>
+                <span class="n">U</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">[</span><span class="n">U</span><span class="p">,</span><span class="n">S</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span><span class="p">[</span><span class="n">U</span><span class="p">]</span> <span class="p">]</span>
+                <span class="n">S</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">   </span><span class="si">{1:15.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="n">objv</span><span class="p">)</span> <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">U</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="k">break</span>
+            
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">S</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="c1"># ordered set of facilities</span>
+            <span class="n">U</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="c1"># list of uncovered nodes</span>
+            <span class="n">objv</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                <span class="n">closed</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">num</span><span class="p">:]</span>
+                <span class="n">dem_covered</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">U</span> <span class="k">if</span> <span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">dmax</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span><span class="n">closed</span><span class="p">))</span> 
+                <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dem_covered</span><span class="p">)</span>
+                <span class="n">objv</span> <span class="o">+=</span> <span class="n">dem_covered</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="n">num</span>
+                <span class="n">U</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">S</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">dmax</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">U</span> <span class="p">)</span> <span class="p">)</span>
+                <span class="n">S</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">   </span><span class="si">{1:15.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="n">objv</span><span class="p">)</span> <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">U</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="k">break</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">(</span><span class="n">objv</span><span class="p">,</span> <span class="n">S</span><span class="p">[:</span><span class="n">num</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_comptime</span><span class="p">()</span>
+        
+    <span class="c1">#------------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__MIPmaxcover</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">keep_model</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solves the maximal covering problem using a MIP solver. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">dmax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__addProc</span><span class="p">(</span> <span class="p">)</span>
+        
+        <span class="c1"># Build the MIP model    </span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;Maximal covering location problem&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">M</span>  
+    
+        <span class="c1"># Assignment variables (can be continuous, as they are integer in optimum)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__z_continuous</span> <span class="k">else</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    
+        <span class="c1"># Binary variables equal to 1 if node i is a facility</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">vtype</span> <span class="o">=</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    
+        <span class="c1"># Covering constraints</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">dmax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="mf">1.0E-5</span> <span class="p">)</span> <span class="o">&gt;=</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> \
+                            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+                             
+        <span class="c1"># Number of open facilities</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">p</span> <span class="p">)</span>
+    
+        <span class="c1"># Objective: maximize total demand covered</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">maximize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+             
+        <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span>                    
+        <span class="c1"># Solve model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_starttime</span><span class="p">(</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span>  <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">ObjBound</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">ObjVal</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_comptime</span><span class="p">(</span><span class="n">mip_time</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">keep_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">else</span><span class="p">:</span>      
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> 
+          
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__mcover_as_pmedian</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mip&#39;</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solves the maximal covering location problem as a p-median</span>
+<span class="sd">        problem using the indicated method, which can be using</span>
+<span class="sd">        a MIP solver or the subgradient-based Lagrangian heuristic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>  
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>    
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span><span class="p">:</span>
+            <span class="n">dmat</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">dmat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dmax</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)]</span> <span class="p">)</span>
+       
+        <span class="n">pmp</span> <span class="o">=</span> <span class="n">PMedian</span><span class="p">(</span> <span class="n">d</span><span class="o">=</span><span class="n">dmat</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="p">)</span>  
+        <span class="k">if</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;mip&#39;</span><span class="p">:</span>
+            <span class="n">pmp</span><span class="o">.</span><span class="n">pmp_solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;strongMIP&#39;</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mip_time</span> <span class="o">=</span> <span class="n">pmp</span><span class="o">.</span><span class="n">mip_time</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">mip_work</span> <span class="o">=</span> <span class="n">pmp</span><span class="o">.</span><span class="n">mip_work</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">nodesCount</span> <span class="o">=</span> <span class="n">pmp</span><span class="o">.</span><span class="n">nodeCount</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">pmp</span><span class="o">.</span><span class="n">sg_iter</span> <span class="o">=</span> <span class="mi">3</span>
+            <span class="n">pmp</span><span class="o">.</span><span class="n">pmp_solve</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;subgradient&#39;</span> <span class="p">)</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">itr</span> <span class="o">=</span> <span class="n">pmp</span><span class="o">.</span><span class="n">itr</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">ctime</span> <span class="o">=</span> <span class="n">pmp</span><span class="o">.</span><span class="n">ctime</span> 
+        <span class="n">wsum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="n">wsum</span><span class="o">-</span><span class="n">pmp</span><span class="o">.</span><span class="n">bound</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">(</span><span class="n">wsum</span> <span class="o">-</span> <span class="n">pmp</span><span class="o">.</span><span class="n">wdist</span><span class="p">,</span><span class="n">pmp</span><span class="o">.</span><span class="n">facilities</span> <span class="p">)</span> 
+         
+    <span class="c1">#---------------------------------------------</span>
+
+<div class="viewcode-block" id="MaxCover.mcl_solve">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.cover.MaxCover.mcl_solve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mcl_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mip&#39;</span><span class="p">,</span> <span class="n">keep_model</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes a solution to the maximal covering problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method : str </span>
+<span class="sd">            Determines the solution method to be employed:</span>
+<span class="sd">            </span>
+<span class="sd">            method = &#39;IP&#39;</span>
+<span class="sd">                Formulates the problem as an integer linear</span>
+<span class="sd">                program and solves it using a MIP solver.</span>
+<span class="sd">                </span>
+<span class="sd">            method = &#39;MIP&#39;</span>
+<span class="sd">                Formulates the problem as a mixed integer</span>
+<span class="sd">                linear program and solves it using a MIP solver.     </span>
+<span class="sd">                    </span>
+<span class="sd">            method = &#39;pmp-mip&#39;</span>
+<span class="sd">                Reformulates the problem as a p-median problem and</span>
+<span class="sd">                solves this by means of a MIP solver using the strong</span>
+<span class="sd">                MIP formulation.</span>
+<span class="sd">                </span>
+<span class="sd">            method = &#39;pmp-subgrad&#39;</span>
+<span class="sd">                Reformulates the problem as a p-median problem</span>
+<span class="sd">                and applies the subgradient-based Lagrangian</span>
+<span class="sd">                heuristic to obtain a solution.</span>
+<span class="sd">                            </span>
+<span class="sd">            method = &#39;greedy&#39;</span>
+<span class="sd">                A heuristic solution is obtained using the greedy</span>
+<span class="sd">                add procedure.</span>
+<span class="sd">                          </span>
+<span class="sd">        keep_model : bool</span>
+<span class="sd">            If True, the MIP model is kept for later purposes,</span>
+<span class="sd">            otherwise destroyed after the computations. This option</span>
+<span class="sd">            only applies if method=&#39;IP&#39; or &#39;MIP&#39;.      </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">meth</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;greedy&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__addProc</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="s1">&#39;pmp&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;sub&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__mcover_as_pmedian</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;subgradient&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">__mcover_as_pmedian</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;mip&#39;</span><span class="p">)</span>    
+        <span class="k">elif</span> <span class="s1">&#39;ip&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__z_continuous</span> <span class="o">=</span> <span class="s1">&#39;mip&#39;</span> <span class="ow">in</span> <span class="n">meth</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__MIPmaxcover</span><span class="p">(</span><span class="n">keep_model</span><span class="o">=</span><span class="n">keep_model</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

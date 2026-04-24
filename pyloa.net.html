@@ -1,0 +1,760 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.net package &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=26111179" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyloa" href="modules.html" />
+    <link rel="prev" title="pyloa.plane package" href="pyloa.plane.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pyloa.net package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.net.netprob">pyloa.net.netprob module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.netprob.NetProblem"><code class="docutils literal notranslate"><span class="pre">NetProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.assigned"><code class="docutils literal notranslate"><span class="pre">NetProblem.assigned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.bound"><code class="docutils literal notranslate"><span class="pre">NetProblem.bound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.ctime"><code class="docutils literal notranslate"><span class="pre">NetProblem.ctime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.facilities"><code class="docutils literal notranslate"><span class="pre">NetProblem.facilities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.get_assigned"><code class="docutils literal notranslate"><span class="pre">NetProblem.get_assigned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.get_coverage"><code class="docutils literal notranslate"><span class="pre">NetProblem.get_coverage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.itr"><code class="docutils literal notranslate"><span class="pre">NetProblem.itr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.min_wdist"><code class="docutils literal notranslate"><span class="pre">NetProblem.min_wdist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.mipSolver"><code class="docutils literal notranslate"><span class="pre">NetProblem.mipSolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.mip_time"><code class="docutils literal notranslate"><span class="pre">NetProblem.mip_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.mip_work"><code class="docutils literal notranslate"><span class="pre">NetProblem.mip_work</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.model"><code class="docutils literal notranslate"><span class="pre">NetProblem.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.nodeCount"><code class="docutils literal notranslate"><span class="pre">NetProblem.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.prob_name"><code class="docutils literal notranslate"><span class="pre">NetProblem.prob_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.reset"><code class="docutils literal notranslate"><span class="pre">NetProblem.reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.set_data"><code class="docutils literal notranslate"><span class="pre">NetProblem.set_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.silent"><code class="docutils literal notranslate"><span class="pre">NetProblem.silent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.wdist"><code class="docutils literal notranslate"><span class="pre">NetProblem.wdist</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.x"><code class="docutils literal notranslate"><span class="pre">NetProblem.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.y"><code class="docutils literal notranslate"><span class="pre">NetProblem.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.z"><code class="docutils literal notranslate"><span class="pre">NetProblem.z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.net.netsolver">pyloa.net.netsolver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.netsolver.NetSolver"><code class="docutils literal notranslate"><span class="pre">NetSolver</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.net.parser">pyloa.net.parser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.parser.comp_dist_mat"><code class="docutils literal notranslate"><span class="pre">comp_dist_mat()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.parser.read_graph"><code class="docutils literal notranslate"><span class="pre">read_graph()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.parser.read_orlib_graph"><code class="docutils literal notranslate"><span class="pre">read_orlib_graph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.net.cover">pyloa.net.cover module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.cover.MaxCover"><code class="docutils literal notranslate"><span class="pre">MaxCover</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.cover.MaxCover.coverage"><code class="docutils literal notranslate"><span class="pre">MaxCover.coverage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.cover.MaxCover.mcl_solve"><code class="docutils literal notranslate"><span class="pre">MaxCover.mcl_solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.net.pmedian">pyloa.net.pmedian module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.pmedian.PMedian"><code class="docutils literal notranslate"><span class="pre">PMedian</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pmedian.PMedian.alpha"><code class="docutils literal notranslate"><span class="pre">PMedian.alpha</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pmedian.PMedian.default_subgr_params"><code class="docutils literal notranslate"><span class="pre">PMedian.default_subgr_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pmedian.PMedian.half"><code class="docutils literal notranslate"><span class="pre">PMedian.half</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pmedian.PMedian.mipModel"><code class="docutils literal notranslate"><span class="pre">PMedian.mipModel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pmedian.PMedian.mipSolve"><code class="docutils literal notranslate"><span class="pre">PMedian.mipSolve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pmedian.PMedian.pmp_solve"><code class="docutils literal notranslate"><span class="pre">PMedian.pmp_solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pmedian.PMedian.sg_iter"><code class="docutils literal notranslate"><span class="pre">PMedian.sg_iter</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.net.pcenter">pyloa.net.pcenter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.net.pcenter.PCenter"><code class="docutils literal notranslate"><span class="pre">PCenter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pcenter.PCenter.pcp_solve"><code class="docutils literal notranslate"><span class="pre">PCenter.pcp_solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.pcenter.PCenter.radius"><code class="docutils literal notranslate"><span class="pre">PCenter.radius</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pyloa.net package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pyloa.net.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyloa-net-package">
+<h1>pyloa.net package<a class="headerlink" href="#pyloa-net-package" title="Link to this heading"></a></h1>
+<p>Methods for solving location problems on a network.</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-pyloa.net.netprob">
+<span id="pyloa-net-netprob-module"></span><h2>pyloa.net.netprob module<a class="headerlink" href="#module-pyloa.net.netprob" title="Link to this heading"></a></h2>
+<p>Module net.net_prob of package pyloa:
+Base class for a network location problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.net.netprob.</span></span><span class="sig-name descname"><span class="pre">NetProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dstmat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'matrix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orlib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/netprob.html#NetProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.netprob.NetProblem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for a network location problem.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.assigned">
+<span class="sig-name descname"><span class="pre">assigned</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.assigned" title="Link to this definition"></a></dt>
+<dd><p>assigned[i] gives the nearest facility node to node i in a solution</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.bound">
+<span class="sig-name descname"><span class="pre">bound</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.bound" title="Link to this definition"></a></dt>
+<dd><p>Lower (or upper) bound on optimal objective value</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.ctime">
+<span class="sig-name descname"><span class="pre">ctime</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.ctime" title="Link to this definition"></a></dt>
+<dd><p>Computation time (CPU and Walltime) required to solve a problem instance</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.facilities">
+<span class="sig-name descname"><span class="pre">facilities</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.facilities" title="Link to this definition"></a></dt>
+<dd><p>List of facility node indices in a solution</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.get_assigned">
+<span class="sig-name descname"><span class="pre">get_assigned</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.get_assigned" title="Link to this definition"></a></dt>
+<dd><p>Function returning as a list that for each customer node gives
+the nearest facility from a given set S of facilities</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.get_coverage">
+<span class="sig-name descname"><span class="pre">get_coverage</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.get_coverage" title="Link to this definition"></a></dt>
+<dd><p>Function return amount of demand covered by a list S of open facilities</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.itr">
+<span class="sig-name descname"><span class="pre">itr</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.itr" title="Link to this definition"></a></dt>
+<dd><p>Any iteration counter</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.min_wdist">
+<span class="sig-name descname"><span class="pre">min_wdist</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.min_wdist" title="Link to this definition"></a></dt>
+<dd><p>Function returning a numpy array that gives for each customer
+node its weighted distance to the nearest facility from 
+a given list S of established facilities</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.mipSolver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipSolver</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.mipSolver" title="Link to this definition"></a></dt>
+<dd><p>Return the MIP solver’s name used for solving MIPs.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.mip_time">
+<span class="sig-name descname"><span class="pre">mip_time</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.mip_time" title="Link to this definition"></a></dt>
+<dd><p>Computation time (walltime seconds) spent in the MIP solver</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.mip_work">
+<span class="sig-name descname"><span class="pre">mip_work</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.mip_work" title="Link to this definition"></a></dt>
+<dd><p>Deterministic computation time. For Cplex this is the total amout
+of CPU ticks. For GuRoBi one work unit is about one second on single
+thread.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.model" title="Link to this definition"></a></dt>
+<dd><p>Handle to the MIP model</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.nodeCount">
+<span class="sig-name descname"><span class="pre">nodeCount</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.nodeCount" title="Link to this definition"></a></dt>
+<dd><p>Number of nodes processed in total when solving with a MIP solver</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.prob_name">
+<span class="sig-name descname"><span class="pre">prob_name</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.prob_name" title="Link to this definition"></a></dt>
+<dd><p>Name of data file or None</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/netprob.html#NetProblem.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.netprob.NetProblem.reset" title="Link to this definition"></a></dt>
+<dd><p>Nullify the problem’s data, solution values, etc.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.set_data">
+<span class="sig-name descname"><span class="pre">set_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/netprob.html#NetProblem.set_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.netprob.NetProblem.set_data" title="Link to this definition"></a></dt>
+<dd><p>Pass data to this instance of a network location problem.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>d<span class="classifier">Numpy array of int/float or dictionary of int/float or a function  </span></dt><dd><p>d keeps the distances between the m nodes of the graph and the 
+n &lt;= m nodes where facilities can be established.</p>
+<ol class="arabic simple">
+<li><p>If the set of facility nodes and customer nodes is identical
+and thus the matrix of distances symmetric, d can be one
+of the following:</p>
+<ol class="arabic simple">
+<li><p>d is a numpy (mxn), n=m, array of int or float and
+d[i,j]=d[j,i] the distance between nodes i and j,
+d[i,i]=0.</p></li>
+<li><p>d is a dictionary of length m*(m-1)//2 and d[(i,j)] gives 
+the distance between nodes i and j for i=1,…,m-1 and 
+j = 0,…, i-1.</p></li>
+<li><p>d is a numpy array of size m*(m-1)//2. The distance
+between nodes i (i=1,…,m-1) and j (j=0,…,i-1) must
+then be stored in d[ i*(i-1)//2 + j ].</p></li>
+<li><p>d is a function, so that d(i,j) returns the distance
+beween nodes i (i=1,…,m-1) and j (j=0,…,i-1).</p></li>
+</ol>
+</li>
+<li><p>Set of customer and facility nodes are not identical.
+In this case d need to be a numpy mxn matrix just as
+under (1.1).</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>p<span class="classifier">int  </span></dt><dd><p>The number of facilities to locate</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>w<span class="classifier">None or a numpy array of positive int  </span></dt><dd><p>If None, all weights are set to one. Otherwise, w must be a numpy 
+array of int and w[i] is the weight of node i=0,…,m-1.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>dmax<span class="classifier">None or numpy array of int or float  </span></dt><dd><p>dmax[i] specifies the maximal distance for customer node i
+in maximal covering location</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>m, n<span class="classifier">int  </span></dt><dd><p>In case that d is a function, m and n need to be specified.
+m gives the number of customer nodes and n the number of
+facility nodes. The function d should then return the 
+distance between customer node i and facility node j as 
+d(i,j).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.silent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">silent</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.silent" title="Link to this definition"></a></dt>
+<dd><p>If silent is True, solution methods do not give log-output</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.wdist">
+<span class="sig-name descname"><span class="pre">wdist</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.wdist" title="Link to this definition"></a></dt>
+<dd><p>Total weighted distance in a solution</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.x">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.x" title="Link to this definition"></a></dt>
+<dd><p>Demand allocation variables x[i,j], where i is a 
+customer and j a facility node.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.y">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.y" title="Link to this definition"></a></dt>
+<dd><p>Location binary variables y[j] for 
+j=0,…,n-1 and n number of facility nodes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.z">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.z" title="Link to this definition"></a></dt>
+<dd><p>Covering variables in maximal covering location
+or variables z in Elloumi formulation.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.net.netsolver">
+<span id="pyloa-net-netsolver-module"></span><h2>pyloa.net.netsolver module<a class="headerlink" href="#module-pyloa.net.netsolver" title="Link to this heading"></a></h2>
+<p>Module net.netsolve:
+Implements a class that inherits the solver methods
+from classes MaxCover, PCenter and PMedian.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.net.netsolver.NetSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.net.netsolver.</span></span><span class="sig-name descname"><span class="pre">NetSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dstmat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'matrix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orlib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/netsolver.html#NetSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.netsolver.NetSolver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyloa.net.pmedian.PMedian" title="pyloa.net.pmedian.PMedian"><code class="xref py py-class docutils literal notranslate"><span class="pre">PMedian</span></code></a>, <a class="reference internal" href="#pyloa.net.cover.MaxCover" title="pyloa.net.cover.MaxCover"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaxCover</span></code></a>, <a class="reference internal" href="#pyloa.net.pcenter.PCenter" title="pyloa.net.pcenter.PCenter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PCenter</span></code></a></p>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.net.parser">
+<span id="pyloa-net-parser-module"></span><h2>pyloa.net.parser module<a class="headerlink" href="#module-pyloa.net.parser" title="Link to this heading"></a></h2>
+<p>Read (graph) data of a network location problem.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.net.parser.comp_dist_mat">
+<span class="sig-prename descclassname"><span class="pre">pyloa.net.parser.</span></span><span class="sig-name descname"><span class="pre">comp_dist_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">G</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmatrix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/parser.html#comp_dist_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.parser.comp_dist_mat" title="Link to this definition"></a></dt>
+<dd><p>Compute the length of shortest path between all nodes in G and
+return the result as a 2-dim numpy array. Note that the edges
+in the graph MUST have the attribute ‘weight’ which refers
+to the non-negative length of an edge.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>G<span class="classifier">networkx graph (undirected)</span></dt><dd><p>G is a (networkx) graph. Each edge of the graph need to
+have the edge attribute ‘weight’ to which the non-negative 
+length of an edge is associated. Nodes of the graph are 
+numbered/identified as strings ‘1’,…,’n’, where n is 
+the number of nodes.</p>
+</dd>
+<dt>dmatrix<span class="classifier">str  </span></dt><dd><p>Specifies how to return the distance matrix. dmatrix
+must be one of the following:</p>
+<ol class="arabic simple">
+<li><p>dmatrix = ‘dict’ : In this case a dictionary d
+is returned so that d[(i,j)] gives the distance
+between nodes i=1,…,n-1 and  j=0,…,i-1. 
+Note that this case requires the set of customer
+and facility nodes to be identical so that
+the matrix of distances is symmetric.</p></li>
+<li><p>dmatrix = ‘matrix’ : In this case a nxn numpy
+array d is returned and d[i,j] is the distance
+between customer node i=0,…,n-1 and facility node
+j=0,…,n-1. In this case it is not required that 
+customer node i is identical to facility node j
+if i==j. The matrix of distances is thus not
+necessarily symmetric.</p></li>
+<li><p>dmatrix = ‘vector’: In this case a numpy array d
+of dimension n*(n-1)//2 is returned so that
+d[ i*(i-1)//2 + j] gives the distance between
+node i=1,…,n-1 and node j=0,…,i-1.
+Again it is assumed that all customer nodes
+are also facility nodes, so that the matrix
+of distances is symmetric.</p></li>
+</ol>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>d<span class="classifier">dict or numpy array </span></dt><dd><p>distances between nodes as explained above.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.net.parser.read_graph">
+<span class="sig-prename descclassname"><span class="pre">pyloa.net.parser.</span></span><span class="sig-name descname"><span class="pre">read_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orlib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/parser.html#read_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.parser.read_graph" title="Link to this definition"></a></dt>
+<dd><p>Reads data of a graph from a text file called ‘fname’. The
+data in the graph need to structured as follows:</p>
+<blockquote>
+<div><p>number of nodes, number of edges, number p of facilities
+For every edge e: end node 1, end node 2, length
+for each node: weight of the node, covering distance</p>
+</div></blockquote>
+<p>Thereby, p is the number of facilities to establish.
+Data on the nodes’ weight and covering distance is optional.
+If not supplied, weights are assumed to equal 1 and it
+is assumed that information on covering distances is not needed.
+If covering distances are irrelevant and thus also not included
+in the data file, it is possible to just supply weight data
+in case that node weights are different. If covering distances
+(as, e.g., for maximal covering location) are needed, both
+need to be supplied, node weights and the covering distance
+of a node, even if all weights are equal to 1.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fname<span class="classifier">str</span></dt><dd><p>(Path) and file name of the data file.</p>
+</dd>
+<dt>dmatrix<span class="classifier">None or str  </span></dt><dd><p>If None, the underlying graph is read from file and
+returned as a networkx graph object. Otherwise,
+the length of the shortest path in the graph are
+computed and returned in a way specified by ‘dmatrix’
+as follows:
+dmatrix = ‘dict’ : In this case a dictionary d
+is returned so that d[(i,j)] gives the distance
+between nodes i=1,…,n-1 and j=0,…,i-1.
+dmatrix = ‘matrix’ : In this case a nxn numpy
+array d is returned and d[i,j] is the distance
+between nodes i=0,…,n-1 and j=0,…,n-1,
+dmatrix = ‘vector’: In this case a numpy array d
+of dimension (n-2)*(n+1)//2 is returned so that
+d[ i*(i-1)//2 + j] gives the distance between
+node i=1,…,n-1 and node j=0,…,i-1.</p>
+</dd>
+<dt>orlib<span class="classifier">bool, optional</span></dt><dd><p>If True, the data file is assumed to be from Beasley’s
+OR library. The graph data does then not include
+weights of the nodes. Node weights are thus assumed
+to equal 1.  If the file cannot  be found locally, it 
+is tried to download the file from the OR-lib web page.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl>
+<dt>p<span class="classifier">int</span></dt><dd><p>Number of facilities to locate</p>
+</dd>
+<dt>G or d<span class="classifier">either the networkx graph object or matrix d </span></dt><dd><p>Note that the data files are structured as follows:
+number of nodes, number of edges, number p of facilities
+For every edge e: end node 1, end node 1, length</p>
+<p>The OR-lib data have a small flaw. Sometimes, an edge is
+listed twice. In this case, the last read edge is supposed
+to give the correct data.</p>
+<p>If the data file cannot be found or downloaded, None is
+returned.</p>
+</dd>
+<dt>w<span class="classifier">None or numpy array of int</span></dt><dd><p>Weights of the nodes. If the file does not contain node weights
+None is returned.</p>
+</dd>
+<dt>dmax<span class="classifier">None or numpy array of int</span></dt><dd><p>Covering distance for each node if supplied in the data file.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.net.parser.read_orlib_graph">
+<span class="sig-prename descclassname"><span class="pre">pyloa.net.parser.</span></span><span class="sig-name descname"><span class="pre">read_orlib_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmatrix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/parser.html#read_orlib_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.parser.read_orlib_graph" title="Link to this definition"></a></dt>
+<dd><p>This is just a short cut for read_graph(fname, dmatrix=…, orlib=True).
+However only two values are returned, the number p and the graph (or 
+distance matrix).</p>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.net.cover">
+<span id="pyloa-net-cover-module"></span><h2>pyloa.net.cover module<a class="headerlink" href="#module-pyloa.net.cover" title="Link to this heading"></a></h2>
+<p>Module net.cover of package pyloa:
+Methods for solving covering location problems.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.net.cover.MaxCover">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.net.cover.</span></span><span class="sig-name descname"><span class="pre">MaxCover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dstmat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'matrix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orlib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/cover.html#MaxCover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.cover.MaxCover" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyloa.net.netprob.NetProblem" title="pyloa.net.netprob.NetProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetProblem</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.cover.MaxCover.coverage">
+<span class="sig-name descname"><span class="pre">coverage</span></span><a class="headerlink" href="#pyloa.net.cover.MaxCover.coverage" title="Link to this definition"></a></dt>
+<dd><p>Objective function value of any solution to the maximal covering location problem</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.cover.MaxCover.mcl_solve">
+<span class="sig-name descname"><span class="pre">mcl_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/cover.html#MaxCover.mcl_solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.cover.MaxCover.mcl_solve" title="Link to this definition"></a></dt>
+<dd><p>Computes a solution to the maximal covering problem.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl>
+<dt>method<span class="classifier">str </span></dt><dd><p>Determines the solution method to be employed:</p>
+<dl class="simple">
+<dt>method = ‘IP’</dt><dd><p>Formulates the problem as an integer linear
+program and solves it using a MIP solver.</p>
+</dd>
+<dt>method = ‘MIP’</dt><dd><p>Formulates the problem as a mixed integer
+linear program and solves it using a MIP solver.</p>
+</dd>
+<dt>method = ‘pmp-mip’</dt><dd><p>Reformulates the problem as a p-median problem and
+solves this by means of a MIP solver using the strong
+MIP formulation.</p>
+</dd>
+<dt>method = ‘pmp-subgrad’</dt><dd><p>Reformulates the problem as a p-median problem
+and applies the subgradient-based Lagrangian
+heuristic to obtain a solution.</p>
+</dd>
+<dt>method = ‘greedy’</dt><dd><p>A heuristic solution is obtained using the greedy
+add procedure.</p>
+</dd>
+</dl>
+</dd>
+<dt>keep_model<span class="classifier">bool</span></dt><dd><p>If True, the MIP model is kept for later purposes,
+otherwise destroyed after the computations. This option
+only applies if method=’IP’ or ‘MIP’.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.net.pmedian">
+<span id="pyloa-net-pmedian-module"></span><h2>pyloa.net.pmedian module<a class="headerlink" href="#module-pyloa.net.pmedian" title="Link to this heading"></a></h2>
+<p>Module net.pmedian of package pyloa:
+Methods for solving the p-median problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.net.pmedian.</span></span><span class="sig-name descname"><span class="pre">PMedian</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dstmat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'matrix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orlib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/pmedian.html#PMedian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.pmedian.PMedian" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyloa.net.netprob.NetProblem" title="pyloa.net.netprob.NetProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetProblem</span></code></a></p>
+<p>Class implementing a couple of methods for solving the p-median problem
+on a graph.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian.alpha">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#pyloa.net.pmedian.PMedian.alpha" title="Link to this definition"></a></dt>
+<dd><p>Step length parameter alpha in subgradient procedure</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian.default_subgr_params">
+<span class="sig-name descname"><span class="pre">default_subgr_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/pmedian.html#PMedian.default_subgr_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.pmedian.PMedian.default_subgr_params" title="Link to this definition"></a></dt>
+<dd><p>Sets the subgradient parameters to default values:
+alpha=2, half=5 and itr=1</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian.half">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">half</span></span><a class="headerlink" href="#pyloa.net.pmedian.PMedian.half" title="Link to this definition"></a></dt>
+<dd><p>Step size parameter H. The parameter alpha will be halved 
+after H iterations if this is larger than the number of 
+3% of the maximal number of iterations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian.mipModel">
+<span class="sig-name descname"><span class="pre">mipModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_continuous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weakModel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/pmedian.html#PMedian.mipModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.pmedian.PMedian.mipModel" title="Link to this definition"></a></dt>
+<dd><p>Build the MIP model of the p-median problem.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>x_continuous<span class="classifier">bool</span></dt><dd><p>If True (the default), the allocation variables are declared
+as continuous variables, otherwise as binary.</p>
+</dd>
+<dt>weakModel<span class="classifier">bool </span></dt><dd><p>If True, the weak model formulation is used, otherwise
+(the default) the strong formulation.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian.mipSolve">
+<span class="sig-name descname"><span class="pre">mipSolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_facilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_assignment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/pmedian.html#PMedian.mipSolve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.pmedian.PMedian.mipSolve" title="Link to this definition"></a></dt>
+<dd><p>Solves the MIP formulation of p-median problem using a MIP solver.</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>save_facilities<span class="classifier">bool </span></dt><dd><p>If True the set of facilities open in the obtained
+solution is remembered in the class field self.facilities</p>
+</dd>
+<dt>save_assignment<span class="classifier">bool </span></dt><dd><p>If True the assignment of customers to the open facilities
+in the obtained solution is remembered in the class field 
+self.assigned.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian.pmp_solve">
+<span class="sig-name descname"><span class="pre">pmp_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'weak_MIP'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/pmedian.html#PMedian.pmp_solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.pmedian.PMedian.pmp_solve" title="Link to this definition"></a></dt>
+<dd><p>Computes a solution to the p-median problem.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl>
+<dt>method<span class="classifier">str </span></dt><dd><p>Determines the solution method to be employed:</p>
+<dl class="simple">
+<dt>method = ‘weakMIP’</dt><dd><p>The weak problem formulation is solved using Cplex.
+Allocation variables are declared as continuous.</p>
+</dd>
+<dt>method = ‘strongMIP’</dt><dd><p>The strong problem formulation is solved using Cplex.
+Allocation variables are declared as continuous.</p>
+</dd>
+<dt>method = ‘weakIP’</dt><dd><p>The weak problem formulation is solved using Cplex.
+Allocation variables are declared as binary.</p>
+</dd>
+<dt>method = ‘strongIP’</dt><dd><p>The strong problem formulation is solved using Cplex.
+Allocation variables are declared as binary.</p>
+</dd>
+<dt>method = ‘greedy’</dt><dd><p>A heuristic solution is obtained using the greedy
+add procedure.</p>
+</dd>
+<dt>method = ‘subgradient’</dt><dd><p>A heuristic solution and a lower bound is computed
+using Lagrangian relaxation and subgradient optimization.</p>
+</dd>
+</dl>
+</dd>
+<dt>keep_model<span class="classifier">bool</span></dt><dd><p>If True, the docplex model is kept for later purposes,
+otherwise destroyed after the computations. This option
+only applies if docplex is used as solver.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.pmedian.PMedian.sg_iter">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sg_iter</span></span><a class="headerlink" href="#pyloa.net.pmedian.PMedian.sg_iter" title="Link to this definition"></a></dt>
+<dd><p>Fixes the number of subgradient iterations not to exceed
+miter times (m+n)</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.net.pcenter">
+<span id="pyloa-net-pcenter-module"></span><h2>pyloa.net.pcenter module<a class="headerlink" href="#module-pyloa.net.pcenter" title="Link to this heading"></a></h2>
+<p>Module net.pcenter of package pyloa:
+Methods for solving the vertex p-center problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.net.pcenter.PCenter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.net.pcenter.</span></span><span class="sig-name descname"><span class="pre">PCenter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dstmat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'matrix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orlib</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/pcenter.html#PCenter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.pcenter.PCenter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyloa.net.netprob.NetProblem" title="pyloa.net.netprob.NetProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">NetProblem</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.net.pcenter.PCenter.pcp_solve">
+<span class="sig-name descname"><span class="pre">pcp_solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Elloumi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/net/pcenter.html#PCenter.pcp_solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.net.pcenter.PCenter.pcp_solve" title="Link to this definition"></a></dt>
+<dd><p>Computes a solution to the vertex p-center problem.</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl>
+<dt>method<span class="classifier">str </span></dt><dd><p>Determines the solution method to be employed:</p>
+<dl class="simple">
+<dt>method = ‘Elloumi’</dt><dd><p>Use the set-covering based solution algorithm
+suggested by Elloumi, Labbe and Pochet.</p>
+</dd>
+<dt>method = ‘MIP-Traditional’</dt><dd><p>Use the traditional MIP formulation and solve it  
+using a MIP solver. Allocation variables are declared 
+as continuous.</p>
+</dd>
+<dt>method = ‘IP-Traditional’</dt><dd><p>Same as MIP-Traditional but allocation variables
+are declared as binary.</p>
+</dd>
+<dt>method = ‘MIP-Elloumi’</dt><dd><p>Solves Elloumi et al.’s formulations where variables
+z are declared as continuous.</p>
+</dd>
+<dt>method = ‘IP-Elloumi’</dt><dd><p>Solves Elloumi et al.’s formulations where variables
+z are declared as binary.</p>
+</dd>
+</dl>
+</dd>
+<dt>keep_model<span class="classifier">bool</span></dt><dd><p>If True, the MIP model is kept for later purposes,
+otherwise destroyed after the computations. This option
+only applies if a MIP solver is used as solver.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.net.pcenter.PCenter.radius">
+<span class="sig-name descname"><span class="pre">radius</span></span><a class="headerlink" href="#pyloa.net.pcenter.PCenter.radius" title="Link to this definition"></a></dt>
+<dd><p>Largest weighted distance of a customer to a facility in a solution</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyloa.plane.html" class="btn btn-neutral float-left" title="pyloa.plane package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="pyloa" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.plane.mip &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.plane.mip</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.plane.mip</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module plane.mip of package pyloa:</span>
+<span class="sd">    2nd order cone (MIP) models of planar location problems solved</span>
+<span class="sd">    by means of Cplex&#39;s or GuRoBi&#39;s solver.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclid</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="SOCPweber">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.mip.SOCPweber">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">SOCPweber</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves the Fermat-Weber problem as a 2nd order cone problem</span>
+<span class="sd">    using Cplex&#39;s solver.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------- </span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : None or numpy array of m float or int</span>
+<span class="sd">        positive customer weights (if None all weights are set to 1)</span>
+<span class="sd">    screen : str </span>
+<span class="sd">        If &#39;on&#39;, intermediate output on the state of</span>
+<span class="sd">        the computations are printed to the screen.</span>
+<span class="sd"> </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    objv : float</span>
+<span class="sd">        Sum of weighted distances to the optimal facility location </span>
+<span class="sd">    X   : px2 numpy array of float</span>
+<span class="sd">        Coordinates of the optimal facility location</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">M</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;Fermat-Weber&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Locations of the p facilities</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lb</span> <span class="o">=</span> <span class="o">-</span><span class="n">M</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+      
+    <span class="c1"># Distance to facility site</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">n</span> <span class="p">)</span>
+    
+    <span class="c1"># Variables equaling x-Y[i]</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lb</span><span class="o">=-</span><span class="n">M</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+    
+    <span class="c1"># Constraints v[i] = x-Y[i]</span>
+    <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">x</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">-</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Quadratic constraints modelling the distance to the facility  </span>
+    <span class="n">M</span><span class="o">.</span><span class="n">addQuadConstrs</span><span class="p">(</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">)</span> 
+        
+    <span class="c1"># Objective function: Minimize sum of weighted distances</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">d</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+   
+    <span class="c1"># Call the solver</span>
+    <span class="n">objv</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span>  
+    <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;on&#39;</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">objv</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">ObjVal</span> 
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+    <span class="n">M</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+     
+    <span class="k">return</span> <span class="n">objv</span><span class="p">,</span> <span class="n">X</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="SOCPcenter">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.mip.SOCPcenter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">SOCPcenter</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve the weighted 1-center problem as a quadratically </span>
+<span class="sd">    constrained continuous convex optimization problem using </span>
+<span class="sd">    a MIP solver. For reasons of numerical stability, we normalize </span>
+<span class="sd">    the weights w by dividing it by the average weight.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : numpy mx2 array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m int or float</span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    screen: str</span>
+<span class="sd">        if &#39;on&#39;, information on solution process is printed</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    r : float</span>
+<span class="sd">        &quot;radius&quot; of the computed center location</span>
+<span class="sd">    X : numpy array of two float</span>
+<span class="sd">        coordinates of the center as a </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">PCP</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;Planar 1-center problem&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Locations of the p facilities</span>
+    
+    <span class="n">X</span> <span class="o">=</span> <span class="n">PCP</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lb</span><span class="o">=-</span><span class="n">PCP</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+    
+    <span class="c1"># Variables equaling X-Y[i]</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">PCP</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">n</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lb</span><span class="o">=-</span><span class="n">PCP</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+    
+    <span class="c1"># objective value (that is squared &quot;radius&quot;) of the solution</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">PCP</span><span class="o">.</span><span class="n">addVar</span><span class="p">()</span>
+    
+    <span class="c1"># Constraints: Constraints V[i] = X-Y[i]</span>
+    <span class="n">PCP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">X</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">-</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="o">==</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Quadratic constraints: radius not smaller than weighted distances to X  </span>
+    <span class="n">w_mean</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">w</span><span class="o">==</span><span class="mi">1</span><span class="p">):</span>  
+        <span class="n">PCP</span><span class="o">.</span><span class="n">addQuadConstrs</span><span class="p">(</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">r2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w_mean</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> 
+        <span class="n">ww</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="n">w_mean</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">PCP</span><span class="o">.</span><span class="n">addQuadConstrs</span><span class="p">(</span> <span class="n">ww</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="p">)</span>
+        
+    <span class="n">PCP</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">r2</span> <span class="p">)</span>
+    
+    <span class="c1"># Call the solver</span>
+    <span class="n">PCP</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;on&#39;</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="n">PCP</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>     
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">PCP</span><span class="o">.</span><span class="n">ObjVal</span><span class="p">)</span><span class="o">*</span><span class="n">w_mean</span>
+        <span class="n">XX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="n">PCP</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+        
+    <span class="n">PCP</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> 
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span> <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">XX</span>    
+    <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span></div>
+
+    
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="weber_mipq">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.mip.weber_mipq">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">weber_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timLim</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formulates the multi-source Weber problem as a quadratically</span>
+<span class="sd">    constrained MIP and solves it using a MIP solver.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : int</span>
+<span class="sd">        number of facilities to locate (1 &lt; p &lt; #customers) </span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : None or numpy array of m float or int</span>
+<span class="sd">        positive customer weights (if None all weights are set to 1)</span>
+<span class="sd">    screen: </span>
+<span class="sd">        If &#39;on&#39;, intermediate output on the state of</span>
+<span class="sd">        the computations are printed to the screen.</span>
+<span class="sd">    strategy : int </span>
+<span class="sd">        strategy Cplex or GuRoBi applies to solve the the problem:</span>
+<span class="sd">           </span>
+<span class="sd">        * 1 -&gt; solve the quadratic continuous relaxation</span>
+<span class="sd">        * 2 -&gt; use conical cuts (or outer approximation) </span>
+<span class="sd">        * 0 -&gt; decide automatically  </span>
+<span class="sd">    timeLim : float </span>
+<span class="sd">        Time limit (seconds) to be used for the MIQCP solver</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    objv : float  </span>
+<span class="sd">    </span>
+<span class="sd">    Xsol : px2 numpy array of float  </span>
+<span class="sd">    </span>
+<span class="sd">    a : list of int</span>
+<span class="sd">        the assignment of customer points to the facilities,</span>
+<span class="sd">        i.e., a[i]=j if point Y[i] is assigned to facility at </span>
+<span class="sd">        location X[j]</span>
+<span class="sd">    </span>
+<span class="sd">    tim : float</span>
+<span class="sd">        Computation time in seconds</span>
+<span class="sd">    </span>
+<span class="sd">    nnodes : int</span>
+<span class="sd">        number of B&amp;B tree nodes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Function returning a customer&#39;s distance to most distant customer</span>
+    <span class="n">dmax</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="nb">max</span><span class="p">(</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span> <span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">MWP</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;Multi-source Weber&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Locations of the p facilities</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lb</span><span class="o">=-</span><span class="n">MWP</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+    
+    <span class="c1"># Assignment variables</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span> 
+    
+    <span class="c1"># Distance to closest facility site</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    
+    <span class="c1"># Variables equalling X[j]-Y[i]</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">addVarCube</span><span class="p">((</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">lb</span><span class="o">=-</span><span class="n">MWP</span><span class="o">.</span><span class="n">infinity</span><span class="p">)</span>
+    
+    <span class="c1"># Distance between customers and facilities</span>
+    <span class="n">dmat</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">p</span> <span class="p">)</span>
+    
+    <span class="c1"># Constraints: Each customer need to be assigned to a facility</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">MWP</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Constraints: Constraints to ensure that d[i] = dmat[i,j] if z[i,j]=1</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">dmax</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span><span class="o">+</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">dmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="p">)</span>
+    
+    <span class="c1"># Constraints: Constraints V[i,j] = X[j]-Y[i]</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span><span class="o">-</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="o">==</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">dim</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="p">)</span>
+
+    <span class="c1"># Constraints: Quadratic constraints to model the Euclidian distances</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">addQuadConstrs</span><span class="p">(</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">dmat</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="p">)</span> 
+
+    <span class="c1"># Constraints: For purposes of symmetry breaking order X from west to east</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Objective function</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="n">MWP</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">MWP</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">MWP</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">MWP</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Choose strategy for solving the linear relaxation</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">MIQCPMethod</span> <span class="o">=</span> <span class="n">strategy</span>
+    
+    <span class="c1"># Set the time limit if one is given</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timLim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">MWP</span><span class="o">.</span><span class="n">timelimit</span> <span class="o">=</span> <span class="n">timLim</span>
+    
+    <span class="c1"># Call the solver</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;off&#39;</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">)</span>
+    
+    <span class="c1"># Return None if solving the model failed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">MWP</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span>
+        
+    <span class="n">objv</span>  <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">ObjVal</span>
+    <span class="n">XX</span>    <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">Xsol</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">XX</span><span class="p">:</span> <span class="n">Xsol</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">XX</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span>
+    
+    <span class="n">assign</span> <span class="o">=</span> <span class="p">(</span><span class="n">MWP</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">assign</span> <span class="p">)</span>
+    
+    <span class="n">tim</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">runtime</span> 
+    <span class="n">nnodes</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">nodeCount</span>
+    <span class="n">MWP</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">objv</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">tim</span><span class="p">,</span> <span class="n">nnodes</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="pcenter_mipq">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.mip.pcenter_mipq">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pcenter_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeLim</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formulates the planar p-center problem as a quadratically</span>
+<span class="sd">    constrained MIP and solves it using a MIP solver.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : int</span>
+<span class="sd">        number of facilities to locate (1 &lt; p &lt; #customers) </span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m float or int</span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    screen: str</span>
+<span class="sd">        If &#39;on&#39;, the MIP solver shows intermediate output on the state of</span>
+<span class="sd">        the computations are printed to the screen.</span>
+<span class="sd">    strategy : int </span>
+<span class="sd">        Strategy the MIP solver should apply to solve the problem:</span>
+<span class="sd">        </span>
+<span class="sd">        * 0 -&gt; decide automatically </span>
+<span class="sd">        * 1 -&gt; solve the quadratic continuous relaxtion for obtaining lower bounds</span>
+<span class="sd">        * 2 -&gt; use conical cuts</span>
+<span class="sd">    timeLim : float </span>
+<span class="sd">        Time limit (seconds) to be used for the MIQCP solver</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    objv : float</span>
+<span class="sd">        objective value of the optimal solution (smallest</span>
+<span class="sd">        weighted distance to the nearest center point)</span>
+<span class="sd">    Xsol : px2 numpy array of float</span>
+<span class="sd">        Xsol[j] gives the two coordinates of the j-th center point</span>
+<span class="sd">    a : list of int</span>
+<span class="sd">        the assignment of customer points to the centers,</span>
+<span class="sd">        i.e., a[i]=j if point Y[i] is assigned to the center at </span>
+<span class="sd">        location X[j]</span>
+<span class="sd">    tim : float</span>
+<span class="sd">        Computation time in seconds</span>
+<span class="sd">    nnodes : int</span>
+<span class="sd">        number of B&amp;B tree nodes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Function returning a customer&#39;s distance to most distant customer</span>
+    <span class="n">dmax</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="nb">max</span><span class="p">(</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span> <span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">PPCP</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;Planar p-center problem&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Locations of the p facilities</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="n">lb</span><span class="o">=-</span><span class="n">PPCP</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+    
+    <span class="c1"># Assignment variables</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span> <span class="p">)</span> 
+    
+    <span class="c1"># &quot;Radius&quot; (largest weighted distance to nearest center point)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span> <span class="p">)</span>
+    
+    <span class="c1"># Variables equaling X[j]-Y[i]</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">addVarCube</span><span class="p">(</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">lb</span><span class="o">=-</span><span class="n">PPCP</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+    
+    <span class="c1"># Distance between customers and facilities</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">p</span> <span class="p">)</span>
+    
+    <span class="c1"># Constraints: Each customer need to be assigned to a center</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="p">(</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Constraints: Constraints to ensure that the radius is at least the weighted</span>
+    <span class="c1"># distance if if z[i,j]=1</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">PPCP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">dmax</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">PPCP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">dmax</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]))</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">))</span> <span class="p">)</span>
+        
+    <span class="c1"># Constraints: Constraints V[i,j] = X[j]-Y[i]</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="p">(</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span><span class="o">-</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="o">==</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">dim</span><span class="p">]</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> \
+                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Constraints: Quadratic constraints to model the Euclidian distances</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">addQuadConstrs</span><span class="p">(</span> <span class="p">(</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> \
+                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="c1"># Constraints: For purposes of symmetry breaking order X from west to east</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="p">(</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">p</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># Objective function</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">r</span> <span class="p">)</span>
+    
+    <span class="c1"># Choose strategy for solving the linear relaxation</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">MIQCPMethod</span> <span class="o">=</span> <span class="n">strategy</span> 
+    
+    <span class="c1"># Set time limit if one is given</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">timeLim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">timelimit</span> <span class="o">=</span> <span class="n">timeLim</span>
+        
+    <span class="c1"># Call the solver</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;off&#39;</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">)</span>
+    
+    <span class="c1"># Return None if solving the model failed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">PPCP</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mf">0.0</span>
+    
+    <span class="n">objv</span>  <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">ObjVal</span>
+    <span class="n">XX</span>    <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="n">Xsol</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">XX</span><span class="p">:</span> <span class="n">Xsol</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">XX</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span>
+    
+    <span class="n">assign</span> <span class="o">=</span> <span class="p">(</span><span class="n">PPCP</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="n">z</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span> <span class="p">))</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">assign</span> <span class="p">)</span>
+    
+    <span class="n">tim</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">runtime</span>
+    <span class="n">nnodes</span> <span class="o">=</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">nodeCount</span>
+    <span class="n">PPCP</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">objv</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">tim</span><span class="p">,</span> <span class="n">nnodes</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

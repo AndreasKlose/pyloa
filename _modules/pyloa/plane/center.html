@@ -1,0 +1,840 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.plane.center &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.plane.center</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.plane.center</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module plane.center of package pyloa:</span>
+<span class="sd">    Methods for the 1-center problem in Euclidian plane.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclid</span>
+
+<span class="n">_EPSI</span> <span class="o">=</span> <span class="mf">1.0E-6</span>
+<span class="n">_ZERO</span> <span class="o">=</span> <span class="mf">1.0E-6</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sqeuc</span><span class="p">(</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns squared Euclidian distance between points A and B</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">A</span><span class="o">-</span><span class="n">B</span>
+    <span class="n">dst2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span><span class="n">diff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dst2</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_acute</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if triangle spanned by points P, Q, R is not obtuse.</span>
+<span class="sd">    Triangle is not obtuse if c^2 &lt;= a^2 + b^2, where c is</span>
+<span class="sd">    length of longest side.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PQ</span> <span class="o">=</span> <span class="n">_sqeuc</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">)</span>
+    <span class="n">PR</span> <span class="o">=</span> <span class="n">_sqeuc</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+    <span class="n">QR</span> <span class="o">=</span> <span class="n">_sqeuc</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+    <span class="n">ML</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span> <span class="n">PQ</span><span class="p">,</span> <span class="n">PR</span><span class="p">,</span> <span class="n">QR</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span> <span class="mi">2</span><span class="o">*</span><span class="n">ML</span> <span class="o">&gt;</span> <span class="n">PQ</span> <span class="o">+</span> <span class="n">PR</span> <span class="o">+</span> <span class="n">QR</span> <span class="p">)</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_2points</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns radius and center for the weighted or unweighted</span>
+<span class="sd">    1-center problem in case of just two points Y1 and Y2 of</span>
+<span class="sd">    weights w1 and w2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">X</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_3circle</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns radius and center of the circle enclosing the triangle </span>
+<span class="sd">    spanned by the three points P, Q and R. The triangle is assumed to </span>
+<span class="sd">    be actute or right-angled.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    P, Q, R : 3 iterables of floats of length 2</span>
+<span class="sd">        The three points on the circle&#39;s boundary</span>
+<span class="sd">            </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    r: float</span>
+<span class="sd">        The radius of the circle</span>
+<span class="sd">    C: numpy array of 2 float</span>
+<span class="sd">        The coordinates of the circle&#39;s center</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">)</span> <span class="o">=</span> <span class="n">Q</span><span class="o">-</span><span class="n">P</span>
+    <span class="p">(</span><span class="n">x3</span><span class="p">,</span><span class="n">y3</span><span class="p">)</span> <span class="o">=</span> <span class="n">R</span><span class="o">-</span><span class="n">P</span>
+    <span class="n">LQ</span> <span class="o">=</span> <span class="n">x2</span><span class="o">*</span><span class="n">x2</span> <span class="o">+</span> <span class="n">y2</span><span class="o">*</span><span class="n">y2</span>
+    <span class="n">LR</span> <span class="o">=</span> <span class="n">x3</span><span class="o">*</span><span class="n">x3</span> <span class="o">+</span> <span class="n">y3</span><span class="o">*</span><span class="n">y3</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">x2</span><span class="o">*</span><span class="n">y3</span> <span class="o">-</span> <span class="n">x3</span><span class="o">*</span><span class="n">y2</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">(</span> <span class="n">y3</span><span class="o">*</span><span class="n">LQ</span> <span class="o">-</span> <span class="n">y2</span><span class="o">*</span><span class="n">LR</span><span class="p">,</span> <span class="n">x2</span><span class="o">*</span><span class="n">LR</span> <span class="o">-</span> <span class="n">x3</span><span class="o">*</span><span class="n">LQ</span> <span class="p">)</span> <span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">D</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+    <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">C</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_weight_circle</span><span class="p">(</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">Y2</span><span class="p">,</span> <span class="n">w1</span><span class="p">,</span> <span class="n">w2</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns radius and center of the circle whose boundary is the</span>
+<span class="sd">    set of points showing equal weighted distance to the two</span>
+<span class="sd">    points Y1 and Y2, where 0 &lt; w1 &lt; w2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">w1</span><span class="o">/</span><span class="n">w2</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y1</span><span class="p">,</span><span class="n">Y2</span><span class="p">)</span><span class="o">*</span><span class="n">r</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y2</span> <span class="o">-</span> <span class="n">Y1</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">radius</span><span class="p">,</span> <span class="n">C</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_line_circle_intersect</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">w_PQ</span><span class="p">,</span><span class="n">w_R</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Intersects the perpendicular bisector of the side connecting</span>
+<span class="sd">    the points P and Q of equal weight w_PQ with the circle </span>
+<span class="sd">    describing the set of points showing equal weighted distance to </span>
+<span class="sd">    point Q and point R (w_PQ must be different from w_R).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">w_PQ</span> <span class="o">&lt;</span> <span class="n">w_R</span><span class="p">:</span>
+        <span class="n">radius</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">_get_weight_circle</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">w_PQ</span><span class="p">,</span> <span class="n">w_R</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">radius</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">_get_weight_circle</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">w_R</span><span class="p">,</span> <span class="n">w_PQ</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">Q</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">_ZERO</span><span class="p">:</span>
+        <span class="c1"># Case 1: bisector parallel to y-axis</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">Q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">x1</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">radius</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">x1</span><span class="o">-</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">delta</span>
+    <span class="k">elif</span> <span class="nb">abs</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">Q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">_ZERO</span><span class="p">:</span>
+        <span class="c1"># Case 2: bisector parallel to x-axis</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Q</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">y1</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">radius</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">y1</span><span class="o">-</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="p">)</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">delta</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Let y = a + bx describe the perpendicular bisector on P-Q</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">Q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">Q</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">(</span> <span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">Q</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">b</span><span class="o">*</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">Q</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">)</span><span class="o">/</span><span class="mi">2</span> 
+        <span class="c1"># Solve system (x-C.x)^2 + (y-C.y)^2=radius^2     and y=a+bx.</span>
+        <span class="c1"># Inserting y=a+bx in first equation gives quadratic equation</span>
+        <span class="c1"># alpha*x^2 + beta*x + gamma, where:</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">b</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">radius</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">beta</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="o">*</span><span class="n">alpha</span><span class="o">*</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">delta</span><span class="o">+</span><span class="n">beta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">x1</span>
+        <span class="n">y2</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">x2</span>
+    
+    <span class="c1"># Two candidate solutions remain and both show equal weighted </span>
+    <span class="c1"># distance to points P and Q as well as Q and R, hence to all </span>
+    <span class="c1"># three points. Select then the one inside the triangle, which </span>
+    <span class="c1"># must be the one yielding smallest weighted distance.    </span>
+    <span class="n">C1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">))</span>
+    <span class="n">C2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">))</span>
+    <span class="n">r1</span> <span class="o">=</span> <span class="n">w_PQ</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">C1</span><span class="p">)</span>
+    <span class="n">r2</span> <span class="o">=</span> <span class="n">w_PQ</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">C2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">r1</span> <span class="o">&lt;</span> <span class="n">r2</span><span class="p">:</span> <span class="k">return</span> <span class="n">r1</span><span class="p">,</span> <span class="n">C1</span>
+    <span class="k">return</span> <span class="n">r2</span><span class="p">,</span> <span class="n">C2</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_circle_circle_intersect</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">w_P</span><span class="p">,</span><span class="n">w_Q</span><span class="p">,</span><span class="n">w_R</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines weighted 1-center solution for three points P,Q,R</span>
+<span class="sd">    with weights w_P &lt; w_Q &lt; w_R by intersecting the two circles</span>
+<span class="sd">    C(P,Q) and C(Q,R) whose boundary is the set of points (x,y)</span>
+<span class="sd">    respectively showing equal weighted distance to P and Q as</span>
+<span class="sd">    well as Q and R.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get the two circles of points with equal weighted distance</span>
+    <span class="c1"># to (P,Q) and (Q,R), respectively</span>
+    <span class="n">r1</span><span class="p">,</span> <span class="n">C1</span> <span class="o">=</span> <span class="n">_get_weight_circle</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">w_P</span><span class="p">,</span><span class="n">w_Q</span><span class="p">)</span>
+    <span class="n">r2</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="n">_get_weight_circle</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">w_Q</span><span class="p">,</span><span class="n">w_R</span><span class="p">)</span>
+   
+    <span class="c1"># Find the intersections I1 and I2 of these two circles</span>
+    <span class="c1"># (cf. Appendix to Chap. 4, Lecture Notes on Location Planning)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">euclid</span><span class="p">(</span><span class="n">C1</span><span class="p">,</span><span class="n">C2</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="p">((</span><span class="n">r1</span><span class="o">+</span><span class="n">r2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">r1</span><span class="o">-</span><span class="n">r2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span><span class="o">/</span><span class="mi">4</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="p">(</span><span class="n">C1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">C2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span> <span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r1</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">bx</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">K</span><span class="o">/</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">ay</span> <span class="o">=</span> <span class="p">(</span><span class="n">C1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">C2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span> <span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">r1</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">r2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">by</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">C2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">C1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">K</span><span class="o">/</span><span class="n">d</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">I1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">(</span><span class="n">ax</span> <span class="o">+</span> <span class="n">bx</span><span class="p">,</span> <span class="n">ay</span> <span class="o">-</span> <span class="n">by</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">I2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">(</span><span class="n">ax</span> <span class="o">-</span> <span class="n">bx</span><span class="p">,</span> <span class="n">ay</span> <span class="o">+</span> <span class="n">by</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># The center solution is the point inside the triangle</span>
+    <span class="c1"># spanned by P, Q, R and should be the point showing</span>
+    <span class="c1"># smaller weighted distance to these three points.</span>
+    <span class="n">rad1</span> <span class="o">=</span> <span class="n">w_P</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">I1</span><span class="p">)</span>
+    <span class="n">rad2</span> <span class="o">=</span> <span class="n">w_P</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">I2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rad1</span> <span class="o">&lt;</span> <span class="n">rad2</span><span class="p">:</span> <span class="k">return</span> <span class="n">rad1</span><span class="p">,</span> <span class="n">I1</span>
+    <span class="k">return</span> <span class="n">rad2</span><span class="p">,</span> <span class="n">I2</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_w_3circle</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves the weighted 1-center problem for three points given</span>
+<span class="sd">    by Y[0],Y[1] and Y[2] with weights w[0], w[1], w[2]. It is</span>
+<span class="sd">    thereby assumed that weighted distance from the center to</span>
+<span class="sd">    all these three points can be made equal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">w</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">return</span> <span class="n">_3circle</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    
+    <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">w</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">w_P</span><span class="p">,</span> <span class="n">w_Q</span><span class="p">,</span> <span class="n">w_R</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">w</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">w</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">Y</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">Y</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+    
+    <span class="k">if</span> <span class="n">w_P</span><span class="o">==</span><span class="n">w_Q</span><span class="p">:</span> <span class="k">return</span> <span class="n">_line_circle_intersect</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">w_Q</span><span class="p">,</span><span class="n">w_R</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">w_Q</span><span class="o">==</span><span class="n">w_R</span><span class="p">:</span> <span class="k">return</span> <span class="n">_line_circle_intersect</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">w_Q</span><span class="p">,</span><span class="n">w_P</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_circle_circle_intersect</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">w_P</span><span class="p">,</span><span class="n">w_Q</span><span class="p">,</span><span class="n">w_R</span><span class="p">)</span>
+    
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_PD_alg</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">Xlst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Primal-dual iterative method for solving the 1-center problem</span>
+<span class="sd">    in Euclidian plane with Euclidian distances. The method</span>
+<span class="sd">    shows severe numerical problems as the Lagrangian multipliers </span>
+<span class="sd">    corresponding to points not relevant for computing the center </span>
+<span class="sd">    quickly approach very small values. The method should thus </span>
+<span class="sd">    only be used if the number of points is very small </span>
+<span class="sd">    (4 at most 5)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : numpy mx2 array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m int or float </span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    screen : str, optional </span>
+<span class="sd">        If &#39;on&#39;, then progress of the algorithm is displayed on screen.</span>
+<span class="sd">    Xlst : None or a list of pairs of float, optional</span>
+<span class="sd">        If not None, the intermediate center solutions are appended</span>
+<span class="sd">        to the list Xlst.</span>
+<span class="sd">    normalize : bool </span>
+<span class="sd">        If true, the weights are normalized by dividing by there</span>
+<span class="sd">        mean. This is recommended if the weights are not yet</span>
+<span class="sd">        normalized and are relatively large (in particular when</span>
+<span class="sd">        squared)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    UB : float</span>
+<span class="sd">        &quot;radius&quot; of the computed center location</span>
+<span class="sd">    X  : numpy array of two float</span>
+<span class="sd">        coordinates of the center found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">wmean</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">m</span> <span class="k">if</span> <span class="n">normalize</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="n">ws</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span> <span class="n">w</span><span class="o">/</span><span class="n">wmean</span> <span class="p">)</span>
+    
+    <span class="c1"># Initial Lagrangian multiplier values</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">m</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">screenOn</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------ Computing 1-center in plane -----&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Lower Bound  Upper Bound&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Iterative part</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Modifiy squared weights with Lagrangian multipliers</span>
+        <span class="n">wu</span> <span class="o">=</span> <span class="n">ws</span><span class="o">*</span><span class="n">u</span>
+        <span class="c1"># Get primal solution as gravity center </span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wu</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">wu</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Xlst</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Xlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> 
+        <span class="c1"># Squared distance of customer points to X and primal objective</span>
+        <span class="n">dist</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">_sqeuc</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)),</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">UB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span> <span class="n">dist</span><span class="o">*</span><span class="n">ws</span> <span class="p">)</span>
+        <span class="c1"># Value of Lagrangian dual function at u </span>
+        <span class="n">LB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wu</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
+        <span class="c1"># Check if gap between UB and LB is small enough</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">UB</span> <span class="o">-</span> <span class="n">LB</span> <span class="p">)</span><span class="o">/</span><span class="n">LB</span> <span class="o">&lt;</span> <span class="n">_EPSI</span><span class="p">:</span> <span class="k">break</span>
+        <span class="c1"># Adjust the Lagrangian multipliers</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">wu</span><span class="o">*</span><span class="n">dist</span><span class="o">/</span><span class="n">LB</span><span class="p">,</span><span class="n">_EPSI</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:11.4f}</span><span class="s1">  </span><span class="si">{2:11.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">LB</span><span class="p">,</span><span class="n">UB</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------------------------------&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">UB</span> <span class="p">)</span><span class="o">*</span><span class="n">wmean</span><span class="p">,</span> <span class="n">X</span>                 
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes radius of a center point in X.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : numpy mx2 array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m int or float</span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    X : numpy array of two float </span>
+<span class="sd">        coordinates of center point</span>
+<span class="sd">    b : list of points, optional</span>
+<span class="sd">        if b is present, it need be a list of points. </span>
+<span class="sd">        The largest weighted distance to points in b </span>
+<span class="sd">        serves as lower bound.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    wdist : float</span>
+<span class="sd">        radius of the solution</span>
+<span class="sd">    outer : int</span>
+<span class="sd">        index i of a point Y[i] showing largest weighted </span>
+<span class="sd">        distance to X </span>
+<span class="sd">    bdist : float (only returned if b is not None)</span>
+<span class="sd">        if b is not None, the largest weighted distance </span>
+<span class="sd">        to points Y in b.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">wdist</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)),</span> <span class="nb">float</span> <span class="p">)</span> 
+    <span class="n">outer</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span> <span class="n">wdist</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wdist</span><span class="p">[</span><span class="n">outer</span><span class="p">],</span> <span class="n">outer</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wdist</span><span class="p">[</span><span class="n">outer</span><span class="p">],</span> <span class="n">outer</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">wdist</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="growRadius">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.center.growRadius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">growRadius</span> <span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">Xlst</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves the weighted 1-center problem in plane by growing the</span>
+<span class="sd">    &quot;radius&quot; until all points are covered. The method starts</span>
+<span class="sd">    by selecting two initial points for which the 1-center problem</span>
+<span class="sd">    is solved. Then additional uncovered points are included and</span>
+<span class="sd">    the adjusted 1-center problem on a small subset of points is</span>
+<span class="sd">    solved. The method continues this way until all points are</span>
+<span class="sd">    covered.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    Y : numpy mx2 array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m int or float</span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    screen: str</span>
+<span class="sd">        if &#39;on&#39;, information on solution process is printed</span>
+<span class="sd">    Xlst : list of tuple of float or None</span>
+<span class="sd">       if not none, the points found in each &quot;iteration&quot;</span>
+<span class="sd">       are stored in this list.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    UB : float</span>
+<span class="sd">        &quot;radius&quot; of the computed center location</span>
+<span class="sd">    X  : numpy array of two float </span>
+<span class="sd">        coordinates of the center as a </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">screenOn</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------ Computing 1-center in plane -----&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Lower Bound  Upper Bound  Current Center&quot;</span><span class="p">)</span>
+        
+    <span class="c1"># Normalize the weights by dividing with there mean</span>
+    <span class="n">wsum</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">wmean</span> <span class="o">=</span> <span class="n">wsum</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="o">/</span><span class="n">wmean</span>
+    
+    <span class="c1"># Compute center of gravity</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+   
+    <span class="c1"># 1st point is the one showing largest weighted distance to X</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span> <span class="p">)</span>
+    <span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
+
+    <span class="c1"># 2nd point shows largest weighted distance to the 1st</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="p">)</span>
+    <span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">out</span> <span class="p">)</span>
+
+    <span class="c1"># Initial center is gravity center of the selected two points</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">]</span> <span class="p">)</span><span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">basis</span><span class="p">]</span> <span class="p">)</span>
+    <span class="n">UB</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">LB</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">basis</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Xlst</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Xlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+    
+    <span class="c1"># Continue as long as UB exceeds LB</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="p">(</span> <span class="n">UB</span><span class="o">-</span><span class="n">LB</span> <span class="p">)</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">LB</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">_EPSI</span><span class="p">:</span>        
+       
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Print current solution</span>
+        <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:11.4f}</span><span class="s1">  </span><span class="si">{2:11.4f}</span><span class="s1">  </span><span class="si">{3:.5f}</span><span class="s1">/</span><span class="si">{4:.5f}</span><span class="s1">&#39;</span><span class="o">.</span>\
+                  <span class="nb">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">LB</span><span class="p">,</span><span class="n">UB</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># Remove points strictly covered from the &quot;basis&quot;</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">basis</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">b</span><span class="p">],</span><span class="n">X</span><span class="p">)</span><span class="o">*</span><span class="n">w</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">LB</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">_EPSI</span><span class="p">):</span> <span class="n">basis</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>  
+        
+        <span class="c1"># Include the outer point in the basis</span>
+        <span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">out</span> <span class="p">)</span>
+        
+        <span class="c1"># Find 1-center for the points in the basis</span>
+        <span class="n">LB</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">_PD_alg</span> <span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">basis</span><span class="p">]</span> <span class="p">)</span>
+
+        <span class="c1"># Update upper and lower bound</span>
+        <span class="n">UB</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">LB</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">basis</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Xlst</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Xlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:11.4f}</span><span class="s1">  </span><span class="si">{2:11.4f}</span><span class="s1">  </span><span class="si">{3:.5f}</span><span class="s1">/</span><span class="si">{4:.5f}</span><span class="s1">&#39;</span><span class="o">.</span>\
+              <span class="nb">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">LB</span><span class="p">,</span><span class="n">UB</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------------------------------&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">UB</span><span class="o">*</span><span class="n">wmean</span><span class="p">,</span> <span class="n">X</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="elzinga_hearn">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.center.elzinga_hearn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">elzinga_hearn</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">Xlst</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Elzinga and Hearn&#39;s method to determine the minimal covering</span>
+<span class="sd">    circle of m points in Euclidian plane.</span>
+<span class="sd">    </span>
+<span class="sd">    Reference: Elzinga, J. and Hearn, D. W. (1972).  Geometrical </span>
+<span class="sd">    Solutions of Some Minimax Location Problems.Transportation </span>
+<span class="sd">    Science 6:370–394.</span>
+<span class="sd">  </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : numpy mx2 array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    screen : str, optional </span>
+<span class="sd">        If &#39;on&#39;, then progress of the algorithm is displayed on screen.</span>
+<span class="sd">    Xlst : None or a list of pairs of float, optional</span>
+<span class="sd">        If not None, the intermediate center solutions are appended</span>
+<span class="sd">        to the list Xlst.</span>
+<span class="sd">  </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    R : float</span>
+<span class="sd">        &quot;radius&quot; of the computed center location</span>
+<span class="sd">    X  : numpy array of two float</span>
+<span class="sd">        coordinates of the center found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">m</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># Function returning on which side of a plane a point p is</span>
+    <span class="n">absv</span><span class="p">,</span> <span class="n">slope</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">p</span> <span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span> <span class="n">absv</span> <span class="o">+</span> <span class="n">slope</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+    
+    <span class="n">screenOn</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----- Computing minimal covering circle ------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Lower Bound  Upper Bound  Current Center&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Center of gravity </span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">m</span>
+    <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="k">return</span> <span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">X</span>
+    
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># Get most distant point to X and most distant one to the former</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span> <span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="p">)</span>
+    <span class="n">bdim</span> <span class="o">=</span> <span class="mi">2</span>
+    
+    <span class="c1"># Main loop: Repeat as long as Circle(Basis) does not cover all points</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Determine radius and circle for points Y[basis]</span>
+        <span class="k">if</span> <span class="n">bdim</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+            <span class="n">RB</span><span class="p">,</span> <span class="n">X</span>  <span class="o">=</span> <span class="n">_2points</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[:</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> 
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">RB</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">_3circle</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+        <span class="n">R</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:11.4f}</span><span class="s1">  </span><span class="si">{2:11.4f}</span><span class="s1">  </span><span class="si">{3:.5f}</span><span class="s1">/</span><span class="si">{4:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">RB</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">R</span> <span class="o">&lt;=</span> <span class="n">RB</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">_EPSI</span><span class="p">):</span> <span class="k">break</span>
+        <span class="k">if</span> <span class="n">bdim</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># Current circle determined by three points</span>
+            <span class="n">D</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">out</span><span class="p">]</span>
+            <span class="c1"># Sort the three basis points by decreasing distance to D</span>
+            <span class="n">basis</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">D</span><span class="p">),</span><span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">A</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="c1"># Get hyperplane through points A and X </span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">absv</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">slope</span><span class="o">*</span><span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Second basis point is opposite to D regarding hyperplane</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span> <span class="n">H</span><span class="p">(</span><span class="n">D</span><span class="p">)</span> <span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">H</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]]))</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span> <span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">H</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]]))</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span> <span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                 
+        <span class="c1"># If non-acute triangle, basis consists of point outside current circle</span>
+        <span class="c1"># and the one most distant to it</span>
+        <span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span>
+        <span class="n">bdim</span> <span class="o">=</span> <span class="mi">3</span> 
+        <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_acute</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">):</span>
+            <span class="n">bdim</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">euclid</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">euclid</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">C</span><span class="p">):</span> 
+                <span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>    
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+            
+    <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span> </div>
+
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="charalambous">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.center.charalambous">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">charalambous</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">Xlst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Charalambous&#39; (1982) method for solving the weighted 1-centre</span>
+<span class="sd">    problem in the plane.</span>
+<span class="sd">    </span>
+<span class="sd">    Reference: Charalambous, C. (1982). Extension of the Elzinga-Hearn</span>
+<span class="sd">    Algorithm to the Weighted Case. Operations Research 30:591–594.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : numpy mx2 array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m int or float</span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    screen: str</span>
+<span class="sd">        if &#39;on&#39;, information on solution process is printed</span>
+<span class="sd">    Xlst : None or a list of pairs of float, optional</span>
+<span class="sd">        If not None, the intermediate center solutions are appended</span>
+<span class="sd">        to the list Xlst.</span>
+<span class="sd">  </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    UB : float</span>
+<span class="sd">        &quot;radius&quot; of the computed center location</span>
+<span class="sd">    X  : numpy array of two float</span>
+<span class="sd">        coordinates of the center as a </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">initialCenter</span><span class="p">(</span> <span class="n">w</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Determine initial solution &quot;&quot;&quot;</span>  
+        <span class="c1"># center of gravity:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>  
+        <span class="c1"># point showing largest weighted distance to X</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span> <span class="p">)</span> 
+        <span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="n">out</span><span class="p">]</span>
+        <span class="c1"># point showing largest weighted distance to the 1st</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="p">)</span>
+        <span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">out</span> <span class="p">)</span>
+        <span class="c1"># Initial center is 2-point solution with basis &quot;basis&quot;</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">]</span> <span class="p">)</span><span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">basis</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">basis</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">new_basis_3points</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">out</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Find solution with a basis that containing point &#39;out&#39; and</span>
+<span class="sd">            one or two points of the current 2-point basis &quot;&quot;&quot;</span>
+        <span class="n">covered</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Check all 2-point solutions covering points Y[out]</span>
+        <span class="c1"># and a single point from the current basis</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span> 
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">j</span><span class="p">,</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">out</span> 
+            <span class="n">r</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_2points</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">B</span><span class="p">]</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">_EPSI</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">R</span><span class="p">:</span>
+                <span class="n">covered</span> <span class="o">=</span> <span class="kc">True</span> 
+                <span class="n">R</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">r</span><span class="p">,</span> <span class="n">x</span>
+                <span class="n">basis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">basis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+        <span class="k">if</span> <span class="n">covered</span><span class="p">:</span> <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="mi">2</span>
+        
+        <span class="c1"># If no two point basis it need to be the 3-point one</span>
+        <span class="n">basis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span>
+        <span class="n">R</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">_w_3circle</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">basis</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="mi">3</span>        
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">new_basis_4points</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">out</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Find solution for the 1-centre problem with 4 customer points</span>
+<span class="sd">            given by the set basis+{out}. The basis for the solution need </span>
+<span class="sd">            thereby to contain the point &#39;out&#39; together with one or two </span>
+<span class="sd">            points of the current 3-point basis &quot;&quot;&quot;</span> 
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bdim</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">b</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[:]</span>
+            <span class="c1"># Exclude point j=B[i] and include out</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> 
+            <span class="c1"># Find solution to 3-points problem {B[0], B[1], out}</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bsize</span> <span class="o">=</span> <span class="n">new_basis_3points</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">out</span> <span class="p">)</span>
+            <span class="c1"># Check if this also covers point j</span>
+            <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">_EPSI</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">R</span><span class="p">:</span>
+                <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">bdim</span> <span class="o">=</span> <span class="n">r</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bsize</span>
+                <span class="n">B</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[:]</span> 
+        <span class="c1"># Return the solution and the basis&#39; dimension</span>
+        <span class="n">basis</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[:]</span>
+        <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">bdim</span>
+             
+    <span class="c1">#--------------------</span>
+    <span class="c1"># Begin main routine </span>
+    <span class="c1">#--------------------    </span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">screenOn</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------ Computing 1-center in plane -----&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Lower Bound  Upper Bound  Current Center&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Get weights as flat numpy array</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="c1"># Create initial solution </span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">basis</span> <span class="o">=</span> <span class="n">initialCenter</span><span class="p">(</span> <span class="n">w</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">Xlst</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Xlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+    <span class="n">UB</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">LB</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">basis</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:11.4f}</span><span class="s1">  </span><span class="si">{2:11.4f}</span><span class="s1">  </span><span class="si">{3:.5f}</span><span class="s1">/</span><span class="si">{4:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">LB</span><span class="p">,</span><span class="n">UB</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    
+    <span class="c1"># Main loop</span>
+    <span class="n">bdim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">basis</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bdim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">while</span> <span class="p">(</span> <span class="n">UB</span><span class="o">-</span><span class="n">LB</span> <span class="p">)</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="n">LB</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">_EPSI</span><span class="p">:</span> 
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">bdim</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+            <span class="n">LB</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">bdim</span> <span class="o">=</span> <span class="n">new_basis_3points</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">out</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">LB</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">bdim</span> <span class="o">=</span> <span class="n">new_basis_4points</span><span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">out</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Xlst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Xlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+        <span class="n">UB</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">_getRadius</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:11.4f}</span><span class="s1">  </span><span class="si">{2:11.4f}</span><span class="s1">  </span><span class="si">{3:.5f}</span><span class="s1">/</span><span class="si">{4:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">LB</span><span class="p">,</span><span class="n">UB</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    
+    <span class="k">if</span> <span class="n">Xlst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">UB</span><span class="p">,</span> <span class="n">X</span> 
+    <span class="k">return</span> <span class="n">UB</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Xlst</span></div>
+
+    
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="welzl">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.center.welzl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">welzl</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Welzl&#39;s recursive algorithm for computing the covering circle.</span>
+<span class="sd">    The algorithm&#39;s simple idea is as follows. Let P be the list</span>
+<span class="sd">    of points we have to cover. Let B denote the basis, that is</span>
+<span class="sd">    the set of (up to three) points whose covering circle determines</span>
+<span class="sd">    the complete solution and which thus lie on the circle&#39;s boundary. </span>
+<span class="sd">    Initially, let B be empty. Choose then a point p from P and let S </span>
+<span class="sd">    be the solution for point set P-{p}. If point p is covered we&#39;re </span>
+<span class="sd">    done. Otherwise, point p need to be one of those points on the </span>
+<span class="sd">    circle&#39;s boundary and we add p to B. If B comprises three points, </span>
+<span class="sd">    the circle is uniquely determined. Otherwise, we try to find the </span>
+<span class="sd">    smallest enclosing circle of point set P-{p} with points B+{p} on </span>
+<span class="sd">    the boundary. </span>
+<span class="sd">    </span>
+<span class="sd">    Reference: Emo Welzl (1991). Smallest enclosing disks (balls and </span>
+<span class="sd">    ellipsoids). In Maurer, H., ed., New Results and New Trends in </span>
+<span class="sd">    Computer Science. Lecture Notes in Computer Science, Vol. 555, </span>
+<span class="sd">    Springer-Verlag, pp. 359–370, doi:10.1007/BFb0038202.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : numpy mx2 array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m int or float</span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    screen: str</span>
+<span class="sd">        if &#39;on&#39;, information on solution process is printed</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    UB : float</span>
+<span class="sd">        &quot;radius&quot; of the computed center location</span>
+<span class="sd">    X  : numpy array of two float</span>
+<span class="sd">        coordinates of the center as a </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">talk</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;on&#39;</span>
+    
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+              
+    <span class="k">def</span><span class="w"> </span><span class="nf">_trivial_circle</span><span class="p">(</span> <span class="n">B</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return weighted center solution of up to three points</span>
+<span class="sd">        Y[B] such that all points Y[B] show equal weighted distance</span>
+<span class="sd">        to the center point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">B</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span> <span class="k">return</span> <span class="n">_2points</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">B</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span> <span class="k">return</span> <span class="n">_w_3circle</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">B</span><span class="p">])</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">_welzl_recursion</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find recursively the smallest enclosing circle of the</span>
+<span class="sd">        n first points in P such that points in B are on the</span>
+<span class="sd">        circle&#39;s boundary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">nonlocal</span> <span class="n">itr</span>
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_trivial_circle</span><span class="p">(</span> <span class="n">B</span> <span class="p">)</span>
+        
+        <span class="c1"># Find solution for first n-1 points with boundary B</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">_welzl_recursion</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span> <span class="p">)</span>
+        
+        <span class="c1"># Check if point Y[p] is covered</span>
+        <span class="n">covered</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">_EPSI</span><span class="p">)</span><span class="o">*</span><span class="n">r</span> 
+        
+        <span class="c1"># If point Y[p] is covered, we found the solution for</span>
+        <span class="c1"># the minimal circle of the first n points with points</span>
+        <span class="c1"># Y[B] on the boundary.</span>
+        <span class="k">if</span> <span class="n">covered</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> 
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:14.4f}</span><span class="s1">  </span><span class="si">{2:.5f}</span><span class="s1">/</span><span class="si">{3:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">X</span>
+        
+        <span class="c1"># If Y[p] is not covered, it must be on the boundary.</span>
+        <span class="c1"># Hence, find minimal circle covering the first n-1</span>
+        <span class="c1"># points with points Y[B] and Y[p] on the boundary.</span>
+        <span class="n">B</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_welzl_recursion</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Start of procedure welzl    </span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)))</span>
+    
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------ Computing 1-center in plane -----&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Current Radius  Current Center&quot;</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">_welzl_recursion</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="p">[],</span> <span class="n">n</span><span class="p">)</span></div>
+
+         
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

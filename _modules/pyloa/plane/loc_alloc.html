@@ -1,0 +1,617 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.plane.loc_alloc &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.plane.loc_alloc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.plane.loc_alloc</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module plane.loc_alloc of package pyloa:</span>
+<span class="sd">    Methods for solving the multi-source Weber and planar p-center</span>
+<span class="sd">    problem mostly relying on location-allocation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclid</span><span class="p">,</span> <span class="n">all_two_parts</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.weber</span><span class="w"> </span><span class="kn">import</span> <span class="n">solveWeber</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.center</span><span class="w"> </span><span class="kn">import</span> <span class="n">charalambous</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">AgglomerativeClustering</span> <span class="k">as</span> <span class="n">hAggClust</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_lex_smaller</span><span class="p">(</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns True if array x is lexicograpically smaller than y.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span> 
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span> <span class="n">x</span><span class="o">&gt;=</span><span class="n">y</span> <span class="p">):</span> <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">y</span> <span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> 
+    <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cooper&#39;s location-allocation heuristic.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : int</span>
+<span class="sd">        number of facilities to locate (1 &lt; p &lt; #customers)</span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : numpy array of m float or int</span>
+<span class="sd">        positive customer weights</span>
+<span class="sd">    X0 : None or a px2 numpy array of float</span>
+<span class="sd">         Optional initial solution. If an initial solution is</span>
+<span class="sd">         passed it need to be a numpy px2 array.</span>
+<span class="sd">    minisum : bool </span>
+<span class="sd">        True, if a multi-source Weber problem has to be solved</span>
+<span class="sd">        and False if a planar p-center problem is to be solved.</span>
+<span class="sd">    screen: string</span>
+<span class="sd">        If &#39;on&#39;, the result of the current iteration is printed </span>
+<span class="sd">        to &quot;stdout&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    totalCost : float</span>
+<span class="sd">        the objective value of the solution</span>
+<span class="sd">    X : px2 numpy array of float</span>
+<span class="sd">        the solution&#39;s p facility locations</span>
+<span class="sd">    itr : int</span>
+<span class="sd">        the number of location-allocation iterations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">locFunc</span> <span class="o">=</span> <span class="n">solveWeber</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">charalambous</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">X0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="c1">#Select p customer points randomly as initial locations</span>
+        <span class="n">sel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">sel</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X0</span> 
+        <span class="n">p</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">m</span>
+    <span class="n">objv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">Inf</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">Inf</span><span class="p">)</span>
+    <span class="n">costj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1.0E-04</span>
+    <span class="n">screenOn</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------ LOCATION-ALLOCATION HEURISTIC -----&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Current cost&quot;</span><span class="p">)</span>
+    
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>  
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Allocation: Assign customers to the closest location</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span><span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">]</span>
+        <span class="c1"># Location: Solve the single Weber problem for each region </span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+            <span class="c1"># Solve single Weber problem over j-th customer subset</span>
+            <span class="n">customers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="n">j</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+            <span class="n">costj</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">locFunc</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">customers</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">customers</span><span class="p">]</span> <span class="p">)</span>
+        <span class="c1"># Print cost of current solution</span>
+        <span class="k">if</span> <span class="n">minisum</span><span class="p">:</span> 
+            <span class="n">cur_obj</span> <span class="o">=</span> <span class="n">costj</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:12.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">cur_obj</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">cur_obj</span> <span class="o">&gt;</span> <span class="n">objv</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span> <span class="k">break</span> 
+            <span class="n">objv</span> <span class="o">=</span> <span class="n">cur_obj</span>     
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">costj</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span> <span class="o">-</span><span class="n">costj</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span> <span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:12.4f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">costj</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">_lex_smaller</span><span class="p">(</span><span class="n">costj</span><span class="p">,</span> <span class="n">objv</span> <span class="p">):</span> <span class="k">break</span>
+            <span class="n">objv</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">costj</span><span class="p">[:]</span>    
+        
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------------------------------&quot;</span><span class="p">)</span>
+
+    <span class="n">val</span> <span class="o">=</span> <span class="n">objv</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">objv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span>                 
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="locAlloc">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.loc_alloc.locAlloc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">initLA</span><span class="o">=</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>\
+              <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies Cooper&#39;s location allocation heuristic using different</span>
+<span class="sd">    initial solutions and returns the best one found.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : int</span>
+<span class="sd">        number of facilities to locate (1 &lt; p &lt; #customers) </span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : None or a numpy array of m float or int</span>
+<span class="sd">        positive customer weights (if None weights will be set to 1)</span>
+<span class="sd">    minisum : bool</span>
+<span class="sd">        If True, a multi-source Weber problem is solved. Otherwise,</span>
+<span class="sd">        a planar p-center problem.</span>
+<span class="sd">    initLA : string</span>
+<span class="sd">        method to be applied for finding initial solution.</span>
+<span class="sd">        Currently the following two options can be chosen.</span>
+<span class="sd">        (i) &#39;random&#39; means a random initial solution at the </span>
+<span class="sd">        customer points</span>
+<span class="sd">        (ii) &#39;cluster&#39; means initial solution from clustering</span>
+<span class="sd">        using the kmeans as well as hierarchical methods </span>
+<span class="sd">        based on complete, single linkage and Ward&#39;s method</span>
+<span class="sd">    repeat : int</span>
+<span class="sd">        number of times location-allocation is repeated with</span>
+<span class="sd">        different start solution (only applies if initLA=&#39;random&#39;)</span>
+<span class="sd">    screen: string</span>
+<span class="sd">        If &#39;on&#39;, the result of the current iteration is printed </span>
+<span class="sd">        to &quot;stdout&quot;</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bestObj : float</span>
+<span class="sd">        the objective value (as a float) of the solution</span>
+<span class="sd">    Xbest : px2 numpy array of float</span>
+<span class="sd">        the solution&#39;s p facility locations,</span>
+<span class="sd">    a : list of int</span>
+<span class="sd">        the assignment of customer points to the facilities,</span>
+<span class="sd">        i.e., a[i]=j if point Y[i] is assigned to facility at </span>
+<span class="sd">        location X[j]</span>
+<span class="sd">    itr : int</span>
+<span class="sd">        the total number of location-allocation iterations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">locFunc</span> <span class="o">=</span> <span class="n">solveWeber</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">charalambous</span>
+    <span class="n">screen</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">screen_on</span> <span class="o">=</span> <span class="n">screen</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="n">initLA</span> <span class="o">=</span> <span class="n">initLA</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">Xbest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">bestObj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">Inf</span>
+    <span class="n">tot_itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span> <span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">initLA</span> <span class="o">==</span> <span class="s1">&#39;cluster&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">,</span><span class="s1">&#39;complete&#39;</span><span class="p">,</span><span class="s1">&#39;single&#39;</span><span class="p">,</span><span class="s1">&#39;ward&#39;</span><span class="p">,</span><span class="s1">&#39;kmeans&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">screen_on</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cluster customer locations using =&quot;</span><span class="p">,</span><span class="n">link</span><span class="p">)</span>
+            <span class="c1"># Apply clustering method and return array of cluster labels</span>
+            <span class="n">myCluster</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="n">link</span><span class="o">==</span><span class="s1">&#39;kmeans&#39;</span> <span class="k">else</span>\
+                        <span class="n">hAggClust</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">linkage</span><span class="o">=</span><span class="n">link</span><span class="p">)</span>
+            <span class="n">clusters</span> <span class="o">=</span> <span class="n">myCluster</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+            <span class="c1"># Locate a facility in each cluster</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                <span class="n">customers</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">==</span><span class="n">j</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">locFunc</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">customers</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">customers</span><span class="p">])</span>
+            <span class="c1"># Improve solution using location-allocation</span>
+            <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span> <span class="o">=</span> <span class="n">_locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="n">minisum</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span> <span class="p">)</span>
+            <span class="n">tot_itr</span> <span class="o">+=</span> <span class="n">itr</span>
+            <span class="k">if</span> <span class="n">objVal</span> <span class="o">&lt;</span> <span class="n">bestObj</span><span class="p">:</span>    
+                <span class="n">bestObj</span> <span class="o">=</span> <span class="n">objVal</span>
+                <span class="n">Xbest</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">X</span>                  
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">repeat</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">screen_on</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trial no.&quot;</span><span class="p">,</span><span class="n">trial</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;with random start&quot;</span><span class="p">)</span>
+            <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span> <span class="o">=</span> <span class="n">_locAlloc</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="n">minisum</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">)</span>
+            <span class="n">tot_itr</span> <span class="o">+=</span> <span class="n">itr</span>
+            <span class="k">if</span> <span class="n">objVal</span> <span class="o">&lt;</span> <span class="n">bestObj</span><span class="p">:</span>
+                <span class="n">bestObj</span> <span class="o">=</span> <span class="n">objVal</span>
+                <span class="n">Xbest</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">X</span>
+                
+    <span class="c1"># Find customer assignment in best solution found above</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">Xbest</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span><span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">]</span>
+
+    <span class="c1"># Return the best solution</span>
+    <span class="k">return</span> <span class="n">bestObj</span><span class="p">,</span> <span class="n">Xbest</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">tot_itr</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="pmedian_heuristic">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.loc_alloc.pmedian_heuristic">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pmedian_heuristic</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    p-median heuristic for the multi-source Weber problem. We</span>
+<span class="sd">    first solve a p-median problem using a MIP solver in order to cluster</span>
+<span class="sd">    the customer set. The optimal locations for each cluster are</span>
+<span class="sd">    then used as starting point for the location-allocation method.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : int</span>
+<span class="sd">        number of facilities to locate (1 &lt; p &lt; #customers) </span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : None or a numpy array of m float or int</span>
+<span class="sd">        positive customer weights (if None all weights are set to 1)</span>
+<span class="sd">    minisum : bool</span>
+<span class="sd">        If True, a multi-source Weber problem is solved; otherwise</span>
+<span class="sd">        a planar p-center problem</span>
+<span class="sd">    screen: </span>
+<span class="sd">        If &#39;on&#39;, Cplex&#39;s intermediate output on the state of</span>
+<span class="sd">        the computations are printed to the screen.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    objv : float  </span>
+<span class="sd">    </span>
+<span class="sd">    Xsol : px2 numpy array of float    </span>
+<span class="sd">    </span>
+<span class="sd">    a : list of int  </span>
+<span class="sd">        the assignment of customer points to the facilities,</span>
+<span class="sd">        i.e., a[i]=j if point Y[i] is assigned to facility at </span>
+<span class="sd">        location X[j]    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pmed</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;p-median&#39;</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
+    
+    <span class="c1"># Assignment variables (continuous, as they are integer in optimum)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">pmed</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">m</span> <span class="p">)</span>
+    
+    <span class="c1"># Binary variables equal to 1 if point i represents a cluster</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">pmed</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span> 
+    
+    <span class="c1"># Assignment constraints   </span>
+    <span class="n">pmed</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">pmed</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> 
+                           
+    <span class="c1"># No assignment to an inactive possible representative</span>
+    <span class="n">pmed</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="p">)</span>
+    
+    <span class="c1"># Number of clusters</span>
+    <span class="n">pmed</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span> <span class="n">pmed</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">p</span> <span class="p">)</span>
+    
+    <span class="c1"># Objective: minimize sum of distances to representative</span>
+    <span class="n">pmed</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">pmed</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">*</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="p">)</span> <span class="p">)</span>
+                             
+    <span class="c1"># Solve model</span>
+    <span class="n">pmed</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;on&#39;</span>
+    <span class="n">ok</span> <span class="o">=</span> <span class="n">pmed</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">pmed</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+      
+    <span class="c1"># Retrieve solution to p-median</span>
+    <span class="n">ysol</span> <span class="o">=</span> <span class="n">pmed</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="n">y</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span> <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> 
+     
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">pmed</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="n">z</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span> <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">assign</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">]</span> <span class="p">)</span> <span class="c1"># Assignment of customers to facilities</span>
+    
+    <span class="c1"># Solve Fermat-Weber for each cluster</span>
+    <span class="n">locFunc</span> <span class="o">=</span> <span class="n">solveWeber</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">charalambous</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">ysol</span><span class="p">:</span>
+        <span class="n">customers</span> <span class="o">=</span> <span class="n">assign</span> <span class="o">==</span> <span class="n">j</span> 
+        <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">cnt</span><span class="p">]</span> <span class="o">=</span> <span class="n">locFunc</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">customers</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">customers</span><span class="p">])</span>
+        <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+                
+    <span class="c1"># Improve solution using location-allocation</span>
+    <span class="n">objv</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span><span class="o">=</span> <span class="n">_locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="n">minisum</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span> <span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span><span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">]</span>
+    
+    <span class="n">pmed</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">objv</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">itr</span></div>
+
+     
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="weber_vns">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.loc_alloc.weber_vns">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">weber_vns</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Variable neighbourhood search for respectively the multi-source </span>
+<span class="sd">    Weber and planar p-center problem in the realm of the VNS suggested </span>
+<span class="sd">    by Brimberg et al. (2000). Let k be the neighbourhood size. In each </span>
+<span class="sd">    iteration, the method tries to find an improved solution by picking </span>
+<span class="sd">    k customer points and locating facilities on these k customer points. </span>
+<span class="sd">    We choose the k customers with a probability proportional to the </span>
+<span class="sd">    weighted distance to their nearest facility. In exchange of locating </span>
+<span class="sd">    a facility at a selected customer point, the currently open facility </span>
+<span class="sd">    closest to that customer is closed.</span>
+<span class="sd">    </span>
+<span class="sd">    Reference: Brimberg et al. (2000). Improvements and comparison of </span>
+<span class="sd">    heuristics for solving the multi-source Weber problem. Operations </span>
+<span class="sd">    Research 48: 444-460.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : int</span>
+<span class="sd">        number of facilities to locate (1 &lt; p &lt; #customers) </span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : None or numpy array of m float or int</span>
+<span class="sd">        positive customer weights (if None all weights are set to 1)</span>
+<span class="sd">    X : None or px2 numpy array of float</span>
+<span class="sd">        If not none, X is the initial solution with X[j] specifying</span>
+<span class="sd">        the two coordinates of the j-th facility, j=0,...,p-1.</span>
+<span class="sd">    minisum : bool</span>
+<span class="sd">        If True, a multi-source Weber problem is solved; otherwise</span>
+<span class="sd">        a planar p-center problem.</span>
+<span class="sd">    screen : str </span>
+<span class="sd">        If &#39;on&#39;, Cplex&#39;s intermediate output on the state of</span>
+<span class="sd">        the computations are printed to the screen.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    objv : float</span>
+<span class="sd">    </span>
+<span class="sd">    X : px2 numpy array of float</span>
+<span class="sd">    </span>
+<span class="sd">    a : list of int</span>
+<span class="sd">        the assignment of customer points to the facilities,</span>
+<span class="sd">        i.e., a[i]=j if point Y[i] is assigned to facility at </span>
+<span class="sd">        location X[j]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">talk</span> <span class="o">=</span> <span class="n">screen</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="c1"># Find initial solution </span>
+    <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computing initial solution&quot;</span><span class="p">)</span>
+        <span class="n">objv</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="n">minisum</span><span class="p">,</span> <span class="n">initLA</span><span class="o">=</span><span class="s1">&#39;cluster&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial objective value:&quot;</span><span class="p">,</span><span class="n">objv</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span><span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">]</span>
+        <span class="n">objv</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span>\
+            <span class="nb">max</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+        
+    <span class="c1"># Smallest and largest neighbourhood size</span>
+    <span class="n">kmin</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">kmax</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">m</span><span class="o">-</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">k_cur</span> <span class="o">=</span> <span class="mi">1</span>     
+    
+    <span class="c1"># Maximal number of subsequent non-improving iterations</span>
+    <span class="n">max_fail</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span> <span class="nb">max</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="n">m</span><span class="o">//</span><span class="mi">2</span><span class="p">),</span> <span class="mi">50</span> <span class="p">)</span>
+    <span class="n">num_fail</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Current_obj_val  Trial_obj_val  Best_obj_val&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+    <span class="c1"># Do the iterations</span>
+    <span class="n">best_objv</span> <span class="o">=</span> <span class="n">objv</span> 
+    <span class="n">best_X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">best_a</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">X_cur</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">num_fail</span> <span class="o">&lt;</span> <span class="n">max_fail</span><span class="p">:</span>
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">X_cur</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:]</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+        <span class="n">to_open</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="n">k_cur</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">prob</span><span class="o">/</span><span class="n">prob</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">k_cur</span> <span class="o">&lt;</span> <span class="n">p</span><span class="p">:</span>
+            <span class="c1"># Find k_cur current facility locations to be closed</span>
+            <span class="n">closed</span> <span class="o">=</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span><span class="o">*</span><span class="n">p</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">to_open</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">closed</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> 
+                    <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">closed</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span><span class="nb">float</span><span class="p">))</span>  
+                <span class="n">closed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">closed</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">to_open</span><span class="p">[</span><span class="n">num</span><span class="p">]]</span>
+                    <span class="n">num</span> <span class="o">+=</span> <span class="mi">1</span>    
+                    <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_open</span><span class="p">):</span> <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">X</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">to_open</span><span class="p">]</span>
+        <span class="n">trial_objv</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_locAlloc</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="n">minisum</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">  </span><span class="si">{1:15.2f}</span><span class="s1">  </span><span class="si">{2:13.2f}</span><span class="s1">  </span><span class="si">{3:12.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span><span class="n">objv</span><span class="p">,</span><span class="n">trial_objv</span><span class="p">,</span><span class="n">best_objv</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">trial_objv</span> <span class="o">&lt;</span> <span class="n">objv</span><span class="p">:</span>
+            <span class="c1"># Solution accepted as new current one </span>
+            <span class="n">objv</span> <span class="o">=</span> <span class="n">trial_objv</span> 
+            <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)),</span><span class="nb">float</span><span class="p">))</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="c1"># Reject solution as new current one</span>
+            <span class="n">X</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">X_cur</span><span class="p">[:]</span>
+        <span class="c1"># Check if new best solution found</span>
+        <span class="k">if</span> <span class="n">objv</span> <span class="o">&lt;</span> <span class="n">best_objv</span><span class="p">:</span>
+            <span class="n">best_objv</span> <span class="o">=</span> <span class="n">objv</span> 
+            <span class="n">best_X</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:]</span>
+            <span class="n">best_a</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_fail</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">num_fail</span> <span class="o">==</span> <span class="n">max_fail</span><span class="p">:</span> <span class="k">break</span>
+            <span class="n">k_cur</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">k_cur</span> <span class="o">&gt;</span> <span class="n">kmax</span><span class="p">:</span> <span class="n">k_cur</span> <span class="o">=</span> <span class="n">kmin</span>
+        
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">best_objv</span><span class="p">,</span> <span class="n">best_X</span><span class="p">,</span> <span class="n">best_a</span>  </div>
+
+    
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="twoFacility">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.loc_alloc.twoFacility">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">twoFacility</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves the two-facility Weber or 2-center problem by investigating all</span>
+<span class="sd">    possible partitions of the customer set in two non-overlapping</span>
+<span class="sd">    convex hulls.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : None or numpy array of m float or int</span>
+<span class="sd">        positive customer weights (if None all weights are set to 1)</span>
+<span class="sd">    minisum : bool </span>
+<span class="sd">        If True, a 2-Weber is solved; otherwise a 2-center problem</span>
+<span class="sd">    screen : str </span>
+<span class="sd">        If &#39;on&#39;, intermediate output on the state of the computations </span>
+<span class="sd">        is printed to the screen.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns </span>
+<span class="sd">    -------</span>
+<span class="sd">    objv : float  </span>
+<span class="sd">        The solution&#39;s objective value </span>
+<span class="sd">    X : 2x2 numpy array of float</span>
+<span class="sd">        X[0] and X[1] are the coordinate vectors of the two facility</span>
+<span class="sd">        locations</span>
+<span class="sd">    a : list of int</span>
+<span class="sd">        the assignment of customer points to the facilities,</span>
+<span class="sd">        i.e., a[i]=j if point Y[i] is assigned to facility at </span>
+<span class="sd">        location X[j], j=0 or 1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">talk</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;on&#39;</span>
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating all partitions in two non-overlapping convex hulls&#39;</span><span class="p">)</span>
+    
+    <span class="n">all_partits</span> <span class="o">=</span> <span class="n">all_two_parts</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">locFunc</span> <span class="o">=</span> <span class="n">solveWeber</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">charalambous</span>
+    
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> 
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_partits</span><span class="p">[</span><span class="n">num</span><span class="p">])</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">all_partits</span> <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">num</span><span class="p">,</span><span class="s1">&#39;partitions generated&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Partition no.  Objective value&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">30</span><span class="p">)</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">infty</span><span class="p">)</span>
+    <span class="n">X_best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">all_partits</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">I1</span><span class="p">,</span> <span class="n">I2</span> <span class="ow">in</span> <span class="n">all_partits</span><span class="p">[</span><span class="n">num</span><span class="p">]:</span>
+            <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>   
+            <span class="c1"># Solve Fermat-Weber problem for the two customer sets</span>
+            <span class="n">obj0</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">locFunc</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">I1</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">I1</span><span class="p">]</span> <span class="p">)</span>
+            <span class="n">obj1</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">locFunc</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">I2</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">I2</span><span class="p">]</span> <span class="p">)</span>
+            <span class="n">objv</span> <span class="o">=</span> <span class="n">obj0</span><span class="o">+</span><span class="n">obj1</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">obj0</span><span class="p">,</span><span class="n">obj1</span><span class="p">),</span><span class="nb">min</span><span class="p">(</span><span class="n">obj0</span><span class="p">,</span><span class="n">obj1</span><span class="p">))</span> 
+            <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> 
+                <span class="n">cur_obj</span> <span class="o">=</span> <span class="n">objv</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">objv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:13d}</span><span class="s1"> </span><span class="si">{1:16.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span> <span class="n">cur_obj</span><span class="p">)</span> <span class="p">)</span>
+            <span class="n">improve</span> <span class="o">=</span> <span class="n">objv</span> <span class="o">&lt;</span> <span class="n">best</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="p">(</span><span class="n">objv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">or</span>\
+                      <span class="p">(</span> <span class="p">(</span><span class="ow">not</span> <span class="n">objv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">objv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">best</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>  
+            <span class="k">if</span> <span class="n">improve</span><span class="p">:</span>
+                <span class="n">best</span> <span class="o">=</span> <span class="n">objv</span> 
+                <span class="n">X_best</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,:]</span> 
+                <span class="n">a</span><span class="p">[</span><span class="n">I1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">a</span><span class="p">[</span><span class="n">I2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+        <span class="n">mybest</span> <span class="o">=</span> <span class="n">best</span> <span class="k">if</span> <span class="n">minisum</span> <span class="k">else</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Optimal objective value: </span><span class="si">{0:&lt;.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mybest</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Facility no. 0 at      : (</span><span class="si">{0:&lt;.4f}</span><span class="s1">,</span><span class="si">{1:&lt;.4f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Facility no. 1 at      : (</span><span class="si">{0:&lt;.4f}</span><span class="s1">,</span><span class="si">{1:&lt;.4f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Assignment of customer points&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Point   :&#39;</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{0:4d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Facility:&#39;</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; </span><span class="si">{0:4d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">f</span><span class="p">),</span><span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">50</span><span class="p">)</span>
+                
+    <span class="k">return</span> <span class="n">best</span><span class="p">,</span> <span class="n">X_best</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
+
+                
+<span class="c1">#------------------------------------------------------------------</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

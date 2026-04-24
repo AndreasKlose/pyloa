@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.net.parser &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.net.parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.net.parser</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read (graph) data of a network location problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.request</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlretrieve</span>
+   
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_findEdge</span> <span class="p">(</span> <span class="n">edge</span><span class="p">,</span> <span class="n">lste</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns index of edge &quot;edge&quot; in the list &quot;lste&quot; of edges</span>
+<span class="sd">    and -1 if e is not in the list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span> <span class="n">lste</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">edge</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">edge</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">return</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="comp_dist_mat">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.parser.comp_dist_mat">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">comp_dist_mat</span><span class="p">(</span> <span class="n">G</span><span class="p">,</span> <span class="n">dmatrix</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the length of shortest path between all nodes in G and</span>
+<span class="sd">    return the result as a 2-dim numpy array. Note that the edges</span>
+<span class="sd">    in the graph MUST have the attribute &#39;weight&#39; which refers</span>
+<span class="sd">    to the non-negative length of an edge.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    G : networkx graph (undirected)</span>
+<span class="sd">        G is a (networkx) graph. Each edge of the graph need to</span>
+<span class="sd">        have the edge attribute &#39;weight&#39; to which the non-negative </span>
+<span class="sd">        length of an edge is associated. Nodes of the graph are </span>
+<span class="sd">        numbered/identified as strings &#39;1&#39;,...,&#39;n&#39;, where n is </span>
+<span class="sd">        the number of nodes.</span>
+<span class="sd">    dmatrix : str  </span>
+<span class="sd">        Specifies how to return the distance matrix. dmatrix</span>
+<span class="sd">        must be one of the following:  </span>
+<span class="sd">        </span>
+<span class="sd">        1. dmatrix = &#39;dict&#39; : In this case a dictionary d</span>
+<span class="sd">           is returned so that d[(i,j)] gives the distance</span>
+<span class="sd">           between nodes i=1,...,n-1 and  j=0,...,i-1. </span>
+<span class="sd">           Note that this case requires the set of customer</span>
+<span class="sd">           and facility nodes to be identical so that</span>
+<span class="sd">           the matrix of distances is symmetric.  </span>
+<span class="sd">        </span>
+<span class="sd">        2. dmatrix = &#39;matrix&#39; : In this case a nxn numpy</span>
+<span class="sd">           array d is returned and d[i,j] is the distance</span>
+<span class="sd">           between customer node i=0,...,n-1 and facility node</span>
+<span class="sd">           j=0,...,n-1. In this case it is not required that </span>
+<span class="sd">           customer node i is identical to facility node j</span>
+<span class="sd">           if i==j. The matrix of distances is thus not</span>
+<span class="sd">           necessarily symmetric.  </span>
+<span class="sd">        </span>
+<span class="sd">        3. dmatrix = &#39;vector&#39;: In this case a numpy array d</span>
+<span class="sd">           of dimension n*(n-1)//2 is returned so that</span>
+<span class="sd">           d[ i*(i-1)//2 + j] gives the distance between</span>
+<span class="sd">           node i=1,...,n-1 and node j=0,...,i-1.</span>
+<span class="sd">           Again it is assumed that all customer nodes</span>
+<span class="sd">           are also facility nodes, so that the matrix</span>
+<span class="sd">           of distances is symmetric.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : dict or numpy array </span>
+<span class="sd">        distances between nodes as explained above.            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">G</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()</span>
+    <span class="n">spl</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">shortest_path_length</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span>
+    <span class="n">dmat</span> <span class="o">=</span> <span class="n">dmatrix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">dmat</span><span class="o">==</span><span class="s1">&#39;matrix&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spl</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">dmat</span><span class="o">==</span><span class="s1">&#39;dict&#39;</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spl</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> <span class="n">d</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">dim</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">spl</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">d</span></div>
+
+        
+<span class="c1">#------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="read_graph">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.parser.read_graph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_graph</span><span class="p">(</span> <span class="n">fname</span><span class="p">,</span> <span class="n">dmatrix</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads data of a graph from a text file called &#39;fname&#39;. The</span>
+<span class="sd">    data in the graph need to structured as follows:</span>
+<span class="sd">    </span>
+<span class="sd">        number of nodes, number of edges, number p of facilities</span>
+<span class="sd">        For every edge e: end node 1, end node 2, length</span>
+<span class="sd">        for each node: weight of the node, covering distance</span>
+<span class="sd">    </span>
+<span class="sd">    Thereby, p is the number of facilities to establish.</span>
+<span class="sd">    Data on the nodes&#39; weight and covering distance is optional.</span>
+<span class="sd">    If not supplied, weights are assumed to equal 1 and it</span>
+<span class="sd">    is assumed that information on covering distances is not needed.</span>
+<span class="sd">    If covering distances are irrelevant and thus also not included</span>
+<span class="sd">    in the data file, it is possible to just supply weight data</span>
+<span class="sd">    in case that node weights are different. If covering distances</span>
+<span class="sd">    (as, e.g., for maximal covering location) are needed, both</span>
+<span class="sd">    need to be supplied, node weights and the covering distance</span>
+<span class="sd">    of a node, even if all weights are equal to 1.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fname : str</span>
+<span class="sd">        (Path) and file name of the data file.</span>
+<span class="sd">    dmatrix : None or str  </span>
+<span class="sd">        If None, the underlying graph is read from file and</span>
+<span class="sd">        returned as a networkx graph object. Otherwise,</span>
+<span class="sd">        the length of the shortest path in the graph are</span>
+<span class="sd">        computed and returned in a way specified by &#39;dmatrix&#39;</span>
+<span class="sd">        as follows:</span>
+<span class="sd">        dmatrix = &#39;dict&#39; : In this case a dictionary d</span>
+<span class="sd">        is returned so that d[(i,j)] gives the distance</span>
+<span class="sd">        between nodes i=1,...,n-1 and j=0,...,i-1.</span>
+<span class="sd">        dmatrix = &#39;matrix&#39; : In this case a nxn numpy</span>
+<span class="sd">        array d is returned and d[i,j] is the distance</span>
+<span class="sd">        between nodes i=0,...,n-1 and j=0,...,n-1,</span>
+<span class="sd">        dmatrix = &#39;vector&#39;: In this case a numpy array d</span>
+<span class="sd">        of dimension (n-2)*(n+1)//2 is returned so that</span>
+<span class="sd">        d[ i*(i-1)//2 + j] gives the distance between</span>
+<span class="sd">        node i=1,...,n-1 and node j=0,...,i-1.</span>
+<span class="sd">    orlib : bool, optional</span>
+<span class="sd">        If True, the data file is assumed to be from Beasley&#39;s</span>
+<span class="sd">        OR library. The graph data does then not include</span>
+<span class="sd">        weights of the nodes. Node weights are thus assumed</span>
+<span class="sd">        to equal 1.  If the file cannot  be found locally, it </span>
+<span class="sd">        is tried to download the file from the OR-lib web page.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    p : int</span>
+<span class="sd">        Number of facilities to locate</span>
+<span class="sd">    G or d : either the networkx graph object or matrix d </span>
+<span class="sd">        Note that the data files are structured as follows:</span>
+<span class="sd">        number of nodes, number of edges, number p of facilities</span>
+<span class="sd">        For every edge e: end node 1, end node 1, length</span>
+<span class="sd">            </span>
+<span class="sd">        The OR-lib data have a small flaw. Sometimes, an edge is</span>
+<span class="sd">        listed twice. In this case, the last read edge is supposed</span>
+<span class="sd">        to give the correct data. </span>
+<span class="sd">            </span>
+<span class="sd">        If the data file cannot be found or downloaded, None is</span>
+<span class="sd">        returned.  </span>
+<span class="sd">    w : None or numpy array of int</span>
+<span class="sd">        Weights of the nodes. If the file does not contain node weights</span>
+<span class="sd">        None is returned.    </span>
+<span class="sd">    dmax : None or numpy array of int</span>
+<span class="sd">       Covering distance for each node if supplied in the data file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="ow">and</span> <span class="n">orlib</span><span class="p">:</span>
+        <span class="c1"># Try to get the file from ORlib</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/&#39;</span><span class="o">+</span><span class="n">fname</span>
+            <span class="n">urlretrieve</span><span class="p">(</span> <span class="n">url</span><span class="p">,</span> <span class="n">fname</span> <span class="p">)</span>  
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dmatrix</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span> 
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot read or download file &quot;</span><span class="o">+</span><span class="n">fname</span><span class="p">)</span>
+    
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">fname</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span> <span class="p">)</span>
+    <span class="c1"># read first line of the file n=#nodes and m=#edges</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="p">)</span> <span class="p">)</span>
+
+    <span class="c1"># read remaining lines of the file</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">l</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">l</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">_findEdge</span><span class="p">(</span> <span class="n">e</span><span class="p">,</span><span class="n">edges</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">e</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="n">edges</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="o">==</span><span class="n">m</span><span class="p">:</span> <span class="k">break</span>
+        
+    <span class="n">w</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>    <span class="c1"># node weights if supplied</span>
+    <span class="n">dmax</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span> <span class="c1"># covering distances if supplied</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">w</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">dmax</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">==</span><span class="n">n</span><span class="p">:</span> <span class="k">break</span> 
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dmax</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="n">dmax</span> <span class="o">=</span> <span class="kc">None</span>
+        
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+    <span class="c1"># set up the graph using the list of edges</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+        <span class="n">G</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="p">)</span>
+        
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">dmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dmax</span><span class="p">)</span>
+  
+    <span class="k">if</span> <span class="n">dmatrix</span><span class="p">:</span> <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">comp_dist_mat</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">dmatrix</span><span class="p">),</span> <span class="n">w</span><span class="p">,</span> <span class="n">dmax</span>
+    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">G</span><span class="p">,</span> <span class="n">w</span></div>
+
+
+<span class="c1">#------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="read_orlib_graph">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.parser.read_orlib_graph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_orlib_graph</span><span class="p">(</span> <span class="n">fname</span><span class="p">,</span> <span class="n">dmatrix</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is just a short cut for read_graph(fname, dmatrix=..., orlib=True).</span>
+<span class="sd">    However only two values are returned, the number p and the graph (or </span>
+<span class="sd">    distance matrix).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">Gd</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">read_graph</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">dmatrix</span><span class="o">=</span><span class="n">dmatrix</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">Gd</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,695 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.plane.weber_cg &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.plane.weber_cg</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.plane.weber_cg</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module plane.weber_cg of package pyloa:</span>
+<span class="sd">    Column generation for solving the multi-source Weber problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.loc_alloc</span><span class="w"> </span><span class="kn">import</span> <span class="n">locAlloc</span><span class="p">,</span> <span class="n">pmedian_heuristic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.weber</span><span class="w"> </span><span class="kn">import</span> <span class="n">limitedDist</span>
+
+<span class="n">__optTol</span> <span class="o">=</span> <span class="mf">1.0E-04</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Optimality tolerance. The column generation is stopped when the</span>
+<span class="sd">relative gap between lower bound and the master&#39;s objective value</span>
+<span class="sd">is no larger than this value.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="Pricing">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Pricing">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Pricing</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class handling the pricing problem</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">use_mip</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the class.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Y : mx2 numpy array of float</span>
+<span class="sd">            Coordinates of the customer points</span>
+<span class="sd">        w : numpy array of float or int </span>
+<span class="sd">            The customer weights.</span>
+<span class="sd">        use_mip : bool </span>
+<span class="sd">            If True, the pricing problem is solved as</span>
+<span class="sd">            2nd order cone (quadratically constraint MIP)</span>
+<span class="sd">            using a MIP solver. Otherwise, the limited</span>
+<span class="sd">            distance Weber problem is solved using Drezner&#39;s</span>
+<span class="sd">            algorithm. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span> <span class="o">=</span> <span class="n">Y</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Coordinates of the customer points&quot;&quot;&quot;</span> 
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="o">=</span> <span class="n">w</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Weights of the customer points&quot;&quot;&quot;</span> 
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__prices</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dual variables of the covering constraints and</span>
+<span class="sd">        the dual variable of the cardinality constraint&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;MIP model of the pricing problem&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__X</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Coordinates of the facility in a solution&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__z</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Binary variables for selecting the customer subset&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__objf</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The model&#39;s objective function (as a constraint)&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__zero</span> <span class="o">=</span> <span class="mf">1.0E-05</span>
+                
+        <span class="k">if</span> <span class="n">use_mip</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__init_price</span><span class="p">()</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_price</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up the pricing subproblem as a quadratically</span>
+<span class="sd">        constrained MIP.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span>  
+        <span class="n">dmax</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;Pricing subproblem&#39;</span><span class="p">)</span>
+    
+        <span class="n">X</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="mi">2</span><span class="p">,</span> <span class="n">lb</span><span class="o">=-</span><span class="n">mod</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span> 
+        <span class="n">z</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    
+        <span class="c1"># Continuous variables for the distance to the facility</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">m</span> <span class="p">)</span>
+    
+        <span class="c1"># Continuous variables for the difference of the coordinates</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">lb</span><span class="o">=-</span><span class="n">mod</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span> <span class="c1"># X(0)-Y(i,0)</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">m</span><span class="p">,</span> <span class="n">lb</span><span class="o">=-</span><span class="n">mod</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span> <span class="c1"># X(1)-Y(i,1)</span>
+    
+        <span class="c1"># Continuous variable equaling ||X-Y(i)||*z(i)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">m</span> <span class="p">)</span>
+
+        <span class="c1"># Constraints: X(0) - Y(i,0)==dx(i) and X(1) - Y(i,1)==dy(i)</span>
+        <span class="n">mod</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>  
+        <span class="n">mod</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">dy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>  
+    
+        <span class="c1"># Quadratic constraints to model the distance to the facility    </span>
+        <span class="n">mod</span><span class="o">.</span><span class="n">addQuadConstrs</span><span class="p">(</span> <span class="n">dx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">dy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">&lt;=</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    
+        <span class="c1"># Constraints to ensure delta(i)=d(i) if z(i)=1</span>
+        <span class="n">mod</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">dmax</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">delta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    
+        <span class="c1"># Objective function is \sum_i w(i)*delta(i) - lambda(i)*z(i).</span>
+        <span class="c1"># As we, the time being, do not know lambda, we set each lambda(i)</span>
+        <span class="c1"># temporarily to 1. Later, we have to change the objective coefficients</span>
+        <span class="c1"># of variables z(i). As this cannot be done with GuRoBi, we include</span>
+        <span class="c1"># the objective via an additional variable Obj and the constraint</span>
+        <span class="c1"># Obj &gt;= w*delta - lambda*z.</span>
+        <span class="n">Obj</span>  <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span> <span class="n">lb</span> <span class="o">=</span> <span class="o">-</span><span class="n">mod</span><span class="o">.</span><span class="n">infinity</span> <span class="p">)</span>
+        <span class="n">objf</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span> <span class="n">mod</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">delta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="o">-</span> <span class="n">mod</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="n">Obj</span><span class="p">,</span>\
+                                  <span class="n">return_constr</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>        
+        <span class="n">mod</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">Obj</span> <span class="p">)</span>
+    
+        <span class="n">mod</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="n">mod</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="kc">False</span> 
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__objf</span> <span class="o">=</span> <span class="n">mod</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">objf</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">__miqcp_price_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the pricing problem as as MIQCP and</span>
+<span class="sd">        return the reduced cost and the &#39;column&#39;</span>
+<span class="sd">        showing smallest reduced cost.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">prices</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__prices</span>    
+        <span class="n">mu</span> <span class="o">=</span> <span class="o">-</span><span class="n">prices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># dual variable cardinality constraint</span>
+    
+        <span class="c1"># Adjust objective coefficients of the z-variables</span>
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span> <span class="n">z</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="o">-</span><span class="n">prices</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">chgCoeffs</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__objf</span><span class="p">,</span> <span class="n">coeffs</span> <span class="p">)</span>
+     
+        <span class="c1"># Let the MIP solver solve the pricing problem</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">M</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: No solution to the pricing problem&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span>
+    
+        <span class="c1"># Get smallest reduced cost</span>
+        <span class="n">best_bnd</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">ObjBound</span> <span class="o">+</span> <span class="n">mu</span>
+    
+        <span class="c1"># Extract the selected subset from solution to pricing problem</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">customers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.5</span> <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">column</span><span class="p">[</span><span class="s1">&#39;subset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="n">customers</span> <span class="p">)</span>
+        <span class="n">column</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+        <span class="n">column</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">ObjVal</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">prices</span><span class="p">[</span><span class="n">customers</span><span class="p">]</span> <span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">best_bnd</span><span class="p">,</span> <span class="n">column</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">__drezner_price_out</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the pricing problem by solving a Weber problem with </span>
+<span class="sd">        limited distances using Drezner&#39;s algorithm. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prices</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__prices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> 
+        <span class="c1"># Remove customer points having zero prices</span>
+        <span class="n">custs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">prices</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">__zero</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">lobj</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">limitedDist</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">custs</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">custs</span><span class="p">],</span> <span class="n">prices</span><span class="p">[</span><span class="n">custs</span><span class="p">]</span><span class="o">/</span><span class="n">w</span><span class="p">[</span><span class="n">custs</span><span class="p">],</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">)</span>
+        <span class="n">redcst</span> <span class="o">=</span> <span class="n">lobj</span> <span class="o">-</span> <span class="n">prices</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="c1"># Note that \mu = -prices[-1]</span>
+        <span class="c1"># Subset of customers is all i of weighted distance not exceeding the price</span>
+        <span class="n">customers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">prices</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="n">cost</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">customers</span> <span class="p">)</span>
+        <span class="n">column</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">column</span><span class="p">[</span><span class="s1">&#39;subset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">customers</span>
+        <span class="n">column</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span>
+        <span class="n">column</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span> 
+        
+        <span class="k">return</span> <span class="n">redcst</span><span class="p">,</span> <span class="n">column</span>
+    
+    <span class="c1">#---------------------------------------------</span>
+        
+<div class="viewcode-block" id="Pricing.price_out">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Pricing.price_out">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">price_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solves the pricing problem and returns the smallest</span>
+<span class="sd">        reduced cost and corresponding column&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__drezner_price_out</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__miqcp_price_out</span><span class="p">()</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="Pricing.end">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Pricing.end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Free up space associated with the MIP pricing model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the current pricing vector/array.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__prices</span> 
+    
+    <span class="nd">@prices</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">prices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the price vector/array to the array value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__prices</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="Master">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Master">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Master</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for handling the master problem</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;on&#39;</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the class. Obtain in particular an initial set</span>
+<span class="sd">        of columns and set up the model of the master problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        p : int  </span>
+<span class="sd">            Number of facilities to locate</span>
+<span class="sd">        Y : mx2 numpy array of float</span>
+<span class="sd">            Coordinates of the customer points</span>
+<span class="sd">        w : numpy array of float or int </span>
+<span class="sd">            The customer weights.</span>
+<span class="sd">        screen : str </span>
+<span class="sd">            If &#39;on, log output when solving the pricing problem</span>
+<span class="sd">            is send to stdout. Otherwise, let screen=&#39;off&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span> <span class="o">=</span> <span class="n">Y</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Coordinates of the customer points&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="o">=</span> <span class="n">w</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Weights of the customer points&quot;&quot;&quot;</span>
+                  
+        <span class="bp">self</span><span class="o">.</span><span class="n">__y</span> <span class="o">=</span> <span class="kc">None</span>  
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The master problem&#39;s decision variables&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__p</span> <span class="o">=</span> <span class="n">p</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of facilities to locate&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__constr</span><span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy array of the master problem&#39;s constraints. </span>
+<span class="sd">        Constraints 0 to m-1 are the covering constraints,</span>
+<span class="sd">        the last constraint is the cardinality contraint.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__intTol</span> <span class="o">=</span> <span class="mf">1.0E-04</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tolerance for variables to be integer&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__itr</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of times a restricted linear master is solved&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span> <span class="o">=</span> <span class="n">screen</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Display some logout to stdout if screen is on&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set of columns (customer subsets) generated&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The MIP/LP model of the master problem&quot;&quot;&quot;</span>
+        
+        <span class="c1"># Obtain set of initial columns from heuristic solutions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__get_initial_columns</span><span class="p">(</span> <span class="p">)</span>
+        
+        <span class="c1"># Initialize the master problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init_master</span><span class="p">()</span>
+        
+    <span class="c1">#----------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__add_subsets</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add the columns corresponding to the solution (X,a) to </span>
+<span class="sd">        the current list of columns. Thereby X is the coordinates </span>
+<span class="sd">        of the p facilities and a the customer assignment to these </span>
+<span class="sd">        p facilities.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> 
+        <span class="n">ass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__p</span> <span class="p">):</span>
+            <span class="n">j_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span> <span class="n">ass</span><span class="o">==</span><span class="n">j</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
+            <span class="c1"># Check if subset already in the list</span>
+            <span class="n">in_list</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">:</span>
+                <span class="n">a_set</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;subset&#39;</span><span class="p">]</span>
+                <span class="n">in_list</span> <span class="o">=</span> <span class="n">a_set</span> <span class="o">==</span> <span class="n">j_set</span>
+                <span class="k">if</span> <span class="n">in_list</span><span class="p">:</span> <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_list</span><span class="p">:</span>
+                <span class="n">new_col</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">new_col</span><span class="p">[</span><span class="s1">&#39;subset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">j_set</span>
+                <span class="n">new_col</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> 
+                <span class="n">new_col</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">j_set</span> <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_col</span><span class="p">)</span>
+        
+    <span class="c1">#----------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_initial_columns</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtain a collection of initial columns (= customer subsets)</span>
+<span class="sd">        from heuristic solutions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finding initial columns using location-allocation </span><span class="si">{0:d}</span><span class="s1"> times&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">locAlloc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__add_subsets</span><span class="p">(</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span> <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Applying p-median heuristic for finding further columns.&quot;</span><span class="p">)</span>
+            <span class="n">screen</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span> <span class="k">else</span> <span class="s1">&#39;off&#39;</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pmedian_heuristic</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__add_subsets</span><span class="p">(</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span> <span class="p">)</span> 
+
+    <span class="c1">#----------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_master</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up the initial master problem using the initial columns. Model</span>
+<span class="sd">        thereby the problem as a set covering problem. Return then</span>
+<span class="sd">        the model. Later we need to access the objective function, which</span>
+<span class="sd">        can be done using model.getObjective(). As there is only one</span>
+<span class="sd">        type of variables, we can also access them via model functions</span>
+<span class="sd">        model.getVars(). Similar, we can obtain all (linear) constraints</span>
+<span class="sd">        using model.getConstraints(). Note that the first m constraints</span>
+<span class="sd">        are covering constraints. The last constraints limits the number</span>
+<span class="sd">        of customer subsets to be no larger than p.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span>
+        <span class="n">ncols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;Master problem&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__y</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">ncols</span> <span class="p">)</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">cols</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+   
+        <span class="c1"># Include the covering constraints for each customer</span>
+        <span class="n">m</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">)</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;subset&#39;</span><span class="p">],</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">cnstr</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">row</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> \
+                                  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)),</span> <span class="n">return_constr</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+
+        <span class="c1"># Add constraint on number of facilities. Note that the</span>
+        <span class="c1"># dual variable to a &lt;=-constraint should be non-positive #</span>
+        <span class="c1"># when minimizing the objective function,</span>
+        <span class="n">cnstr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__p</span><span class="p">,</span> <span class="n">return_constr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="p">)</span>
+        
+        <span class="n">M</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="kc">False</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__constr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">cnstr</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="n">M</span> 
+
+    <span class="c1">#----------------------------------------------</span>
+
+<div class="viewcode-block" id="Master.add_column">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Master.add_column">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_column</span> <span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">column</span>  <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a generated column (i.e. customer subset) </span>
+<span class="sd">        as a column to the master problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">column</span><span class="p">[</span><span class="s1">&#39;subset&#39;</span><span class="p">])</span> <span class="c1"># covering constraints for the set</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">new_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">column</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">],</span> <span class="n">constr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__constr</span><span class="p">[</span><span class="n">rows</span><span class="p">],</span> \
+                                  <span class="n">coeffs</span><span class="o">=</span><span class="mf">1.0</span> <span class="p">)</span>  
+        <span class="n">ncols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">[</span><span class="n">ncols</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_y</span></div>
+
+             
+    <span class="c1">#----------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_sol</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform the solution to the integer master program to</span>
+<span class="sd">        a solution for the multi-source Weber problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">objv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">ObjVal</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.5</span> <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">Xsol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">selected</span><span class="p">):</span>
+            <span class="n">cust_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;subset&#39;</span><span class="p">])</span>
+            <span class="n">a</span><span class="p">[</span><span class="n">cust_lst</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span>
+    
+        <span class="k">return</span> <span class="n">objv</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span>   
+        
+    <span class="c1">#----------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__master_integer</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if last solution to the linear master problem is integer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">one</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">__intTol</span>
+        <span class="n">fract</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>\
+                             <span class="n">precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__intTol</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span> <span class="p">)</span> <span class="o">&lt;</span> <span class="n">one</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">fract</span>
+
+    <span class="c1">#----------------------------------------------</span>
+    
+<div class="viewcode-block" id="Master.solve">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Master.solve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the current LP master program. Return</span>
+<span class="sd">        the master program&#39;s objective value and the</span>
+<span class="sd">        dual values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__itr</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">):</span>
+            <span class="n">prices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">get_dual_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__constr</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">ObjVal</span><span class="p">,</span> <span class="n">prices</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>     </div>
+
+         
+    <span class="c1">#----------------------------------------------</span>
+    
+<div class="viewcode-block" id="Master.solve_as_IP">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Master.solve_as_IP">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_as_IP</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the final master as an integer program.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__master_integer</span><span class="p">():</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_sol</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span> 
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">lb</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">ub</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">set_vartype</span><span class="p">(</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solving the integer master program&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_sol</span><span class="p">(</span>  <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merde alors! No integer master solution&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span></div>
+
+    
+    <span class="c1">#----------------------------------------------</span>
+    
+<div class="viewcode-block" id="Master.end">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Master.end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Free the LP/MIP model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
+
+        
+    <span class="c1">#----------------------------------------------</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">ncols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of columns currently in the master</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">itr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of times master problem has been solved.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__itr</span> </div>
+
+        
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="set_optTol">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.set_optTol">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_optTol</span><span class="p">(</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set/return the relative optimality tolerance to be applied.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">__optTol</span>
+    
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">__optTol</span>
+    <span class="k">if</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span> <span class="n">__optTol</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="colgen">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.colgen">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">colgen</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">mip_pricing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve multi-source Weber problem by means of column generation.</span>
+<span class="sd">        </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : intLB, objv, Xsol, a, itr</span>
+<span class="sd">        number of facilities to locate (1 &lt; p &lt; #customers) </span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        m customer points in Euclidian plane</span>
+<span class="sd">    w : None or numpy array of m float or int</span>
+<span class="sd">        positive customer weights (if None, all weights are set to 1)</span>
+<span class="sd">    mip_pricing : bool</span>
+<span class="sd">        If True, the pricing problem is solved using as a MIQCP using</span>
+<span class="sd">        the MIP solver. Otherwise, it is solved as a Weber problem with </span>
+<span class="sd">        limited distances by means of Drezner&#39;s algorithm.</span>
+<span class="sd">    max_iter : int or float</span>
+<span class="sd">        Maximal number of column generation iterations (solving a</span>
+<span class="sd">        restricted linear master problem) to be applied.</span>
+<span class="sd">    screen: </span>
+<span class="sd">        If &#39;on&#39;, intermediate output on the state of the computations </span>
+<span class="sd">        is printed to stdout.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    objv : float</span>
+<span class="sd">        objective value of the best solution found</span>
+<span class="sd">    lbnd : float</span>
+<span class="sd">        lower bound from the LP relaxation of the set-covering problem</span>
+<span class="sd">    Xsol : px2 numpy array of float</span>
+<span class="sd">        the p facility&#39;s coordinates</span>
+<span class="sd">    a : list of int</span>
+<span class="sd">        the assignment of customer points to the facilities,</span>
+<span class="sd">        i.e., a[i]=j if point Y[i] is assigned to facility at </span>
+<span class="sd">        location X[j]</span>
+<span class="sd">    itr : int</span>
+<span class="sd">        number of iterations performed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">talk</span> <span class="o">=</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;on&#39;</span>
+
+    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Column generation for multi-source Weber -- Initializing&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mip_pricing</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Using a MIQCP to price out columns.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Using Drezner&#39;s algorithm to price out columns.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create an instance of the pricing problem class</span>
+    <span class="n">price_prob</span> <span class="o">=</span> <span class="n">Pricing</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">use_mip</span><span class="o">=</span><span class="n">mip_pricing</span> <span class="p">)</span>
+   
+    <span class="c1"># Intialize the master problem</span>
+    <span class="n">master</span> <span class="o">=</span> <span class="n">Master</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span> <span class="p">)</span> 
+    
+    <span class="c1"># Do the actual column generation</span>
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> 
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Column generation for multi-source Weber -- Iterating&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter   columns   current_LB   lower_bound   upper_bound   reduced_cost&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span>
+            
+    
+    <span class="n">LB</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># lower bound on the linear master problem&#39;s objective</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Solve master problem</span>
+        <span class="n">UB</span><span class="p">,</span> <span class="n">price_prob</span><span class="o">.</span><span class="n">prices</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">UB</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Failed to solve master problem&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="c1"># Solve pricing problem</span>
+        <span class="n">rc_lb</span><span class="p">,</span> <span class="n">column</span> <span class="o">=</span> <span class="n">price_prob</span><span class="o">.</span><span class="n">price_out</span><span class="p">()</span>
+        <span class="c1"># Adjust the lower bound</span>
+        <span class="n">cur_LB</span> <span class="o">=</span> <span class="n">UB</span> <span class="o">+</span> <span class="n">p</span><span class="o">*</span><span class="n">rc_lb</span> 
+        <span class="k">if</span> <span class="n">cur_LB</span> <span class="o">&gt;</span> <span class="n">LB</span><span class="p">:</span> <span class="n">LB</span> <span class="o">=</span> <span class="n">cur_LB</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="n">UB</span> <span class="o">-</span> <span class="n">LB</span><span class="p">)</span><span class="o">/</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">LB</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">__optTol</span><span class="p">:</span> <span class="k">break</span> 
+        <span class="k">if</span> <span class="n">master</span><span class="o">.</span><span class="n">itr</span> <span class="o">&gt;=</span> <span class="n">max_iter</span><span class="p">:</span> <span class="k">break</span>
+        <span class="c1"># Add generated column to master problem</span>
+        <span class="n">master</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
+        <span class="c1"># Display state of the computations   </span>
+        <span class="k">if</span> <span class="n">talk</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1">   </span><span class="si">{1:7d}</span><span class="s1">   </span><span class="si">{2:10.2f}</span><span class="s1">   </span><span class="si">{3:11.2f}</span><span class="s1">   </span><span class="si">{4:11.2f}</span><span class="s1">   </span><span class="si">{5:12.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>\
+                <span class="n">master</span><span class="o">.</span><span class="n">itr</span><span class="p">,</span> <span class="n">master</span><span class="o">.</span><span class="n">ncols</span><span class="p">,</span> <span class="n">cur_LB</span><span class="p">,</span> <span class="n">LB</span><span class="p">,</span><span class="n">UB</span><span class="p">,</span> <span class="n">rc_lb</span><span class="p">)</span> <span class="p">)</span>
+             
+    <span class="c1"># Release the model for the pricing problem. No more needed</span>
+    <span class="n">price_prob</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+    
+    <span class="c1"># Solve the master as an integer program </span>
+    <span class="n">objv</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">solve_as_IP</span><span class="p">()</span>
+    
+    <span class="c1"># Release master IP model</span>
+    <span class="n">master</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">LB</span><span class="p">,</span> <span class="n">objv</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">master</span><span class="o">.</span><span class="n">itr</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

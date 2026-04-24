@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.net.pcenter &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.net.pcenter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.net.pcenter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module net.pcenter of package pyloa:</span>
+<span class="sd">    Methods for solving the vertex p-center problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.net.netprob</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetProblem</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="PCenter">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.pcenter.PCenter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PCenter</span><span class="p">(</span> <span class="n">NetProblem</span> <span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">fname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dstmat</span><span class="o">=</span><span class="s1">&#39;matrix&#39;</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                  <span class="n">dmax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates an instance of the class PCenter.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------   </span>
+<span class="sd">        see base class NetProblem in module pyloa.net_prob for a description</span>
+<span class="sd">        of the parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="n">dstmat</span><span class="o">=</span><span class="n">dstmat</span><span class="p">,</span> <span class="n">orlib</span><span class="o">=</span><span class="n">orlib</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+                       
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Largest weighted distance of a customer to a facility in a solution&quot;&quot;&quot;</span>
+                    
+        <span class="bp">self</span><span class="o">.</span><span class="n">__epsi</span> <span class="o">=</span> <span class="mf">1.0E-05</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tolerance value&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__x_continuous</span> <span class="o">=</span> <span class="kc">True</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if allocation variables are treated as continuous variables&quot;&quot;&quot;</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__set_solution</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">objv</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Register solution with facilities from S</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="n">S</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assigned</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_assigned</span><span class="p">(</span> <span class="n">S</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">objv</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">w_dists</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span><span class="p">(</span> <span class="n">S</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="n">w_dists</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">w_dists</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facilities</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">objv</span> 
+       
+    <span class="c1">#---------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__open_all</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns solution to if all facility nodes are opened.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">))</span> <span class="p">)</span>
+ 
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__one_center</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the optimal 1-vertex center</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">([((</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">),</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">([</span><span class="n">j</span><span class="p">])</span>      
+
+<span class="c1">#---------------------------------------------</span>
+     
+    <span class="k">def</span><span class="w"> </span><span class="nf">__trad_pcenter</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">keep_model</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Formulate vertex p-center in a traditional way as a MILP </span>
+<span class="sd">        and solve it by means of a MIP solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> 
+        <span class="n">M</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;P-center problem (traditional)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">M</span> 
+        
+        <span class="c1"># Allocation/assignment variables</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x_continuous</span> <span class="k">else</span> <span class="n">M</span><span class="o">.</span><span class="n">addVarMatrix</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    
+        <span class="c1"># Location variables</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">n</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span> <span class="p">)</span>
+    
+        <span class="c1"># Variable for the radius</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVar</span><span class="p">()</span>
+    
+        <span class="c1"># Assignment constraints    </span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span><span class="o">==</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+                           
+        <span class="c1"># No assignment to a non-center node</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">)</span>
+    
+        <span class="c1"># Number of center nodes</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">y</span> <span class="p">)</span> <span class="o">==</span> <span class="n">p</span> <span class="p">)</span>
+    
+        <span class="c1"># Constraints to model the radius of a solution</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">r</span> <span class="o">&gt;=</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    
+        <span class="c1"># Objective function</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">r</span> <span class="p">)</span>
+                                 
+        <span class="c1"># Solve model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_starttime</span><span class="p">(</span> <span class="p">)</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> 
+        <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">ObjBound</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_comptime</span><span class="p">(</span> <span class="n">mip_time</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">(</span> <span class="nb">list</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="n">y</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>\
+                                 <span class="n">M</span><span class="o">.</span><span class="n">ObjVal</span> <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">keep_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">else</span><span class="p">:</span>      
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+
+    <span class="c1">#---------------------------------------------</span>
+   
+    <span class="k">def</span><span class="w"> </span><span class="nf">__get_wdist_list</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return sorted list of different weighted distance values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span> <span class="p">)</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="n">D</span> <span class="p">)</span>
+     
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__elloumi_MIP</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">keep_model</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use Elloumi et al.&#39;s formulation of the vertex p-center and solve it by</span>
+<span class="sd">        means of a MIP solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> 
+       
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span> 
+        <span class="n">M</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s1">&#39;P-center problem (Elloumi)&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">M</span>
+    
+        <span class="c1"># Obtain sorted list of weighted distances</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_wdist_list</span><span class="p">(</span> <span class="p">)</span>
+   
+        <span class="c1"># &#39;Covering&#39; variables z</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x_continuous</span> <span class="k">else</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span><span class="n">K</span><span class="p">,</span><span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+        <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lb</span> <span class="o">=</span> <span class="mi">1</span> 
+        <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ub</span> <span class="o">=</span> <span class="mi">1</span>
+    
+        <span class="c1"># Location variables</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="n">n</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="s1">&#39;B&#39;</span> <span class="p">)</span>
+    
+        <span class="c1"># Number of center nodes</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">p</span> <span class="p">)</span>
+    
+        <span class="c1"># Covering constraints</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">(</span> <span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">C</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">1</span> \
+                          <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">K</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+                               
+        <span class="c1"># Objective function</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">-</span><span class="n">C</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">z</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">K</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+                                 
+        <span class="c1"># Solve model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_starttime</span><span class="p">(</span> <span class="p">)</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> 
+        <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span>  <span class="p">):</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">ObjBound</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_comptime</span><span class="p">(</span> <span class="n">mip_time</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="n">y</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        
+        <span class="k">if</span> <span class="n">keep_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">z</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">else</span><span class="p">:</span>      
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> 
+            
+    <span class="c1">#---------------------------------------------</span>
+       
+    <span class="k">def</span><span class="w"> </span><span class="nf">__build_scp_model</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">r</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up the MIP model of the linearly relaxed set </span>
+<span class="sd">        covering problem to be repeatedly solved in Elloumi</span>
+<span class="sd">        et al.&#39;s method. Parameter r is thereby the current</span>
+<span class="sd">        trial radius.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> 
+        <span class="n">M</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="s2">&quot;Set covering&quot;</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addVars</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="p">)</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">constr</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">addConstraints</span><span class="p">((</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span> \
+                                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)),</span> <span class="n">return_constr</span> <span class="o">=</span> <span class="kc">True</span> <span class="p">)</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">constr</span> <span class="o">=</span> <span class="n">constr</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">M</span>
+        
+    <span class="c1">#----------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__adjust_scp</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">scp</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adjust the covering constraints to the new radius r in the current</span>
+<span class="sd">        set covering model scp.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scp</span><span class="o">.</span><span class="n">constr</span><span class="p">):</span>
+            <span class="n">coeffs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span> <span class="n">scp</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+            <span class="n">scp</span><span class="o">.</span><span class="n">chgCoeffs</span><span class="p">(</span> <span class="n">c</span><span class="p">,</span> <span class="n">coeffs</span> <span class="p">)</span>
+            
+    <span class="c1">#----------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__sortLP</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">scp</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtain p-center solution from current solution, s, to the linear </span>
+<span class="sd">        set covering problem, scp, by opening the facilities showing </span>
+<span class="sd">        largest solution value of the corresponding location variable. </span>
+<span class="sd">        If this results in less than p open facilities, open additional </span>
+<span class="sd">        ones showing smallest LP reduced costs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="n">scp</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="n">scp</span><span class="o">.</span><span class="n">y</span> <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+        <span class="n">fac_lst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span>
+        <span class="k">while</span> <span class="n">y</span><span class="p">[</span><span class="n">fac_lst</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">&lt;</span> <span class="mf">1.0E-5</span><span class="p">:</span> <span class="n">j</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">:</span>
+            <span class="n">red_cst</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">reduced_costs</span><span class="p">(</span> <span class="n">scp</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="p">)</span>
+            <span class="n">fac_lst</span><span class="p">[</span><span class="n">j</span><span class="p">:]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fac_lst</span><span class="p">[</span><span class="n">j</span><span class="p">:],</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">k</span> <span class="p">:</span> <span class="n">red_cst</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">fac_lst</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span><span class="p">(</span><span class="n">S</span><span class="p">))</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">S</span>
+
+    <span class="c1">#----------------------------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__elloumi</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Implements Elloumi et al.&#39;s set covering based solution </span>
+<span class="sd">        method for the p-center problem. Phase 1 of the method </span>
+<span class="sd">        computes a lower bound on the minimal radius by solving </span>
+<span class="sd">        a sequence of linear set covering problems.Starting with </span>
+<span class="sd">        this lower bound, the second phase then obtains the</span>
+<span class="sd">        minimal radius and corresponding vertex p-center using a </span>
+<span class="sd">        binary search that in each iteration solves an (integer) </span>
+<span class="sd">        set covering problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>    
+        <span class="c1"># Sorted list of weighted distances</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_wdist_list</span><span class="p">(</span> <span class="p">)</span>
+    
+        <span class="c1"># First phase: Find lower bound on the minimal radius</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>       <span class="c1"># strict lower bound</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">C</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># upper bound on (non-integer) minimal radius</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>    <span class="c1"># upper bound on integer minimal radius</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">u</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="c1"># C[k] curent trial radius</span>
+    
+        <span class="n">scp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__build_scp_model</span><span class="p">(</span> <span class="n">C</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="p">)</span>
+ 
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">56</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Elloumi&#39;s method for solving the vertex p-center problem&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">56</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Phase   Iter   lower bound   upper bound   best radius&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">56</span><span class="p">)</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_starttime</span><span class="p">(</span> <span class="p">)</span>
+        <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># Solve the linear set covering problem</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">scp</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">):</span> <span class="k">break</span> 
+            <span class="n">num_facs</span> <span class="o">=</span> <span class="n">scp</span><span class="o">.</span><span class="n">ObjVal</span>  
+            <span class="k">if</span> <span class="n">num_facs</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">:</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="c1"># Apply simple heuristic to get a p-center solution</span>
+            <span class="n">objv</span><span class="p">,</span> <span class="n">facLst</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__sortLP</span><span class="p">(</span> <span class="n">scp</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="n">objv</span> <span class="o">&lt;</span> <span class="n">U</span><span class="p">:</span>
+                <span class="n">U</span> <span class="o">=</span> <span class="n">objv</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="n">facLst</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span> 
+                <span class="n">L</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">C</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:5d}</span><span class="s1">   </span><span class="si">{1:4d}</span><span class="s1">   </span><span class="si">{2:11.0f}</span><span class="s1">   </span><span class="si">{3:11.0f}</span><span class="s1">   </span><span class="si">{4:11.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">itr</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="n">u</span><span class="p">],</span><span class="n">U</span><span class="p">)</span> <span class="p">)</span>       
+            <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">u</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+            <span class="k">if</span> <span class="n">l</span><span class="o">+</span><span class="mi">1</span> <span class="o">==</span> <span class="n">u</span><span class="p">:</span> <span class="k">break</span>
+            <span class="c1"># Adjust the covering constraints to the new radius C[k]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__adjust_scp</span><span class="p">(</span> <span class="n">C</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">scp</span> <span class="p">)</span>       
+        
+        <span class="c1"># Second phase: Binary search for minimal radius r* over (C[l], U)</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="n">U</span><span class="p">)</span> <span class="k">if</span> <span class="n">U</span> <span class="o">&lt;</span> <span class="n">C</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="nb">len</span><span class="p">(</span><span class="n">C</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>    
+        <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+             
+        <span class="c1"># Upper cutoff value and lower stop value</span>
+        <span class="n">scp</span><span class="o">.</span><span class="n">upper_cutoff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epsi</span>
+        <span class="n">scp</span><span class="o">.</span><span class="n">lowerObjStop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> 
+        
+        <span class="c1"># Make all variables binary</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">scp</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">values</span><span class="p">():</span> <span class="n">scp</span><span class="o">.</span><span class="n">set_vartype</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">u</span><span class="p">:</span>
+            <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">u</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__adjust_scp</span><span class="p">(</span> <span class="n">C</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">scp</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">scp</span><span class="o">.</span><span class="n">optim</span><span class="p">():</span>
+                <span class="c1"># Due to the upper cut-off no solution of objective larger p possible</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">k</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">k</span>
+                <span class="n">U</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="n">u</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">scp</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span><span class="n">scp</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:5d}</span><span class="s1">   </span><span class="si">{1:4d}</span><span class="s1">   </span><span class="si">{2:11.0f}</span><span class="s1">   </span><span class="si">{3:11.0f}</span><span class="s1">   </span><span class="si">{4:11.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">itr</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="n">l</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="n">u</span><span class="p">],</span><span class="n">U</span><span class="p">)</span> <span class="p">)</span>
+      
+        <span class="n">scp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>      
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">56</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bound</span> <span class="o">=</span> <span class="n">U</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">facilities</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_comptime</span><span class="p">()</span>
+        
+    <span class="c1">#----------------------------------------------</span>
+    
+<div class="viewcode-block" id="PCenter.pcp_solve">
+<a class="viewcode-back" href="../../../pyloa.net.html#pyloa.net.pcenter.PCenter.pcp_solve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pcp_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Elloumi&#39;</span><span class="p">,</span> <span class="n">keep_model</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes a solution to the vertex p-center problem.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method : str </span>
+<span class="sd">            Determines the solution method to be employed:</span>
+<span class="sd">            </span>
+<span class="sd">            method = &#39;Elloumi&#39;</span>
+<span class="sd">                Use the set-covering based solution algorithm</span>
+<span class="sd">                suggested by Elloumi, Labbe and Pochet.</span>
+<span class="sd">            </span>
+<span class="sd">            method = &#39;MIP-Traditional&#39;</span>
+<span class="sd">                Use the traditional MIP formulation and solve it  </span>
+<span class="sd">                using a MIP solver. Allocation variables are declared </span>
+<span class="sd">                as continuous.</span>
+<span class="sd">                </span>
+<span class="sd">            method = &#39;IP-Traditional&#39;</span>
+<span class="sd">                Same as MIP-Traditional but allocation variables</span>
+<span class="sd">                are declared as binary.</span>
+<span class="sd">                </span>
+<span class="sd">            method = &#39;MIP-Elloumi&#39;</span>
+<span class="sd">                Solves Elloumi et al.&#39;s formulations where variables</span>
+<span class="sd">                z are declared as continuous.</span>
+<span class="sd">                </span>
+<span class="sd">            method = &#39;IP-Elloumi&#39;</span>
+<span class="sd">                Solves Elloumi et al.&#39;s formulations where variables</span>
+<span class="sd">                z are declared as binary.</span>
+
+<span class="sd">        keep_model : bool</span>
+<span class="sd">            If True, the MIP model is kept for later purposes,</span>
+<span class="sd">            otherwise destroyed after the computations. This option</span>
+<span class="sd">            only applies if a MIP solver is used as solver.    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__open_all</span><span class="p">(</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__one_center</span><span class="p">(</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">meth</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">meth</span> <span class="o">==</span> <span class="s1">&#39;elloumi&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__elloumi</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__x_continuous</span> <span class="o">=</span> <span class="s1">&#39;mip&#39;</span> <span class="ow">in</span> <span class="n">meth</span>      
+                <span class="k">if</span> <span class="s1">&#39;trad&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">:</span> 
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__trad_pcenter</span><span class="p">(</span><span class="n">keep_model</span><span class="o">=</span><span class="n">keep_model</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__elloumi_MIP</span><span class="p">(</span><span class="n">keep_model</span><span class="o">=</span><span class="n">keep_model</span><span class="p">)</span>    </div>
+</div>
+
+    
+    <span class="c1">#----------------------------------------------</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

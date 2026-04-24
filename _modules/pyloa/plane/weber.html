@@ -1,0 +1,490 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.plane.weber &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.plane.weber</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.plane.weber</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module plane.weber of package pyloa:</span>
+<span class="sd">    Methods for solving the Fermat-Weber problem.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclid</span><span class="p">,</span> <span class="n">all_circle_intersections</span>
+
+<span class="c1"># Optimality tolerance</span>
+<span class="n">_EPSILON</span> <span class="o">=</span> <span class="mf">1.0E-04</span>
+
+<span class="c1"># Tolerance to decide if current iterate falls on a customer point</span>
+<span class="n">_ZERO</span> <span class="o">=</span> <span class="mf">1.0E-4</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_trivial_weber</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return solution for at most two customer points&quot;&quot;&quot;</span>
+    <span class="c1"># Only 1 customer point</span>
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span> <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span>
+    <span class="c1"># Two customer points</span>
+    <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">return</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="k">return</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span>   
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_getGradient</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the gradient of current solution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : numpy array of two float specifying the current solution </span>
+<span class="sd">    Y : mx2 numpy array specifiying the m customer points</span>
+<span class="sd">    w : numpy array of m customer weights (int or float)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (1) Object value of current solution X</span>
+<span class="sd">    (2) Customer index on which current solution falls </span>
+<span class="sd">        (or -1 if X does not fall on any customer point)</span>
+<span class="sd">    (3) Maximum distance of a customer point to X</span>
+<span class="sd">    (4) Sum s(x) of modified weights w(i)/||X-Y(i)||</span>
+<span class="sd">    (5) Gradient</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Obtain distances to current location and the objective value</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">),</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">ObjVal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dist</span><span class="p">)</span>
+    <span class="n">dmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+
+    <span class="c1"># Obtain modified weights = weight/distance</span>
+    <span class="n">cIndex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+    <span class="n">dmin</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">cIndex</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dmin</span> <span class="o">&gt;</span> <span class="n">_ZERO</span><span class="p">:</span>
+        <span class="n">cIndex</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">wid</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">dist</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dist</span><span class="p">[</span><span class="n">cIndex</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">wid</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">dist</span>
+        <span class="n">wid</span><span class="p">[</span><span class="n">cIndex</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">dist</span><span class="p">[</span><span class="n">cIndex</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Compute gradient</span>
+    <span class="n">sx</span> <span class="o">=</span> <span class="n">wid</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">gradient</span> <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">sx</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">wid</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ObjVal</span><span class="p">,</span> <span class="n">cIndex</span><span class="p">,</span> <span class="n">dmin</span><span class="p">,</span> <span class="n">dmax</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">gradient</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_weiszfeld</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">Xlst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes optimal location X for a single Weber problem with </span>
+<span class="sd">    customer point locations Y and strictly positive customer </span>
+<span class="sd">    weights w.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : (numpy) array where each row i stores the 2-dimensional </span>
+<span class="sd">        vector Y(i) and Y(i) specifices customer i&#39;s coordinates.</span>
+<span class="sd">    w : (numpy) array of customer weights.</span>
+<span class="sd">    l : parameter &quot;lambda&quot; for adjusting the step lengths.</span>
+<span class="sd">    screen: If &#39;on&#39;, the result of the current iteration is printed </span>
+<span class="sd">            to &quot;stdout&quot;.</span>
+<span class="sd">    Xlst : If not None, then Xlst is assumed to be an empty list </span>
+<span class="sd">           on input. On output it will contain the list of the </span>
+<span class="sd">           solutions X=(x1,x2) generated in each iteration.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    (1) the optimal objective value, </span>
+<span class="sd">    (2) the optimal location as a numpy array of two float, </span>
+<span class="sd">    (3) the number of iterations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span> <span class="k">return</span> <span class="n">_trivial_weber</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span>
+      
+    <span class="n">screenOn</span> <span class="o">=</span> <span class="p">(</span><span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Objective value  x-coordinate  y-coordinate&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------&quot;</span><span class="p">)</span>
+
+    <span class="n">lam</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="mf">2.0</span><span class="p">)</span>
+    <span class="c1"># Center of gravity is starting point</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">objVal</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">stop</span><span class="p">:</span>
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">objVal</span><span class="p">,</span> <span class="n">cIndex</span><span class="p">,</span> <span class="n">_</span> <span class="p">,</span> <span class="n">dmax</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">gradient</span> <span class="o">=</span> <span class="n">_getGradient</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">gnrm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gradient</span><span class="p">)</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">lam</span> <span class="o">/</span> <span class="n">sx</span>
+        <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1"> </span><span class="si">{1:16.5f}</span><span class="s1"> </span><span class="si">{2:13.4f}</span><span class="s1"> </span><span class="si">{3:13.4f}</span><span class="s1">&#39;</span><span class="o">.</span>\
+                   <span class="nb">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span> <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">Xlst</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Xlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">cIndex</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># current iterate lies on customer point cIndex</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">gnrm</span> <span class="o">-</span> <span class="n">w</span><span class="p">[</span><span class="n">cIndex</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">_EPSILON</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stop</span><span class="p">:</span> <span class="n">step</span> <span class="o">*=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">w</span><span class="p">[</span><span class="n">cIndex</span><span class="p">]</span> <span class="o">/</span> <span class="n">gnrm</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stop</span><span class="p">:</span>
+            <span class="c1"># compute lower bound</span>
+            <span class="n">maxImprove</span> <span class="o">=</span> <span class="n">dmax</span> <span class="o">*</span> <span class="n">gnrm</span>
+            <span class="n">lowbnd</span> <span class="o">=</span> <span class="n">objVal</span> <span class="o">-</span> <span class="n">maxImprove</span>
+            <span class="n">stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">lowbnd</span> <span class="o">&gt;</span> <span class="n">_EPSILON</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">maxImprove</span><span class="o">/</span><span class="n">lowbnd</span> <span class="o">&lt;</span> <span class="n">_EPSILON</span><span class="p">)</span>
+            <span class="c1"># make the gradient step</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stop</span><span class="p">:</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="n">step</span> <span class="o">*</span> <span class="n">gradient</span>
+
+    <span class="k">return</span> <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span>
+
+<span class="c1">#------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_drezner</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">Xlst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies Drezner&#39;s method to compute the optimal facility&#39;s </span>
+<span class="sd">    location to the single Weber problem with customer point set Y </span>
+<span class="sd">    and customer weight vector w. All arguments (except l) are the </span>
+<span class="sd">    same as for function &quot;Weiszfeld&quot; above.</span>
+<span class="sd">    </span>
+<span class="sd">    Reference: Drezner, Z. (1992). A Note on the Weber Location </span>
+<span class="sd">    Problem. Annals of Operations Research 40:153–161.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span> <span class="k">return</span> <span class="n">_trivial_weber</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span> <span class="p">)</span>
+    
+    <span class="n">screenOn</span> <span class="o">=</span> <span class="p">(</span><span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter  Objective value  x-coordinate  y-coordinate&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------------&quot;</span><span class="p">)</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">objVal</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">m</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">stop</span><span class="p">:</span>
+        <span class="c1"># Compute gradient et al. at current point</span>
+        <span class="n">objVal</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">dmin</span><span class="p">,</span> <span class="n">dmax</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">gradient</span> <span class="o">=</span> <span class="n">_getGradient</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="n">gnrm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">gradient</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">screenOn</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:4d}</span><span class="s1"> </span><span class="si">{1:16.5f}</span><span class="s1"> </span><span class="si">{2:13.4f}</span><span class="s1"> </span><span class="si">{3:13.4f}</span><span class="s1">&#39;</span><span class="o">.</span> \
+                  <span class="nb">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span> <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">Xlst</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Xlst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">)</span> 
+
+        <span class="c1"># Check if eps-optimality is surely reached</span>
+        <span class="n">maximp</span> <span class="o">=</span> <span class="n">dmax</span> <span class="o">*</span> <span class="n">gnrm</span>
+        <span class="n">lowBnd</span> <span class="o">=</span> <span class="n">objVal</span> <span class="o">-</span> <span class="n">maximp</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="p">(</span><span class="n">lowBnd</span> <span class="o">&gt;</span> <span class="n">_EPSILON</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">maximp</span><span class="o">/</span><span class="n">lowBnd</span> <span class="o">&lt;</span> <span class="n">_EPSILON</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stop</span><span class="p">:</span> <span class="k">break</span>
+
+        <span class="c1"># If iterate falls on k-th customer point, check optimality</span>
+        <span class="c1"># and if not optimal perform Ostresh step</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">gnrm</span> <span class="o">-</span> <span class="n">w</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">_EPSILON</span><span class="p">:</span> <span class="k">break</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">sx</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">w</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">/</span><span class="n">gnrm</span><span class="p">)</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="n">step</span> <span class="o">*</span> <span class="n">gradient</span>
+        <span class="c1"># If not on a customer point, do a step of Drezner&#39;s method</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weiszfp</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="n">gradient</span><span class="o">/</span><span class="n">sx</span>
+            <span class="c1"># Get objective of Weiszfeld point &amp; smallest customer distance</span>
+            <span class="n">dWeisz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">((</span><span class="n">euclid</span><span class="p">(</span><span class="n">weiszfp</span><span class="p">,</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">),</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">weiszObj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">dWeisz</span><span class="p">)</span>
+            <span class="n">weiszDmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">dWeisz</span><span class="p">)</span>
+            <span class="c1"># Compute step length lambda as in Appendix of Chap.2 in the notes</span>
+            <span class="n">dstXWX</span> <span class="o">=</span> <span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">weiszfp</span><span class="p">)</span>
+            <span class="n">wdst</span> <span class="o">=</span> <span class="n">dstXWX</span> <span class="o">*</span> <span class="n">dstXWX</span> <span class="o">*</span> <span class="n">sx</span>
+            <span class="n">lam</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">wdst</span> <span class="o">/</span> <span class="p">(</span><span class="n">weiszObj</span> <span class="o">-</span> <span class="n">objVal</span> <span class="o">+</span> <span class="n">wdst</span><span class="p">)</span>
+            <span class="c1"># Correct the step size lambda if too large</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">dmin</span> <span class="o">&lt;</span> <span class="mf">0.01</span> <span class="p">):</span>
+                <span class="n">lam</span><span class="o">=</span><span class="mf">1.</span>
+            <span class="k">elif</span> <span class="n">dmin</span> <span class="o">&gt;</span> <span class="n">weiszDmin</span> <span class="o">+</span> <span class="n">_EPSILON</span><span class="p">:</span>
+                <span class="n">lam</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">dmin</span> <span class="o">/</span> <span class="p">(</span><span class="n">dmin</span> <span class="o">-</span> <span class="n">weiszDmin</span><span class="p">))</span>
+            <span class="c1"># Make a step of length lambda</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">-</span> <span class="p">(</span><span class="n">lam</span><span class="o">/</span><span class="n">sx</span><span class="p">)</span> <span class="o">*</span> <span class="n">gradient</span>
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span>
+                       
+<span class="c1">#----------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="solveWeber">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber.solveWeber">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">solveWeber</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">l</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;Drezner&#39;</span><span class="p">,</span><span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">Xlst</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves instances of the single Weber problem with customer </span>
+<span class="sd">    point set Y and customer weight vector w. </span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        Y[i] i stores the coordinates of the i-th customer point,</span>
+<span class="sd">        i = 0,...,m-1</span>
+<span class="sd">    w : numpy array of float or int</span>
+<span class="sd">        customer weights</span>
+<span class="sd">    l : float</span>
+<span class="sd">        Parameter for adjusting step length in Ostresh&#39;s method,</span>
+<span class="sd">        default value is 1, which is equivalent to Weiszfeld&#39;s method.</span>
+<span class="sd">    method : str</span>
+<span class="sd">        Solution method to apply, i.e. Weiszfeld, Ostresh or</span>
+<span class="sd">        Drezner. Note that parameter l only need to be supplied </span>
+<span class="sd">        for Ostresh&#39;s method and then should be different from 1.  </span>
+<span class="sd">    screen : str</span>
+<span class="sd">        If &#39;on&#39;, the result of the current iteration is printed to &quot;stdout&quot;</span>
+<span class="sd">    Xlst : None or an empty list</span>
+<span class="sd">        If not None, then Xlst is assumed to be an empyt list on input. On </span>
+<span class="sd">        output it will contain the list of the solutions X=(x1,x2) generated </span>
+<span class="sd">        in each iteration.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    obj : float</span>
+<span class="sd">        The objective value of the optimal solution</span>
+<span class="sd">    X : numpy array of two float</span>
+<span class="sd">        The optimal location of the facility</span>
+<span class="sd">    &quot;&quot;&quot;</span>        
+
+    <span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;weiszfeld&#39;</span> <span class="ow">or</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;ostresh&#39;</span><span class="p">:</span>
+        <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span> <span class="o">=</span> <span class="n">_weiszfeld</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">Xlst</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">itr</span> <span class="o">=</span> <span class="n">_drezner</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">Xlst</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------------------------------------------&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimal objective value = &quot;</span><span class="p">,</span><span class="n">objVal</span> <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Optimal location at &quot;</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Number of iterations    = &quot;</span><span class="p">,</span><span class="n">itr</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--------------------------------------------------&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">objVal</span><span class="p">,</span> <span class="n">X</span></div>
+
+
+<span class="c1">#----------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="limitedDist">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber.limitedDist">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">limitedDist</span> <span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solves the single Weber problem with limited distances, which</span>
+<span class="sd">    is to minimize the function g(X) where </span>
+<span class="sd">    </span>
+<span class="sd">          g(X) = \sum_i w(i) min{ || X-Y(i)||, D(i) }</span>
+<span class="sd">          </span>
+<span class="sd">    Reference: Drezner, Z. (1984). The Planar Two-Center and </span>
+<span class="sd">    Two-Median Problems. Transportation Science 8, 351–361.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : mx2 numpy array of float</span>
+<span class="sd">        Y[i] i stores the coordinates of the i-th customer point,</span>
+<span class="sd">        i = 0,...,m-1</span>
+<span class="sd">    w : numpy array of float or int</span>
+<span class="sd">        customer weights</span>
+<span class="sd">    max_dists : list or numpy array of float or int </span>
+<span class="sd">        max_dists[i] is the limited distance that applies for</span>
+<span class="sd">        customer point i.</span>
+<span class="sd">    screen : str</span>
+<span class="sd">        If &#39;on&#39;, the result of the current iteration is printed to &quot;stdout&quot;</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    objval : float</span>
+<span class="sd">         Objective value of the optimal solution</span>
+<span class="sd">    X : numpy array of two float</span>
+<span class="sd">        The coordinates of the optimal location</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    <span class="n">itr</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">talk</span> <span class="o">=</span> <span class="n">screen</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;on&#39;</span>
+    <span class="k">if</span> <span class="n">talk</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">40</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Iterat  Objective value  Best objective&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">40</span><span class="p">)</span>
+   
+    <span class="c1"># Objective function g(X) </span>
+    <span class="n">g</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span> <span class="p">:</span> <span class="nb">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="nb">min</span><span class="p">(</span><span class="n">euclid</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span><span class="n">max_dist</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    
+    <span class="c1"># best objective value and location    </span>
+    <span class="n">best_objv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span> 
+    <span class="n">X_best</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        
+    <span class="c1"># Dictionary of sets S for which Fermat-Weber problem already solved</span>
+    <span class="n">solved</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span> 
+    
+    <span class="c1"># Simple function checking if improved solution found</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_improve</span><span class="p">(</span> <span class="n">X</span> <span class="p">):</span>
+        <span class="k">nonlocal</span> <span class="n">best_objv</span><span class="p">,</span> <span class="n">itr</span>
+        <span class="n">itr</span> <span class="o">+=</span> <span class="mi">1</span> 
+        <span class="n">objv</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">objv</span> <span class="o">&lt;</span> <span class="n">best_objv</span><span class="p">:</span>
+            <span class="n">best_objv</span> <span class="o">=</span> <span class="n">objv</span> 
+            <span class="n">X_best</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:]</span>
+        <span class="k">if</span> <span class="n">talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:6d}</span><span class="s1">  </span><span class="si">{1:15.2f}</span><span class="s1">  </span><span class="si">{2:14.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">itr</span><span class="p">,</span> <span class="n">objv</span><span class="p">,</span> <span class="n">best_objv</span><span class="p">))</span>
+        
+    <span class="c1"># Function below checks if S in &quot;solved&quot; and if not adds it to &quot;solved&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">in_solved</span><span class="p">(</span> <span class="n">new_S</span> <span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_S</span><span class="p">)</span> 
+        <span class="n">SS</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">new_S</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="k">for</span> <span class="n">S</span> <span class="ow">in</span> <span class="n">solved</span><span class="p">[</span><span class="n">num</span><span class="p">]:</span> 
+                <span class="k">if</span> <span class="n">S</span> <span class="o">==</span> <span class="n">SS</span><span class="p">:</span> <span class="k">return</span> <span class="kc">True</span>  
+            <span class="n">solved</span><span class="p">[</span><span class="n">num</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SS</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">solved</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">SS</span><span class="p">]</span> 
+        <span class="k">return</span> <span class="kc">False</span> 
+       
+    <span class="c1"># Let C(i) be circle of radius max_dist[i] centered at Y[i].</span>
+    <span class="c1"># Function below returns true if C(j) included in C(i)</span>
+    <span class="n">circle_in_circle</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="p">:</span> <span class="n">max_dist</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">max_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> \
+                    <span class="n">euclid</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">+</span> <span class="n">max_dist</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">max_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    
+    <span class="c1"># Enumerate all sets S(i) where S(i) = {j : C(j) \subseteq C(i)}.</span>
+    <span class="c1"># Thereby C(i) is the circle of radius max_dist[i] with center Y[i].</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> <span class="n">circle_in_circle</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">check_improve</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">S</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_solved</span><span class="p">(</span> <span class="n">S</span> <span class="p">):</span>
+                <span class="n">_</span> <span class="p">,</span> <span class="n">X</span>  <span class="o">=</span> <span class="n">solveWeber</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">S</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">S</span><span class="p">]</span> <span class="p">)</span>
+                <span class="n">check_improve</span><span class="p">(</span> <span class="n">X</span> <span class="p">)</span>
+     
+    <span class="c1"># For each intersection point P(i,j) of circles C(i) and C(j) check the</span>
+    <span class="c1"># 4 sets S(i,j), S(i,j)\{i}, S(i,j)\{j} and S(i,j)\{i,j}, whereby</span>
+    <span class="c1"># S(i,j) comprises all indices k where C(k) contains P(i,j)</span>
+    <span class="n">in_circle</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">P</span><span class="p">,</span><span class="n">k</span> <span class="p">:</span> <span class="n">euclid</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Y</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">max_dist</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">+</span><span class="n">_ZERO</span> 
+    <span class="n">all_is_points</span> <span class="o">=</span> <span class="n">all_circle_intersections</span><span class="p">(</span> <span class="n">Y</span><span class="p">,</span> <span class="n">max_dist</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">all_is_points</span><span class="p">:</span> 
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">num</span> <span class="o">//</span> <span class="n">m</span><span class="p">,</span> <span class="n">num</span> <span class="o">%</span> <span class="n">m</span>  
+        <span class="k">for</span> <span class="n">P</span> <span class="ow">in</span> <span class="n">all_is_points</span><span class="p">[</span><span class="n">num</span><span class="p">]:</span>
+            <span class="c1"># Check set S(i,j) = {k : P(i,j) in C(k)}</span>
+            <span class="n">S</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">k</span> <span class="p">:</span> <span class="n">in_circle</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">k</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_solved</span><span class="p">(</span> <span class="n">S</span> <span class="p">):</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">solveWeber</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">S</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">S</span><span class="p">]</span> <span class="p">)</span> 
+                <span class="n">check_improve</span><span class="p">(</span> <span class="n">X</span> <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="c1"># Check set S(i,j)\{i} </span>
+            <span class="n">ii</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">S</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">i</span>
+            <span class="n">S_i</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_solved</span><span class="p">(</span> <span class="n">S_i</span> <span class="p">):</span>  
+                <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">solveWeber</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">S_i</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">S_i</span><span class="p">]</span> <span class="p">)</span>
+                <span class="n">check_improve</span><span class="p">(</span> <span class="n">X</span> <span class="p">)</span> 
+            <span class="c1"># Check set S(i,j)\{j}</span>
+            <span class="n">jj</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+            <span class="n">S</span><span class="p">[</span><span class="n">jj</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span>
+            <span class="n">S_j</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">in_solved</span><span class="p">(</span> <span class="n">S_j</span> <span class="p">):</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">solveWeber</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">S_j</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">S_j</span><span class="p">]</span> <span class="p">)</span>
+                <span class="n">check_improve</span><span class="p">(</span> <span class="n">X</span> <span class="p">)</span>
+            <span class="c1"># Check set S(i,j)\{i,j}</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">S_ij</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">in_solved</span><span class="p">(</span> <span class="n">S_ij</span> <span class="p">):</span>
+                    <span class="n">_</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">solveWeber</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">S_ij</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">S_ij</span><span class="p">]</span> <span class="p">)</span>
+                    <span class="n">check_improve</span><span class="p">(</span> <span class="n">X</span> <span class="p">)</span>
+                
+    <span class="k">return</span> <span class="n">best_objv</span><span class="p">,</span> <span class="n">X_best</span> </div>
+
+
+<span class="c1">#----------------------------------------------------------------</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=26111179" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyloa.plane package" href="pyloa.plane.html" />
+    <link rel="prev" title="PyLoa documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#planar-location">Planar location</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-input">Data input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#network-location">Network location</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Data input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
+<p><strong>pyloa</strong> (python location optimization algorithms) provides a number of methods
+for solving location problems in the plane and on a network as well as discrete facility location problems.</p>
+<p>Some of the implemented solution methods require the availability of a mixed integer programming solver. The time being,
+either GuRoBi (via gurobipy) or Cplex (via docplex) can be used to this end.</p>
+</section>
+<section id="planar-location">
+<h1>Planar location<a class="headerlink" href="#planar-location" title="Link to this heading"></a></h1>
+<p>The sub-package <em>pyloa.plane</em> provides the following methods for solving location
+problems in the Euclidian plane:</p>
+<ul class="simple">
+<li><p>Fermat-Weber problem using Weiszfeld’s, Ostresh’s and Drezner’s algorithms,</p></li>
+<li><p>Planar 1-center problem using Elzinga and Hearn’s, Welzl’s, and Charalambous’ algorithms as well as a primal-dual method and a second order cone formulation.</p></li>
+<li><p>Multi-source Weber problem using Cooper’s location-allocation method, the p-median heuristic, a second order cone mixed integer programming formulation, a simple variable neighbourhood search, and column generation. Implemented is also Ostresh’s method for solving 2-Weber problems exactly.</p></li>
+</ul>
+<section id="data-input">
+<h2>Data input<a class="headerlink" href="#data-input" title="Link to this heading"></a></h2>
+<p>Data input can be provided via a text/csv file. The file should at least provide columns for the two coordinates of each customer point. If available, longitude and latitude data can be provided instead. Optional further data include the customer’s positive weight, and an id/name/address of a customer point. A very simple example of a data file is the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">;</span><span class="n">Y</span><span class="p">;</span><span class="n">weight</span>
+<span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span>
+<span class="mi">5</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span>
+<span class="mi">12</span><span class="p">;</span><span class="mi">6</span><span class="p">;</span><span class="mi">1</span>
+<span class="mi">0</span><span class="p">;</span><span class="mi">10</span><span class="p">;</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>Another one providing longitude and latitude data is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">address</span><span class="p">;</span><span class="n">lat</span><span class="p">;</span><span class="n">long</span>
+<span class="n">Aarhus</span><span class="p">;</span><span class="mf">56.1496278</span><span class="p">;</span><span class="mf">10.2134046</span>
+<span class="n">Herning</span><span class="p">;</span><span class="mf">56.1379757</span><span class="p">;</span><span class="mf">8.9746623</span>
+<span class="n">Horsens</span><span class="p">;</span><span class="mf">55.8611696</span><span class="p">;</span><span class="mf">9.8444774</span>
+<span class="n">Aalborg</span><span class="p">;</span><span class="mf">57.0462626</span><span class="p">;</span><span class="mf">9.9215263</span>
+<span class="n">Esbjerg</span><span class="p">;</span><span class="mf">55.4664892</span><span class="p">;</span><span class="mf">8.4520751</span>
+<span class="n">Aabenraa</span><span class="p">;</span><span class="mf">55.0446228</span><span class="p">;</span><span class="mf">9.4209667</span>
+<span class="n">Sønderborg</span><span class="p">;</span><span class="mf">54.9089186</span><span class="p">;</span><span class="mf">9.7897999</span>
+</pre></div>
+</div>
+<p>Additionally, <a class="reference external" href="https://tsplib95.readthedocs.io/en/stable/">tsplib95</a> data files can be used for data input (just coordinates, weights are then assumed to equal 1).</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<p>The following Python snippet can be used to solve a planar location problem:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.planesolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlaneSolver</span>
+
+<span class="c1"># DataFile path and name of input data file</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">PlaneSolver</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)</span>
+
+<span class="c1"># Solve Fermat-Weber problem</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Solve multi-source Weber problem with 7 facility locations</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">7</span> <span class="p">)</span>
+
+<span class="c1"># Solve 1-center problem in plane</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+
+<span class="c1"># Solve p-center problem in plane as a 2nd order MIP</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;MIPQ&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Solve p-center problem in plane using location-allocation and VNS</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;VNS&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Retrieve solution information</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">facilities</span>            <span class="c1"># Array of the facilities&#39; coordinates</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">assigned</span>              <span class="c1"># Nearest facility (index) for each customer point</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">max_distance</span>          <span class="c1"># Largest unweighted distance to nearest facility</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">max_weighted_distance</span> <span class="c1"># Largest weighted distance to nearest facility</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">distance</span>              <span class="c1"># Sum of distances to nearest facility</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">weighted_distance</span>     <span class="c1"># Sum of weighted distance to nearest facility</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="network-location">
+<h1>Network location<a class="headerlink" href="#network-location" title="Link to this heading"></a></h1>
+<p>The sub-package <em>pyloa.net</em> provides methods for solving location problems on a network. Currently, methods for
+solving the following network problems are implemented.</p>
+<ul class="simple">
+<li><p>Maximal covering location problem by means of</p>
+<ul>
+<li><p>a simple greedy heuristic,</p></li>
+<li><p>an integer or mixed integer programming solver, and</p></li>
+<li><p>a Lagrangian heuristic based on subgradient optimization.</p></li>
+</ul>
+</li>
+<li><p>p-median problem using</p>
+<ul>
+<li><p>a MIP solver,</p></li>
+<li><p>a greedy method, or</p></li>
+<li><p>a Lagrangian heuristic based on subgradient optimization.</p></li>
+</ul>
+</li>
+<li><p>p-center problem using</p>
+<ul>
+<li><p>a MIP solver, or</p></li>
+<li><p>the method by Elloumi, Labbe and Pochet.</p></li>
+</ul>
+</li>
+</ul>
+<section id="id1">
+<h2>Data input<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>Data can be provided via a text file of same structure as those from <a class="reference external" href="https://people.brunel.ac.uk/~mastjjb/jeb/info.html">Beasley’s OR library</a>. It is also
+possible to directly load problem instances from the OR library’s web side.</p>
+<p>A small example is the following data of a maximal covering location problem:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">6</span> <span class="mi">11</span> <span class="mi">2</span>
+<span class="mi">1</span> <span class="mi">2</span> <span class="mi">8</span>
+<span class="mi">1</span> <span class="mi">3</span> <span class="mi">15</span>
+<span class="mi">1</span> <span class="mi">4</span> <span class="mi">10</span>
+<span class="mi">2</span> <span class="mi">3</span> <span class="mi">12</span>
+<span class="mi">2</span> <span class="mi">4</span> <span class="mi">7</span>
+<span class="mi">2</span> <span class="mi">5</span> <span class="mi">16</span>
+<span class="mi">3</span> <span class="mi">5</span> <span class="mi">9</span>
+<span class="mi">3</span> <span class="mi">6</span> <span class="mi">11</span>
+<span class="mi">4</span> <span class="mi">5</span> <span class="mi">11</span>
+<span class="mi">4</span> <span class="mi">6</span> <span class="mi">17</span>
+<span class="mi">5</span> <span class="mi">6</span> <span class="mi">13</span>
+<span class="mi">10</span> <span class="mi">10</span>
+<span class="mi">8</span> <span class="mi">10</span>
+<span class="mi">22</span> <span class="mi">10</span>
+<span class="mi">18</span> <span class="mi">10</span>
+<span class="mi">7</span> <span class="mi">10</span>
+<span class="mi">55</span> <span class="mi">10</span>
+</pre></div>
+</div>
+<p>The first line above gives the number of nodes, the number of edges and the number of facilities to locate. Thereafter, the
+end nodes and length of each edge follow. Finally, the weight and maximal radius of each customer node is given.</p>
+</section>
+<section id="id2">
+<h2>Usage<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>The following Python snippet illustrates how to use the package pyloa.net:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.net.netsolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetSolver</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">NetSolver</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)</span>
+
+<span class="c1"># Solve a maximal covering location problem</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">mcl_solve</span><span class="p">()</span>
+
+<span class="c1"># Solve a p-median problem</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">pmp_solve</span><span class="p">()</span>
+
+<span class="c1"># Solve a p-center problem</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">pcp_solve</span><span class="p">()</span>
+
+<span class="c1"># Solution information to any of the above can be retrieved using the following</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">facilities</span>   <span class="c1"># List of open facility nodes</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">assigned</span>     <span class="c1"># List of facilities to which each customer node is assigned</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">wdist</span>        <span class="c1"># Total weighted distance of customers to facilities</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">get_coverage</span> <span class="c1"># Returns total demand covered within maximal distances</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">radius</span>       <span class="c1"># Largest weighted distance of a customer to nearest facility</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="discrete-location">
+<h1>Discrete location<a class="headerlink" href="#discrete-location" title="Link to this heading"></a></h1>
+<p>This sub-package is undergoing a number of adjustments and will added later.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="PyLoa documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyloa.plane.html" class="btn btn-neutral float-right" title="pyloa.plane package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
