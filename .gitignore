@@ -1,0 +1,15 @@
+__pycache__/
+data/
+docs/
+jupyter/
+SCRIPTS/
+test_it.py
+pyloa/discrete/
+pyloa/mip/__pycache__/
+pyloa/net/__pycache__/
+pyloa/plane/__pycache__/
+pyloa/net/fpmp.py
+.project
+.pydevproject
+.settings/
+

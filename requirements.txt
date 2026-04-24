@@ -1,0 +1,9 @@
+numpy
+folium
+matplotlib
+networkx
+pandas
+geopy
+scikit-learn
+tsplib95
+
