@@ -1,6 +1,8 @@
 __pycache__/
 data/
-docs/
+docs/html/
+docs/source_when_complete/
+docs/Makefile.gh_pages
 jupyter/
 SCRIPTS/
 test_it.py
