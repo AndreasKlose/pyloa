@@ -6,4 +6,4 @@ pandas
 geopy
 scikit-learn
 tsplib95
-
+sphinx-rtd-theme
