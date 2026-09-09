@@ -410,12 +410,11 @@ class Master:
         """
         Solve the final master as an integer program.
         """
-        if self.__master_integer(): return self.__get_sol()
+        #if self.__master_integer(): return self.__get_sol()
         
         self.__model.log_output = self.__talk 
-        for y in self.__y.values():
-            y.lb, y.ub = 0, 1
-            self.__model.set_vartype( y, 'B' )
+        self.__model.change_upper_bounds( self.__y.values(), 1.0 )
+        self.__model.change_var_types( self.__y.values(), 'B' )
         if self.__talk: print("Solving the integer master program")
         if self.__model.optim( ): return self.__get_sol(  )
         if self.__talk: print("Merde alors! No integer master solution")

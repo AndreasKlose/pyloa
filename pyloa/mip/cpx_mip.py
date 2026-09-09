@@ -2,6 +2,7 @@
     Module mip.cpx_mip of package pyloa:
     Defines wrapper class for the docplex.mp.model Model class.
 """
+import numpy as np
 import cplex
 from docplex.mp.model import Model
 from docplex.mp.callbacks.cb_mixin import ModelCallbackMixin
@@ -87,9 +88,30 @@ class CPXmodel:
         
         Returns
         -------
-        List of solution values to the specified variables
+        solution values to the specified variables as a numpy array of float
         """
-        return self.__context.get_relaxation_point( dvars )
+        return np.fromiter(map(lambda v : self.__context.get_relaxation_point(v.index),dvars),dtype=float)
+    
+    #---------------------------------------------
+    
+    def cbGetNodeRealKeys( self, dvars, keys ):
+        """
+        Return the relaxation's solution for decision 
+        variables from a dictionary and the specified
+        dictionary keys.
+        
+        Parameters 
+        ----------
+        dvars : dict of decision variables
+        keys  : sequence of dictionary keys 
+        
+        Returns
+        -------
+        Solution values for the decision variables with the
+        given keys as a numpy array of float 
+        """
+        return np.fromiter(map(lambda k : self.__context.get_relaxation_point(dvars[k].index),keys),dtype=float)
+    
     
     #---------------------------------------------
     
@@ -161,6 +183,30 @@ class CPXmodel:
         c = self.__model.add_quadratic_constraints( constrs )
         if return_constr : return c
     
+    #---------------------------------------------
+        
+    def set_rhs(self, constr, rhs ):
+        """
+        Sets a constraint's "constr" right-hand side to the
+        value of "rhs".
+        
+        Parameters
+        ----------
+        constr : docplex.mp.constr.LinearConstraint
+            The constraint where to adjust the rhs.
+        rhs : int or float
+            The (new) right-hand side value
+        """
+        constr.rhs.constant = float(rhs)
+        
+    #---------------------------------------------
+    
+    def get_rhs(self, constr):
+        """
+        Return the linear constraint's constr right-hand side.
+         """  
+        return constr.rhs
+
     #---------------------------------------------
     
     def minimize (self, expr ):
@@ -390,6 +436,58 @@ class CPXmodel:
                     self.__model.continuous_vartype
         dvar.set_vartype(Vtype) 
     
+    #---------------------------------------------
+    
+    def change_var_types(self, dvars, vtype ):
+        """
+        Changes the type of a collection of variables.
+        (cf. docplex.mp.model.change_var_types)
+        
+        Parameters
+        ----------
+        dvars : iterable of decision variables
+            The variables for which the type should
+            be changed.
+        vtype : an iterable of variable types or 
+            the single type to which the variables
+            should be changed.
+        """
+        self.__model.change_var_types( dvars, vtype )
+        
+    #---------------------------------------------
+    
+    def change_upper_bounds( self, dvars, ub ):
+        """
+        Changes the upper bounds of a collection of variables.
+        (cf. docplex.mp.model.change_var_upper_bounds)
+        
+        Parameters
+        ----------
+        dvars : iterable of decision variables
+            The variables for which the type should
+            be changed.
+        ub : an iterable or a single number specifying
+            the new upper bound(s).
+        """
+        self.__model.change_var_upper_bounds( dvars, ub )
+
+#---------------------------------------------
+    
+    def change_lower_bounds( self, dvars, lb ):
+        """
+        Changes the lower bounds of a collection of variables.
+        (cf. docplex.mp.model.change_var_lower_bounds)
+        
+        Parameters
+        ----------
+        dvars : iterable of decision variables
+            The variables for which the type should
+            be changed.
+        lb : an iterable or a single number specifying
+            the new lower bound(s).
+        """
+        self.__model.change_var_lower_bounds( dvars, lb )
+
     #---------------------------------------------
         
     def sum(self, exprs ):
@@ -872,7 +970,7 @@ class CPXmodel:
         """Set Cplex parameter parameter.benders.strategy. Note
         that value = -1, switches Benders off."""
         if value in (-1, 0, 1, 2, 3):
-            self.__model.parameter.benders.strategy(value)
+            self.__model.parameters.benders.strategy(value)
         
     @property 
     def cb_MIPSOL(self):

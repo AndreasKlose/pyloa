@@ -2,6 +2,7 @@
     Module mip.GRBmodel of package pyloa:
     Defines wrapper class for the gurobipy Model class.
 """
+import numpy as np
 from gurobipy import Model, Column, GRB, quicksum as qsum
             
 #--------------------------------------------------------------------------
@@ -15,7 +16,7 @@ class GRBmodel:
         """
         Parameters
         ----------
-        name : str, optional
+        name : str, onal
             Name of the model, default is None
         """             
         self.__model = Model() if name is None else Model(name)
@@ -71,9 +72,29 @@ class GRBmodel:
         
         Returns
         -------
-        List of solution values to the specified variables
+        Solution values to the specified variables as numpy array of float
         """
-        return self.__model.cbGetNodeRel( dvars )
+        return np.fromiter(map(lambda v : self.__model.cbGetNodeRel(v),dvars),dtype=float)
+    
+    #---------------------------------------------
+    
+    def cbGetNodeRealKeys( self, dvars, keys ):
+        """
+        Return the relaxation's solution for decision 
+        variables from a dictionary and the specified
+        dictionary keys.
+        
+        Parameters 
+        ----------
+        dvars : dict of decision variables
+        keys  : sequence of dictionary keys 
+        
+        Returns
+        -------
+        Solution values for the decision variables with the
+        given keys as a numpy array of float 
+        """
+        return np.fromiter(map(lambda k : self.__model.cbGetNodeRel(dvars[k]),keys),dtype=float)
      
     #---------------------------------------------
     
@@ -151,7 +172,31 @@ class GRBmodel:
         """
         c = self.__model.addConstrs( constrs )
         if return_constr : return c
-      
+     
+    #---------------------------------------------
+    
+    def set_rhs(self, constr, rhs ):
+        """
+        Sets a constraints "constr" right-hand
+        side to a value of "rhs".
+        
+        Parameters
+        ----------
+        constr : gurobipy.Constr
+            The constraint where to adjust the rhs.
+        rhs : int or float
+            The (new) right-hand side value
+        """
+        constr.setAttr( 'rhs', rhs )
+        
+    #---------------------------------------------
+    
+    def get_rhs(self, constr):
+        """
+        Return the linear constraint's constr right-hand side.
+         """  
+        return constr.getAttr('rhs')
+    
     #---------------------------------------------
     
     def minimize (self, expr ):
@@ -373,13 +418,101 @@ class GRBmodel:
      
     #---------------------------------------------
     
+    def change_var_types(self, dvars, vtype ):
+        """
+        Changes the type of a collection of variables.
+        
+        Parameters
+        ----------
+        dvars : iterable of decision variables
+            The variables for which the type should
+            be changed.
+        vtype : an iterable of variable types or 
+            the single type to which the variables
+            should be changed.
+        """
+        try:
+            vitr = iter(vtype)
+            for v in dvars: v.VType = next(vitr)
+        except:
+            for v in dvars: v.VType = vtype 
+        
+    #---------------------------------------------
     
+    def change_upper_bounds( self, dvars, ub ):
+        """
+        Changes the upper bounds of a collection of variables.
+        (cf. docplex.mp.model.change_var_upper_bounds)
+        
+        Parameters
+        ----------
+        dvars : iterable of decision variables
+            The variables for which the type should
+            be changed.
+        ub : an iterable or a single number specifying
+            the new upper bound(s).
+        """
+        try:
+            u = iter(ub)
+            for v in dvars: v.ub = next(u)
+        except:
+            for v in dvars: v.ub = u 
+
+#---------------------------------------------
+    
+    def change_lower_bounds( self, dvars, lb ):
+        """
+        Changes the lower bounds of a collection of variables.
+        (cf. docplex.mp.model.change_var_lower_bounds)
+        
+        Parameters
+        ----------
+        dvars : iterable of decision variables
+            The variables for which the type should
+            be changed.
+        lb : an iterable or a single number specifying
+            the new lower bound(s).
+        """
+        try:
+            l = iter(lb)
+            for v in dvars: v.lb = next(l)
+        except:
+            for v in dvars: v.lb = l 
+
+    #---------------------------------------------
+
     def sum(self, exprs ):
         """
         Returns the sum of a list or iterable of 
         expressions using gurobipy's quicksum
         """
         return qsum(exprs)
+    
+    #---------------------------------------------
+    
+    def mip_tol(self, absgap=-1.0, relgap=-1.0, int_tol=-1.0, feas_tol=-1.0 ):
+        """
+        Set the MIP solver's mality absolute 
+        and relative optimality tolerances to
+        the values absgap and relgap, resp.
+        
+        Parameters
+        ----------
+        absgap, relgap, int_tol, feas_tol : float
+            Non-negative floating point numbers. If negative, the 
+            tolerance is not set. absgap and relgap are the
+            absolute and relative optimality tolerance, int_tol
+            is the tolerance for integrality, and feas_tol the
+            feasibility tolerance for the simplex method.
+        """
+        if not absgap < 0.0:
+            self.__model.params.MIPGapAbs = absgap
+        if not relgap < 0.0:
+            self.__model.params.MIPGap = relgap
+        if not int_tol < 0.0:
+            self.__model.params.IntFeasTol = int_tol
+        if not feas_tol < 0.0:
+            self.__model.params.FeasibilityTol = feas_tol
     
     #---------------------------------------------
     
@@ -733,7 +866,7 @@ class GRBmodel:
     @property 
     def mipEmphasis(self):
         """Return value of GuRoBi parameter MIPFocus"""
-        return self.__model.parameters.MIPFocus
+        return self.__model.params.MIPFocus
     
     @mipEmphasis.setter 
     def mipEmphasis(self, value ):
@@ -741,7 +874,7 @@ class GRBmodel:
         settings for Cplex: 0 = Balanced (default), 1 = Emphasise 
         feasibility, 2 = Emphasis optimality, 3 = Emphasis the bound,
         4 = HIDDENFEAS does not exist for GuRoBi."""
-        if value in (0,1,2,3): self.__model.parameters.mipFocus=value
+        if value in (0,1,2,3): self.__model.params.mipFocus=value
     
     @property 
     def lbHeur(self):

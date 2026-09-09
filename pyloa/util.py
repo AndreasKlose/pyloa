@@ -17,6 +17,105 @@ _ZERO = 1.0E-06
     
 #-----------------------------------------------------------------------
 
+def int_array( arr, dim=0, scale=1, down=True ):
+    """
+    Return arr if arr is a numpy array of an integer type. Otherwise, try
+    to make an integer array out of it.
+    
+    Parameters
+    ----------
+    arr : a number, an iterable, or a numpy array
+        The array/value to be set to an array.
+    dim : int
+        The dimension the array should have if arr is a single value.
+    scale : int
+        Positive integer by which non-integer floating point numbers
+        should be multiplied to obtain up-scaled integer values.
+    down : bool 
+        If True, a up-scaled non-integers are rounded down; otherwise
+        rounded to the nearest integer. 
+    
+    Returns
+    -------
+    * A numpy array of an integer type if arr is so.
+    * An int array of dimension dim if arr is a non-negative integral number.
+    * An int array of dimension dim and rounded values of arr*scale if arr 
+      is not an integral non-negative number. 
+    * An int array of same size as arr and rounded values arr if arr
+      is an numpy array of integral non-negative numbers.
+    * An int array of same size of arr and rounded values arr*scale if arr
+      is an numpy array of non-integral numbers.
+    * An int array of the values given by arr if arr is an iterable of 
+      non-negative integral non-negative numbers
+    * An int array of the rounded and up-scaled values given by arr if arr
+      is an iterable of non-integral numbers.
+    * None if arr is None or arr is or shows a negative number or is not numeric
+    """
+    if arr is None: return None
+    __round = np.floor if down else np.round 
+     
+    if isinstance( arr, np.ndarray ):
+        values = arr
+    else:
+        try:
+            values = np.array(list(arr))
+        except:
+            values = np.array([arr])
+            
+    if len(values)==0: return None 
+   
+    if not values.dtype.kind in ('i','u','f') or np.any(values < 0.0): return None
+    
+    if len(values)==1: 
+        if dim <= 0: return None
+        return np.full(dim, values[0], dtype=int) if values[0]%1==0 else \
+               np.full(dim, __round(values[0])*scale, dtype=int)
+    
+    if values.dtype.kind in ('i','u'): return values
+    if np.any( values % 1 > 0.0 ): np.array(__round( values*scale ))
+
+    return values.astype(int)
+
+#-----------------------------------------------------------------------
+
+def real_array( arr, dim=0 ):
+    """
+    Return a numpy array of non-negative floating points from
+    derived from the value(s) given by arr.
+    
+    Parameters
+    ----------
+    arr : a number, an iterable, or a numpy array
+        The array/value to be set to an array.
+    dim : int
+        The dimension the array should have if arr is a single value.
+    
+    Returns
+    -------
+    * A numpy array of an non-negative floats if arr is so
+    * A numpy array of dimension dim and value arr if arr is a 
+      non-negative number.
+    * A numpy array of non-negative floats if arr is an iterable of 
+      non-negative numbers.
+    * None if arr is None or arr is not non-negative.
+    """
+    if arr is None: return None
+     
+    if isinstance( arr, np.ndarray ):
+        if np.any( arr < 0.0 ): return None 
+        if arr.dtype.kind == 'f': return arr
+        return arr.astype(float)
+        
+    try:
+        return np.array(list(arr), dtype=float)
+    except:
+        if dim==0: return None
+        values = np.array([arr]*dim, dtype=float)
+        if np.any(values < 0.0 ): return None 
+        return values    
+        
+#-----------------------------------------------------------------------
+
 def euclid( X, Y ):
     """
     Returns Eucldean distance between two points X and Y.

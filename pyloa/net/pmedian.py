@@ -223,11 +223,7 @@ class PMedian( NetProblem ):
         # (4) Upper bounds on Lagrangian multipliers
         if self._is_matrix:
             get_gradient = lambda dualv,S : 1-(np.vstack(w)*self._dmat[:,S] < np.vstack(dualv)).sum(axis=1)
-            min_pos = self._dmat.argmin(axis=1,keepdims=True)
-            min_d = np.take_along_axis(self._dmat,min_pos,axis=1)
-            np.put_along_axis(self._dmat,min_pos,self._dmat.max()+1,axis=1)
-            minLam = w * self._dmat.min( axis=1 )
-            np.put_along_axis(self._dmat,min_pos,min_d,axis=1)
+            minLam = w*np.partition( self._dmat, kth=1, axis=1 )[:,1] #2nd smallest in each row
             solveLRsub = self.__solveLRsub_matrix
         else:    
             # This case assumes a symmetric matrix of distances between customer and facility nodes
@@ -295,7 +291,7 @@ class PMedian( NetProblem ):
         if talk: print('-'*70)
         if primal_improve: self.assigned = self.get_assigned( self.facilities ) 
             
-        self._set_comptime( )
+        self._set_comptime( mip_time=False )
         self.itr = itr 
         self.bound = lobnd 
     

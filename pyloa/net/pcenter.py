@@ -297,7 +297,7 @@ class PCenter( NetProblem ):
         scp.lowerObjStop = self._p 
         
         # Make all variables binary
-        for y in scp.y.values(): scp.set_vartype(y, 'B')
+        scp.change_var_types( scp.y.values(), 'B')
         while (l+1) < u:
             itr += 1
             k = (l+u)//2
@@ -316,7 +316,7 @@ class PCenter( NetProblem ):
         if not self.silent: print('-'*56)
         self.bound = U
         self.__set_solution(self.facilities, U)
-        self._set_comptime()
+        self._set_comptime(mip_time=False)
         
     #----------------------------------------------
     

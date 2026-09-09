@@ -69,7 +69,10 @@ def plot_points( Y=None, X=None, lola=None, cust_id=None ):
         plt.show()
     else:
         origin = (min(lo),min(la))
-        m = folium.Map()
+        m = folium.Map( tiles = None )
+        folium.TileLayer( tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",\
+                          attr="&copy; OpenStreetMap contributors",\
+                          options={"referrerPolicy": "strict-origin-when-cross-origin"} ).add_to(m)
         m.fit_bounds([ (origin[1],origin[0]),(max(la),max(lo))])
         if X is None or type(X)==tuple or len(X.shape)==1 or X.shape[0]==1:
             for lat,lon,name in zip(la, lo, names):
@@ -99,5 +102,5 @@ def plot_points( Y=None, X=None, lola=None, cust_id=None ):
         webbrowser.open(__html_fil)
         
 #----------------------------------------------------------------------
-# HTML used for storing maps with folium    
+# HTML used for storing maps with folium.   
 __html_fil = next(tmpName())+'.html'
