@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/1220023342.svg)](https://doi.org/10.5281/zenodo.22726613)
+
 # Pyloa - (Py)thon (l)ocation (o)ptimization (a)lgorithms
 
 Pyloa is a collection of methods for solving, (i) location problems in the Euclidian plane, (ii), location problems on a network (graph) and, (iii) discrete facility location problem. The package is primarily intended for teaching purposes but might to some extend also be useful for research. See the package's [documentation](https://andreasklose.github.io/pyloa/) and the below mentioned book for further information.
