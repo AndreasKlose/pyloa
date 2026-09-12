@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below and include reference to the below mentioned book."
+message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Klose"
   given-names: "Andreas"
@@ -7,13 +7,5 @@ authors:
 title: "Pyloa - Python Location Optimization Algorithms"
 version: 1.0
 doi: (to come)10.5281/zenodo.1234
-date-released: 2026-09-01
+date-released: 2026-09-12
 url: "https://github.com/AndreasKlose/pyloa"
-authors:
-- family-names: "Klose"
-  given-names: "Andreas"
-  orcid: "https://orcid.org/0000-0003-4543-8316"
-title: "Optimisation Models and Methods for Location Planning - with Implementations in Python"
-version: "Graduate Texts in Operations Research, Springer Cham"
-date-released: 2019-09-12
-url: "https://link.springer.com/book/9783032303912"
