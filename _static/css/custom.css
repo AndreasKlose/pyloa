@@ -2,3 +2,5 @@ dl.py.property {
     display: block !important;
 }
 
+.underline { text-decoration: underline; }
+

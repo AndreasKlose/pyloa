@@ -8,7 +8,7 @@
   <title>Index &mdash; PyLoa 1.00 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=26111179" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=99626c5e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -46,8 +46,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#references">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.mip.html">pyloa.mip package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
 </ul>
 
@@ -95,6 +98,8 @@
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
  | <a href="#Y"><strong>Y</strong></a>
@@ -106,17 +111,67 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.Master.add_column">add_column() (pyloa.plane.weber_cg.Master method)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addConstraint">addConstraint() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addConstraint">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addConstraints">addConstraints() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addConstraints">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addQuadConstrs">addQuadConstrs() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addQuadConstrs">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVar">addVar() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVar">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVarCube">addVarCube() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVarCube">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVarMatrix">addVarMatrix() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVarMatrix">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVars">addVars() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVars">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.addVubs">addVubs (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
       <li><a href="modules.html#pyloa.util.all_circle_intersections">all_circle_intersections() (in module pyloa.util)</a>
 </li>
       <li><a href="modules.html#pyloa.util.all_two_parts">all_two_parts() (in module pyloa.util)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.alpha">alpha (pyloa.net.pmedian.PMedian property)</a>
-</li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.assigned">assigned (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.alpha">alpha (pyloa.discrete.uflp.UFLP property)</a>
 
       <ul>
+        <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.alpha">(pyloa.net.pmedian.PMedian property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.assigned">assigned (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.assigned">(pyloa.net.netprob.NetProblem attribute)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.assigned">(pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
       </ul></li>
@@ -126,44 +181,158 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.bound">bound (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.bound">bound (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.bound">(pyloa.net.netprob.NetProblem attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.c">c (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.candidate_objective">candidate_objective (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.candidate_objective">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cb_MIPSOL">cb_MIPSOL (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cb_MIPSOL">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbCut">cbCut() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cbCut">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRealKeys">cbGetNodeRealKeys() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRealKeys">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRel">cbGetNodeRel() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRel">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.ccnst">ccnst (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP">CFLP (class in pyloa.discrete.cflp)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.cflp_solver">cflp_solver (pyloa.discrete.tlcflp.TLCFLP property)</a>
+</li>
       <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.cg_iter">cg_iter (pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_lower_bounds">change_lower_bounds() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.change_lower_bounds">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_upper_bounds">change_upper_bounds() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.change_upper_bounds">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_var_types">change_var_types() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.change_var_types">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.center.charalambous">charalambous() (in module pyloa.plane.center)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.chgCoeff">chgCoeff() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.chgCoeff">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.chgCoeffs">chgCoeffs() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.chgCoeffs">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
       <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.colgen">colgen() (in module pyloa.plane.weber_cg)</a>
 </li>
       <li><a href="pyloa.net.html#pyloa.net.parser.comp_dist_mat">comp_dist_mat() (in module pyloa.net.parser)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP.comp_flows">comp_flows() (pyloa.discrete.cflp.CFLP method)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.context">context (pyloa.mip.cpx_mip.CPXmodel property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.cost">cost (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+</li>
       <li><a href="pyloa.net.html#pyloa.net.cover.MaxCover.coverage">coverage (pyloa.net.cover.MaxCover attribute)</a>
 </li>
       <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.cpuTime">cpuTime (pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.ctime">ctime (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel">CPXmodel (class in pyloa.mip.cpx_mip)</a>
 </li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.ctime">ctime (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.ctime">(pyloa.net.netprob.NetProblem attribute)</a>
+</li>
+      </ul></li>
       <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.customers">customers (pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.cuts">cuts (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cuts">(pyloa.mip.cpx_mip.CPXmodel property)</a>
+</li>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cuts">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.default_subgr_params">default_subgr_params() (pyloa.net.pmedian.PMedian method)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.d">d (pyloa.discrete.dflprob.DFLProblem property)</a>
 </li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.default_options">default_options() (pyloa.discrete.dflprob.DFLProblem method)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.default_subgr_params">default_subgr_params() (pyloa.discrete.uflp.UFLP method)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.default_subgr_params">(pyloa.net.pmedian.PMedian method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.dettime">dettime (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.dettime">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem">DFLProblem (class in pyloa.discrete.dflprob)</a>
+</li>
       <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.distance">distance (pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.doBenders">doBenders (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.doBenders">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -172,9 +341,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.center.elzinga_hearn">elzinga_hearn() (in module pyloa.plane.center)</a>
 </li>
-      <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.Master.end">end() (pyloa.plane.weber_cg.Master method)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.end">end() (pyloa.mip.cpx_mip.CPXmodel method)</a>
 
       <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.end">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+        <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.Master.end">(pyloa.plane.weber_cg.Master method)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.Pricing.end">(pyloa.plane.weber_cg.Pricing method)</a>
 </li>
       </ul></li>
@@ -182,16 +355,36 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules.html#pyloa.util.euclid">euclid() (in module pyloa.util)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.export_model">export_model() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.export_model">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.facilities">facilities (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.f">f (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.facilities">facilities (pyloa.discrete.dflprob.DFLProblem attribute)</a>
 
       <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.facilities">(pyloa.net.netprob.NetProblem attribute)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.facilities">(pyloa.plane.planesolver.PlaneSolver property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.fcost">fcost (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.FeasibilityTol">FeasibilityTol (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.FeasibilityTol">(pyloa.mip.grb_mip.GRBmodel property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -204,9 +397,51 @@
 </li>
       <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.get_assigned">get_assigned (pyloa.net.netprob.NetProblem attribute)</a>
 </li>
+      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.get_coverage">get_coverage (pyloa.net.netprob.NetProblem attribute)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_dual_values">get_dual_values() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.get_dual_values">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.get_fcost">get_fcost (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.get_full_solution">get_full_solution() (pyloa.discrete.tlcflp.TLCFLP method)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_rhs">get_rhs() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.get_rhs">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.get_coverage">get_coverage (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_solution">get_solution() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.get_solution">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getConstraints">getConstraints() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.getConstraints">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getObjective">getObjective() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.getObjective">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getVars">getVars() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.getVars">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel">GRBmodel (class in pyloa.mip.grb_mip)</a>
 </li>
       <li><a href="pyloa.plane.html#pyloa.plane.center.growRadius">growRadius() (in module pyloa.plane.center)</a>
 </li>
@@ -216,7 +451,15 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.half">half (pyloa.net.pmedian.PMedian property)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.half">half (pyloa.discrete.uflp.UFLP property)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.half">(pyloa.net.pmedian.PMedian property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.heuristic">heuristic() (pyloa.discrete.tlcflp.TLCFLP method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -224,9 +467,53 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.itr">itr (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.id_relaxation">id_relaxation (pyloa.mip.cpx_mip.CPXmodel property)</a>
 
       <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.id_relaxation">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.in_relaxation">in_relaxation() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.in_relaxation">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.incument_objective">incument_objective (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.incument_objective">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.infinity">infinity (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.infinity">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules.html#pyloa.util.int_array">int_array() (in module pyloa.util)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.IntFeasTol">IntFeasTol (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.IntFeasTol">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.cflp.VubGenerator.invoke">invoke() (pyloa.discrete.cflp.VubGenerator method)</a>
+
+      <ul>
+        <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.MCFVubGen.invoke">(pyloa.discrete.tlcflp.MCFVubGen method)</a>
+</li>
+        <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.VubGenerator.invoke">(pyloa.discrete.tlcflp.VubGenerator method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.itr">itr (pyloa.discrete.uflp.UFLP attribute)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.itr">(pyloa.net.netprob.NetProblem attribute)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.Master.itr">(pyloa.plane.weber_cg.Master property)</a>
 </li>
       </ul></li>
@@ -236,16 +523,40 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.lbHeur">lbHeur (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.lbHeur">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
       <li><a href="pyloa.plane.html#pyloa.plane.weber.limitedDist">limitedDist() (in module pyloa.plane.weber)</a>
 </li>
       <li><a href="modules.html#pyloa.util.lla2xy">lla2xy() (in module pyloa.util)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.loc_alloc.locAlloc">locAlloc() (in module pyloa.plane.loc_alloc)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.log_output">log_output (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.log_output">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.lowBound">lowBound (pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.lower_cutoff">lower_cutoff (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.lower_cutoff">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.lowerObjStop">lowerObjStop (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.lowerObjStop">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -260,40 +571,130 @@
 </li>
       <li><a href="pyloa.net.html#pyloa.net.cover.MaxCover">MaxCover (class in pyloa.net.cover)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.maximize">maximize() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.maximize">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.MCFVubGen">MCFVubGen (class in pyloa.discrete.tlcflp)</a>
+</li>
       <li><a href="pyloa.net.html#pyloa.net.cover.MaxCover.mcl_solve">mcl_solve() (pyloa.net.cover.MaxCover method)</a>
 </li>
       <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.min_wdist">min_wdist (pyloa.net.netprob.NetProblem attribute)</a>
 </li>
-      <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.mip_nodes">mip_nodes (pyloa.plane.planesolver.PlaneSolver property)</a>
-</li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.mip_time">mip_time (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.minimize">minimize() (pyloa.mip.cpx_mip.CPXmodel method)</a>
 
       <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.minimize">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.mip_nodes">mip_nodes (pyloa.plane.planesolver.PlaneSolver property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mip_time">mip_time (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.mip_time">(pyloa.net.netprob.NetProblem attribute)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.mip_time">(pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
       </ul></li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.mip_work">mip_work (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mip_tol">mip_tol() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mip_tol">(pyloa.mip.grb_mip.GRBmodel method)</a>
 </li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mip_work">mip_work (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.mip_work">(pyloa.net.netprob.NetProblem attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mipEmphasis">mipEmphasis (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mipEmphasis">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.MIPGap">MIPGap (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.MIPGap">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.MIPGapAbs">MIPGapAbs (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.MIPGapAbs">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mipModel">mipModel (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mipModel">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
       <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.mipModel">mipModel() (pyloa.net.pmedian.PMedian method)</a>
 </li>
       <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.mipSolve">mipSolve() (pyloa.net.pmedian.PMedian method)</a>
 </li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.mipSolver">mipSolver (pyloa.net.netprob.NetProblem property)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mipSolver">mipSolver (pyloa.discrete.dflprob.DFLProblem property)</a>
 
       <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.mipSolver">(pyloa.net.netprob.NetProblem property)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.mipSolver">(pyloa.plane.planesolver.PlaneSolver property)</a>
 </li>
       </ul></li>
-      <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.miqcp_strategy">miqcp_strategy (pyloa.plane.planesolver.PlaneSolver property)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mipStrategy">mipStrategy (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mipStrategy">(pyloa.mip.cpx_mip.CPXmodel property)</a>
 </li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.model">model (pyloa.net.netprob.NetProblem property)</a>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mipStrategy">(pyloa.mip.grb_mip.GRBmodel property)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.miqcp_strategy">miqcp_strategy (pyloa.plane.planesolver.PlaneSolver property)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.MIQCPMethod">MIQCPMethod (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.MIQCPMethod">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.model">model (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.model">(pyloa.net.netprob.NetProblem property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.model.Model">Model() (in module pyloa.mip.model)</a>
+</li>
       <li>
     module
 
       <ul>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.cflp">pyloa.discrete.cflp</a>
+</li>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.CFLsg">pyloa.discrete.CFLsg</a>
+</li>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.dflprob">pyloa.discrete.dflprob</a>
+</li>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.parser">pyloa.discrete.parser</a>
+</li>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.tlcflp">pyloa.discrete.tlcflp</a>
+</li>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.uflp">pyloa.discrete.uflp</a>
+</li>
+        <li><a href="pyloa.mip.html#module-pyloa.mip.cpx_mip">pyloa.mip.cpx_mip</a>
+</li>
+        <li><a href="pyloa.mip.html#module-pyloa.mip.grb_mip">pyloa.mip.grb_mip</a>
+</li>
+        <li><a href="pyloa.mip.html#module-pyloa.mip.model">pyloa.mip.model</a>
+</li>
         <li><a href="pyloa.net.html#module-pyloa.net.cover">pyloa.net.cover</a>
 </li>
         <li><a href="pyloa.net.html#module-pyloa.net.netprob">pyloa.net.netprob</a>
@@ -337,20 +738,60 @@
 </li>
       <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem">NetProblem (class in pyloa.net.netprob)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.net.html#pyloa.net.netsolver.NetSolver">NetSolver (class in pyloa.net.netsolver)</a>
 </li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.nodeCount">nodeCount (pyloa.net.netprob.NetProblem attribute)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.nodeCount">nodeCount (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.nodeCount">(pyloa.mip.cpx_mip.CPXmodel property)</a>
 </li>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.nodeCount">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.nodeCount">(pyloa.net.netprob.NetProblem attribute)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.nodeLim">nodeLim (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.nodelimit">nodelimit (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.nodelimit">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.optTol">optTol (pyloa.plane.planesolver.PlaneSolver property)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.ObjBound">ObjBound (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.ObjBound">(pyloa.mip.grb_mip.GRBmodel property)</a>
 </li>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.ObjVal">ObjVal (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.ObjVal">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.optim">optim() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.optim">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.optTol">optTol (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.optTol">(pyloa.plane.planesolver.PlaneSolver property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -390,6 +831,71 @@
 </li>
       </ul></li>
       <li>
+    pyloa.discrete.cflp
+
+      <ul>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.cflp">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.discrete.CFLsg
+
+      <ul>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.CFLsg">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.discrete.dflprob
+
+      <ul>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.dflprob">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.discrete.parser
+
+      <ul>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.parser">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.discrete.tlcflp
+
+      <ul>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.tlcflp">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.discrete.uflp
+
+      <ul>
+        <li><a href="pyloa.discrete.html#module-pyloa.discrete.uflp">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.mip.cpx_mip
+
+      <ul>
+        <li><a href="pyloa.mip.html#module-pyloa.mip.cpx_mip">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.mip.grb_mip
+
+      <ul>
+        <li><a href="pyloa.mip.html#module-pyloa.mip.grb_mip">module</a>
+</li>
+      </ul></li>
+      <li>
+    pyloa.mip.model
+
+      <ul>
+        <li><a href="pyloa.mip.html#module-pyloa.mip.model">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
     pyloa.net.cover
 
       <ul>
@@ -417,8 +923,6 @@
         <li><a href="pyloa.net.html#module-pyloa.net.parser">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     pyloa.net.pcenter
 
@@ -511,51 +1015,139 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.net.html#pyloa.net.pcenter.PCenter.radius">radius (pyloa.net.pcenter.PCenter attribute)</a>
 </li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.parser.read_cflp">read_cflp() (in module pyloa.discrete.parser)</a>
+</li>
       <li><a href="pyloa.net.html#pyloa.net.parser.read_graph">read_graph() (in module pyloa.net.parser)</a>
 </li>
       <li><a href="pyloa.net.html#pyloa.net.parser.read_orlib_graph">read_orlib_graph() (in module pyloa.net.parser)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.parser.read_points">read_points() (in module pyloa.plane.parser)</a>
 </li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.parser.read_tlcflp">read_tlcflp() (in module pyloa.discrete.parser)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.parser.read_tscflp">read_tscflp() (in module pyloa.discrete.parser)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.parser.read_uflp">read_uflp() (in module pyloa.discrete.parser)</a>
+</li>
+      <li><a href="modules.html#pyloa.util.real_array">real_array() (in module pyloa.util)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.reduced_costs">reduced_costs() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.reduced_costs">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
       <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.reset">reset() (pyloa.net.netprob.NetProblem method)</a>
 </li>
       <li><a href="pyloa.plane.html#pyloa.plane.parser.return_lola">return_lola() (in module pyloa.plane.parser)</a>
 </li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.runtime">runtime (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.runtime">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.set_data">set_data() (pyloa.net.netprob.NetProblem method)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.s">s (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.scale_costs">scale_costs() (pyloa.discrete.dflprob.DFLProblem method)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_callback">set_callback() (pyloa.mip.cpx_mip.CPXmodel method)</a>
 
       <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.set_callback">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.set_data">set_data() (pyloa.discrete.dflprob.DFLProblem method)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.set_data">(pyloa.net.netprob.NetProblem method)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.set_data">(pyloa.plane.planesolver.PlaneSolver method)</a>
 </li>
       </ul></li>
+      <li><a href="pyloa.plane.html#pyloa.plane.parser.set_geoServer">set_geoServer() (in module pyloa.plane.parser)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.model.set_mipSolver">set_mipSolver() (in module pyloa.mip.model)</a>
+</li>
+      <li><a href="pyloa.plane.html#pyloa.plane.parser.set_Nominatim_params">set_Nominatim_params() (in module pyloa.plane.parser)</a>
+</li>
       <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.set_optTol">set_optTol() (in module pyloa.plane.weber_cg)</a>
 </li>
-      <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.sg_iter">sg_iter (pyloa.net.pmedian.PMedian property)</a>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_rhs">set_rhs() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.set_rhs">(pyloa.mip.grb_mip.GRBmodel method)</a>
 </li>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.silent">silent (pyloa.net.netprob.NetProblem property)</a>
+      </ul></li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_vartype">set_vartype() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.set_vartype">(pyloa.mip.grb_mip.GRBmodel method)</a>
 </li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.sg_iter">sg_iter (pyloa.discrete.uflp.UFLP property)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.pmedian.PMedian.sg_iter">(pyloa.net.pmedian.PMedian property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.silent">silent (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.silent">(pyloa.net.netprob.NetProblem property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.mip.SOCPcenter">SOCPcenter() (in module pyloa.plane.mip)</a>
 </li>
       <li><a href="pyloa.plane.html#pyloa.plane.mip.SOCPweber">SOCPweber() (in module pyloa.plane.mip)</a>
 </li>
-      <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.solve">solve() (pyloa.plane.planesolver.PlaneSolver method)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP.solve">solve() (pyloa.discrete.cflp.CFLP method)</a>
 
       <ul>
+        <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.solve">(pyloa.discrete.tlcflp.TLCFLP method)</a>
+</li>
+        <li><a href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.solve">(pyloa.discrete.uflp.UFLP method)</a>
+</li>
+        <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.solve">(pyloa.plane.planesolver.PlaneSolver method)</a>
+</li>
         <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.Master.solve">(pyloa.plane.weber_cg.Master method)</a>
 </li>
       </ul></li>
       <li><a href="pyloa.plane.html#pyloa.plane.weber_cg.Master.solve_as_IP">solve_as_IP() (pyloa.plane.weber_cg.Master method)</a>
 </li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.CFLsg.solveCFLP">solveCFLP() (in module pyloa.discrete.CFLsg)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP.solver">solver (pyloa.discrete.cflp.CFLP property)</a>
+</li>
       <li><a href="pyloa.plane.html#pyloa.plane.weber.solveWeber">solveWeber() (in module pyloa.plane.weber)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.stages">stages (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.status">status (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.status">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.parser.store_cflp_GK">store_cflp_GK() (in module pyloa.discrete.parser)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.sum">sum() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.sum">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.supply">supply (pyloa.discrete.dflprob.DFLProblem attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -563,12 +1155,82 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.tcost">tcost (pyloa.discrete.dflprob.DFLProblem attribute)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.terminate">terminate() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.terminate">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.timeLim">timeLim (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.timelimit">timelimit (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.timelimit">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyloa.plane.html#pyloa.plane.planesolver.PlaneSolver.timeLimit">timeLimit (pyloa.plane.planesolver.PlaneSolver property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP">TLCFLP (class in pyloa.discrete.tlcflp)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.totalDemand">totalDemand (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.two_level">two_level (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.plane.html#pyloa.plane.loc_alloc.twoFacility">twoFacility() (in module pyloa.plane.loc_alloc)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP">UFLP (class in pyloa.discrete.uflp)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.uncap">uncap (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.unitCost">unitCost (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.unscale_costs">unscale_costs() (pyloa.discrete.dflprob.DFLProblem method)</a>
+</li>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.update">update() (pyloa.mip.cpx_mip.CPXmodel method)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.update">(pyloa.mip.grb_mip.GRBmodel method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.upper_cutoff">upper_cutoff (pyloa.mip.cpx_mip.CPXmodel property)</a>
+
+      <ul>
+        <li><a href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.upper_cutoff">(pyloa.mip.grb_mip.GRBmodel property)</a>
+</li>
+      </ul></li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.useBenders">useBenders (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.useLB">useLB (pyloa.discrete.dflprob.DFLProblem property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.v">v (pyloa.discrete.dflprob.DFLProblem property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.plane.html#pyloa.plane.loc_alloc.twoFacility">twoFacility() (in module pyloa.plane.loc_alloc)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.cflp.VubGenerator">VubGenerator (class in pyloa.discrete.cflp)</a>
+
+      <ul>
+        <li><a href="pyloa.discrete.html#pyloa.discrete.tlcflp.VubGenerator">(class in pyloa.discrete.tlcflp)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -597,8 +1259,12 @@
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.x">x (pyloa.net.netprob.NetProblem property)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.x">x (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.x">(pyloa.net.netprob.NetProblem property)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules.html#pyloa.util.xy2lla">xy2lla() (in module pyloa.util)</a>
@@ -609,16 +1275,24 @@
 <h2 id="Y">Y</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.y">y (pyloa.net.netprob.NetProblem property)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.y">y (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.y">(pyloa.net.netprob.NetProblem property)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="Z">Z</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.z">z (pyloa.net.netprob.NetProblem property)</a>
+      <li><a href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.z">z (pyloa.discrete.dflprob.DFLProblem property)</a>
+
+      <ul>
+        <li><a href="pyloa.net.html#pyloa.net.netprob.NetProblem.z">(pyloa.net.netprob.NetProblem property)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

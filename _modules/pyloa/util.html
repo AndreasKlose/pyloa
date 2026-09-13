@@ -8,7 +8,7 @@
   <title>pyloa.util &mdash; PyLoa 1.00 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=26111179" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=99626c5e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
@@ -46,8 +46,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#planar-location">Planar location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#network-location">Network location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html#references">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../pyloa.plane.html">pyloa.plane package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyloa.mip.html">pyloa.mip package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyloa</a></li>
 </ul>
 
@@ -93,6 +96,111 @@
 
 <span class="n">_ZERO</span> <span class="o">=</span> <span class="mf">1.0E-06</span>
     
+<span class="c1">#-----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="int_array">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.int_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">int_array</span><span class="p">(</span> <span class="n">arr</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">down</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return arr if arr is a numpy array of an integer type. Otherwise, try</span>
+<span class="sd">    to make an integer array out of it.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : a number, an iterable, or a numpy array</span>
+<span class="sd">        The array/value to be set to an array.</span>
+<span class="sd">    dim : int</span>
+<span class="sd">        The dimension the array should have if arr is a single value.</span>
+<span class="sd">    scale : int</span>
+<span class="sd">        Positive integer by which non-integer floating point numbers</span>
+<span class="sd">        should be multiplied to obtain up-scaled integer values.</span>
+<span class="sd">    down : bool </span>
+<span class="sd">        If True, a up-scaled non-integers are rounded down; otherwise</span>
+<span class="sd">        rounded to the nearest integer. </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    * A numpy array of an integer type if arr is so.</span>
+<span class="sd">    * An int array of dimension dim if arr is a non-negative integral number.</span>
+<span class="sd">    * An int array of dimension dim and rounded values of arr*scale if arr </span>
+<span class="sd">      is not an integral non-negative number. </span>
+<span class="sd">    * An int array of same size as arr and rounded values arr if arr</span>
+<span class="sd">      is an numpy array of integral non-negative numbers.</span>
+<span class="sd">    * An int array of same size of arr and rounded values arr*scale if arr</span>
+<span class="sd">      is an numpy array of non-integral numbers.</span>
+<span class="sd">    * An int array of the values given by arr if arr is an iterable of </span>
+<span class="sd">      non-negative integral non-negative numbers</span>
+<span class="sd">    * An int array of the rounded and up-scaled values given by arr if arr</span>
+<span class="sd">      is an iterable of non-integral numbers.</span>
+<span class="sd">    * None if arr is None or arr is or shows a negative number or is not numeric</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">arr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">__round</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span> <span class="k">if</span> <span class="n">down</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span> 
+     
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">):</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">arr</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">arr</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">arr</span><span class="p">])</span>
+            
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span> 
+   
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span><span class="s1">&#39;u&#39;</span><span class="p">,</span><span class="s1">&#39;f&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">values</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span> <span class="k">return</span> <span class="kc">None</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span> <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">%</span><span class="mi">1</span><span class="o">==</span><span class="mi">0</span> <span class="k">else</span> \
+               <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">__round</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">scale</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;i&#39;</span><span class="p">,</span><span class="s1">&#39;u&#39;</span><span class="p">):</span> <span class="k">return</span> <span class="n">values</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span> <span class="n">values</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="p">):</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">__round</span><span class="p">(</span> <span class="n">values</span><span class="o">*</span><span class="n">scale</span> <span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">values</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+<span class="c1">#-----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="real_array">
+<a class="viewcode-back" href="../../modules.html#pyloa.util.real_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">real_array</span><span class="p">(</span> <span class="n">arr</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a numpy array of non-negative floating points from</span>
+<span class="sd">    derived from the value(s) given by arr.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    arr : a number, an iterable, or a numpy array</span>
+<span class="sd">        The array/value to be set to an array.</span>
+<span class="sd">    dim : int</span>
+<span class="sd">        The dimension the array should have if arr is a single value.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    * A numpy array of an non-negative floats if arr is so</span>
+<span class="sd">    * A numpy array of dimension dim and value arr if arr is a </span>
+<span class="sd">      non-negative number.</span>
+<span class="sd">    * A numpy array of non-negative floats if arr is an iterable of </span>
+<span class="sd">      non-negative numbers.</span>
+<span class="sd">    * None if arr is None or arr is not non-negative.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">arr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+     
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="p">):</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span> <span class="n">arr</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="p">):</span> <span class="k">return</span> <span class="kc">None</span> 
+        <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="n">arr</span>
+        <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dim</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">arr</span><span class="p">]</span><span class="o">*</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">values</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="p">):</span> <span class="k">return</span> <span class="kc">None</span> 
+        <span class="k">return</span> <span class="n">values</span>    </div>
+
+        
 <span class="c1">#-----------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="euclid">

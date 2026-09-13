@@ -1,0 +1,1814 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.mip package &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=99626c5e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyloa" href="modules.html" />
+    <link rel="prev" title="pyloa.discrete package" href="pyloa.discrete.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pyloa.mip package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.mip.cpx_mip">pyloa.mip.cpx_mip module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel"><code class="docutils literal notranslate"><span class="pre">CPXmodel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.FeasibilityTol"><code class="docutils literal notranslate"><span class="pre">CPXmodel.FeasibilityTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.IntFeasTol"><code class="docutils literal notranslate"><span class="pre">CPXmodel.IntFeasTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.MIPGap"><code class="docutils literal notranslate"><span class="pre">CPXmodel.MIPGap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.MIPGapAbs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.MIPGapAbs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.MIQCPMethod"><code class="docutils literal notranslate"><span class="pre">CPXmodel.MIQCPMethod</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.ObjBound"><code class="docutils literal notranslate"><span class="pre">CPXmodel.ObjBound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.ObjVal"><code class="docutils literal notranslate"><span class="pre">CPXmodel.ObjVal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.addConstraint"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addConstraint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.addConstraints"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.addQuadConstrs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addQuadConstrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.addVar"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.addVarCube"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVarCube()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.addVarMatrix"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVarMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.addVars"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.candidate_objective"><code class="docutils literal notranslate"><span class="pre">CPXmodel.candidate_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.cbCut"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cbCut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRealKeys"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cbGetNodeRealKeys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRel"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cbGetNodeRel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.cb_MIPSOL"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cb_MIPSOL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.change_lower_bounds"><code class="docutils literal notranslate"><span class="pre">CPXmodel.change_lower_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.change_upper_bounds"><code class="docutils literal notranslate"><span class="pre">CPXmodel.change_upper_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.change_var_types"><code class="docutils literal notranslate"><span class="pre">CPXmodel.change_var_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.chgCoeff"><code class="docutils literal notranslate"><span class="pre">CPXmodel.chgCoeff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.chgCoeffs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.chgCoeffs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.context"><code class="docutils literal notranslate"><span class="pre">CPXmodel.context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.cuts"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cuts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.dettime"><code class="docutils literal notranslate"><span class="pre">CPXmodel.dettime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.doBenders"><code class="docutils literal notranslate"><span class="pre">CPXmodel.doBenders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.end"><code class="docutils literal notranslate"><span class="pre">CPXmodel.end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.export_model"><code class="docutils literal notranslate"><span class="pre">CPXmodel.export_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.getConstraints"><code class="docutils literal notranslate"><span class="pre">CPXmodel.getConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.getObjective"><code class="docutils literal notranslate"><span class="pre">CPXmodel.getObjective()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.getVars"><code class="docutils literal notranslate"><span class="pre">CPXmodel.getVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.get_dual_values"><code class="docutils literal notranslate"><span class="pre">CPXmodel.get_dual_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.get_rhs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.get_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.get_solution"><code class="docutils literal notranslate"><span class="pre">CPXmodel.get_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.id_relaxation"><code class="docutils literal notranslate"><span class="pre">CPXmodel.id_relaxation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.in_relaxation"><code class="docutils literal notranslate"><span class="pre">CPXmodel.in_relaxation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.incument_objective"><code class="docutils literal notranslate"><span class="pre">CPXmodel.incument_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.infinity"><code class="docutils literal notranslate"><span class="pre">CPXmodel.infinity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.lbHeur"><code class="docutils literal notranslate"><span class="pre">CPXmodel.lbHeur</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.log_output"><code class="docutils literal notranslate"><span class="pre">CPXmodel.log_output</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.lowerObjStop"><code class="docutils literal notranslate"><span class="pre">CPXmodel.lowerObjStop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.lower_cutoff"><code class="docutils literal notranslate"><span class="pre">CPXmodel.lower_cutoff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.maximize"><code class="docutils literal notranslate"><span class="pre">CPXmodel.maximize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.minimize"><code class="docutils literal notranslate"><span class="pre">CPXmodel.minimize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.mipEmphasis"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mipEmphasis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.mipModel"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mipModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.mipStrategy"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mipStrategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.mip_tol"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mip_tol()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.nodeCount"><code class="docutils literal notranslate"><span class="pre">CPXmodel.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.nodelimit"><code class="docutils literal notranslate"><span class="pre">CPXmodel.nodelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.optim"><code class="docutils literal notranslate"><span class="pre">CPXmodel.optim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.reduced_costs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.reduced_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.runtime"><code class="docutils literal notranslate"><span class="pre">CPXmodel.runtime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.set_callback"><code class="docutils literal notranslate"><span class="pre">CPXmodel.set_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.set_rhs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.set_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.set_vartype"><code class="docutils literal notranslate"><span class="pre">CPXmodel.set_vartype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.status"><code class="docutils literal notranslate"><span class="pre">CPXmodel.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.sum"><code class="docutils literal notranslate"><span class="pre">CPXmodel.sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.terminate"><code class="docutils literal notranslate"><span class="pre">CPXmodel.terminate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.timelimit"><code class="docutils literal notranslate"><span class="pre">CPXmodel.timelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.update"><code class="docutils literal notranslate"><span class="pre">CPXmodel.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.cpx_mip.CPXmodel.upper_cutoff"><code class="docutils literal notranslate"><span class="pre">CPXmodel.upper_cutoff</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.mip.grb_mip">pyloa.mip.grb_mip module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel"><code class="docutils literal notranslate"><span class="pre">GRBmodel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.FeasibilityTol"><code class="docutils literal notranslate"><span class="pre">GRBmodel.FeasibilityTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.IntFeasTol"><code class="docutils literal notranslate"><span class="pre">GRBmodel.IntFeasTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.MIPGap"><code class="docutils literal notranslate"><span class="pre">GRBmodel.MIPGap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.MIPGapAbs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.MIPGapAbs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.MIQCPMethod"><code class="docutils literal notranslate"><span class="pre">GRBmodel.MIQCPMethod</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.ObjBound"><code class="docutils literal notranslate"><span class="pre">GRBmodel.ObjBound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.ObjVal"><code class="docutils literal notranslate"><span class="pre">GRBmodel.ObjVal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.addConstraint"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addConstraint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.addConstraints"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.addQuadConstrs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addQuadConstrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.addVar"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.addVarCube"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVarCube()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.addVarMatrix"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVarMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.addVars"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.candidate_objective"><code class="docutils literal notranslate"><span class="pre">GRBmodel.candidate_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.cbCut"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cbCut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRealKeys"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cbGetNodeRealKeys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRel"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cbGetNodeRel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.cb_MIPSOL"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cb_MIPSOL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.change_lower_bounds"><code class="docutils literal notranslate"><span class="pre">GRBmodel.change_lower_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.change_upper_bounds"><code class="docutils literal notranslate"><span class="pre">GRBmodel.change_upper_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.change_var_types"><code class="docutils literal notranslate"><span class="pre">GRBmodel.change_var_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.chgCoeff"><code class="docutils literal notranslate"><span class="pre">GRBmodel.chgCoeff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.chgCoeffs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.chgCoeffs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.cuts"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cuts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.dettime"><code class="docutils literal notranslate"><span class="pre">GRBmodel.dettime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.doBenders"><code class="docutils literal notranslate"><span class="pre">GRBmodel.doBenders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.end"><code class="docutils literal notranslate"><span class="pre">GRBmodel.end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.export_model"><code class="docutils literal notranslate"><span class="pre">GRBmodel.export_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.getConstraints"><code class="docutils literal notranslate"><span class="pre">GRBmodel.getConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.getObjective"><code class="docutils literal notranslate"><span class="pre">GRBmodel.getObjective()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.getVars"><code class="docutils literal notranslate"><span class="pre">GRBmodel.getVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.get_dual_values"><code class="docutils literal notranslate"><span class="pre">GRBmodel.get_dual_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.get_rhs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.get_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.get_solution"><code class="docutils literal notranslate"><span class="pre">GRBmodel.get_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.id_relaxation"><code class="docutils literal notranslate"><span class="pre">GRBmodel.id_relaxation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.in_relaxation"><code class="docutils literal notranslate"><span class="pre">GRBmodel.in_relaxation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.incument_objective"><code class="docutils literal notranslate"><span class="pre">GRBmodel.incument_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.infinity"><code class="docutils literal notranslate"><span class="pre">GRBmodel.infinity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.lbHeur"><code class="docutils literal notranslate"><span class="pre">GRBmodel.lbHeur</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.log_output"><code class="docutils literal notranslate"><span class="pre">GRBmodel.log_output</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.lowerObjStop"><code class="docutils literal notranslate"><span class="pre">GRBmodel.lowerObjStop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.lower_cutoff"><code class="docutils literal notranslate"><span class="pre">GRBmodel.lower_cutoff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.maximize"><code class="docutils literal notranslate"><span class="pre">GRBmodel.maximize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.minimize"><code class="docutils literal notranslate"><span class="pre">GRBmodel.minimize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.mipEmphasis"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mipEmphasis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.mipModel"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mipModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.mipStrategy"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mipStrategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.mip_tol"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mip_tol()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.nodeCount"><code class="docutils literal notranslate"><span class="pre">GRBmodel.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.nodelimit"><code class="docutils literal notranslate"><span class="pre">GRBmodel.nodelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.optim"><code class="docutils literal notranslate"><span class="pre">GRBmodel.optim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.reduced_costs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.reduced_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.runtime"><code class="docutils literal notranslate"><span class="pre">GRBmodel.runtime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.set_callback"><code class="docutils literal notranslate"><span class="pre">GRBmodel.set_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.set_rhs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.set_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.set_vartype"><code class="docutils literal notranslate"><span class="pre">GRBmodel.set_vartype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.status"><code class="docutils literal notranslate"><span class="pre">GRBmodel.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.sum"><code class="docutils literal notranslate"><span class="pre">GRBmodel.sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.terminate"><code class="docutils literal notranslate"><span class="pre">GRBmodel.terminate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.timelimit"><code class="docutils literal notranslate"><span class="pre">GRBmodel.timelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.update"><code class="docutils literal notranslate"><span class="pre">GRBmodel.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.mip.grb_mip.GRBmodel.upper_cutoff"><code class="docutils literal notranslate"><span class="pre">GRBmodel.upper_cutoff</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.mip.model">pyloa.mip.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.mip.model.Model"><code class="docutils literal notranslate"><span class="pre">Model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.mip.model.set_mipSolver"><code class="docutils literal notranslate"><span class="pre">set_mipSolver()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pyloa.mip package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pyloa.mip.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyloa-mip-package">
+<h1>pyloa.mip package<a class="headerlink" href="#pyloa-mip-package" title="Link to this heading"></a></h1>
+<p>Interface to Cplex (via docplex) and GuRoBi.</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-pyloa.mip.cpx_mip">
+<span id="pyloa-mip-cpx-mip-module"></span><h2>pyloa.mip.cpx_mip module<a class="headerlink" href="#module-pyloa.mip.cpx_mip" title="Link to this heading"></a></h2>
+<p>Module mip.cpx_mip of package pyloa:
+Defines wrapper class for the docplex.mp.model Model class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.mip.cpx_mip.</span></span><span class="sig-name descname"><span class="pre">CPXmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Wraps some methods and attributes of the docplex.mp.model class for
+the purposes of synchronizing function names with GuRoBi.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.FeasibilityTol">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FeasibilityTol</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.FeasibilityTol" title="Link to this definition"></a></dt>
+<dd><p>Return parameter simplex.tolerances.feasibility</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.IntFeasTol">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IntFeasTol</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.IntFeasTol" title="Link to this definition"></a></dt>
+<dd><p>Return parameter mip.tolerance.integrality</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.MIPGap">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MIPGap</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.MIPGap" title="Link to this definition"></a></dt>
+<dd><p>Return parameter mip.tolerances.mipgap</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.MIPGapAbs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MIPGapAbs</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.MIPGapAbs" title="Link to this definition"></a></dt>
+<dd><p>Return parameter mip.tolerances.absmipgap</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.MIQCPMethod">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MIQCPMethod</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.MIQCPMethod" title="Link to this definition"></a></dt>
+<dd><p>Returns value of parameter mip.strategy.miqcpstrat</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.ObjBound">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ObjBound</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.ObjBound" title="Link to this definition"></a></dt>
+<dd><p>Best bound on (lower for minimization, upper for
+maximization) on the optimal objective value</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.ObjVal">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ObjVal</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.ObjVal" title="Link to this definition"></a></dt>
+<dd><p>Objective value of a solution to the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.addConstraint">
+<span class="sig-name descname"><span class="pre">addConstraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.addConstraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.addConstraint" title="Link to this definition"></a></dt>
+<dd><p>Adds the single constraint constr to the model.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constr<span class="classifier">docplex.mp.constr.LinearConstraint  </span></dt><dd><p>The constraint to be included</p>
+</dd>
+<dt>return_constr<span class="classifier">bool </span></dt><dd><p>If True, the constraint object instance
+is returned.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.addConstraints">
+<span class="sig-name descname"><span class="pre">addConstraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.addConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.addConstraints" title="Link to this definition"></a></dt>
+<dd><p>Adds several constraints to the IP model.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constrs<span class="classifier">iterable of docplex.mp.constr.LinearConstraint    </span></dt><dd><p>The list of constraints to be included</p>
+</dd>
+<dt>return_constr<span class="classifier">Bool</span></dt><dd><p>If True, the list of added constraints is returned.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<p>None or the list of the added constraints.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.addQuadConstrs">
+<span class="sig-name descname"><span class="pre">addQuadConstrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.addQuadConstrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.addQuadConstrs" title="Link to this definition"></a></dt>
+<dd><p>Add a bunch of quadratic constraints to the model</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constrs: iterable of docplex.mp.constr.QuadraticConstraint    </dt><dd><p>The quadratic constraint expressions.</p>
+</dd>
+<dt>return_constr<span class="classifier">Bool</span></dt><dd><p>If True, the added constraints are returned.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.addVar">
+<span class="sig-name descname"><span class="pre">addVar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.addVar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.addVar" title="Link to this definition"></a></dt>
+<dd><p>Adds a single variable to the model.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lb<span class="classifier">float</span></dt><dd><p>Lower bound for the variable. Default: 0.0</p>
+</dd>
+<dt>ub<span class="classifier">float or None</span></dt><dd><p>Uppper bound on the variable.</p>
+</dd>
+<dt>obj<span class="classifier">float</span></dt><dd><p>The variables objective coefficient</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>If None, a continuous variable is created. 
+Otherwise, if vtype=’B’ a binary and if
+vtype=’I’ an integer variable.</p>
+</dd>
+<dt>name<span class="classifier">None or str </span></dt><dd><p>If not None, the variable name</p>
+</dd>
+<dt>constr<span class="classifier">None or a sequence of constraints</span></dt><dd><p>Sequence of constraint to which the variable should 
+be added.</p>
+</dd>
+<dt>coeffs<span class="classifier">None or a single float/int or an iterable of float/int.</span></dt><dd><p>If coeffs is a single float or int, the variable
+is added to all constraints from the above sequence
+of constraints with the same coefficient ‘coeffs’.
+If coeffs is an iterable, the variable is included
+with the specified coefficient to the given sequence
+of constraints. Make sure that both sequences are
+of the same length.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<p>A docplex.mp.dvar</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.addVarCube">
+<span class="sig-name descname"><span class="pre">addVarCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.addVarCube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.addVarCube" title="Link to this definition"></a></dt>
+<dd><p>Creates and return a dictionary of variables indexed by the
+the three indices.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>indx<span class="classifier">tuple of three int </span></dt><dd><p>tuple of the three indices</p>
+</dd>
+<dt>lb<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Lower bounds to be applied for the variables.
+If None, lower bounds are zero.</p>
+</dd>
+<dt>ub<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Upper bounds to be applied for the variables.
+If None, no upper bounds are imposed.</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>Type of the variables. If None, it’s
+continuous variables, if ‘B’ binary
+variables, if ‘I’ integer variables.</p>
+</dd>
+<dt>name<span class="classifier">None or str </span></dt><dd><p>If not None, variables named as name[index]</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">dict</span></dt><dd><p>The dictionary of MIP model variables.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.addVarMatrix">
+<span class="sig-name descname"><span class="pre">addVarMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.addVarMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.addVarMatrix" title="Link to this definition"></a></dt>
+<dd><p>Create and return a rows x cols matrix of variables
+of type vtype.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rows, cols<span class="classifier">int </span></dt><dd><p>Number of rows and columns of the matrix.</p>
+</dd>
+<dt>lb<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Lower bounds to be applied for the variables.
+If None, lower bounds are zero.</p>
+</dd>
+<dt>ub<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Upper bounds to be applied for the variables.
+If None, no upper bounds are imposed.</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>Type of the variables. If None, it’s
+continuous variables, if ‘B’ binary
+variables, if ‘I’ integer variables.</p>
+</dd>
+<dt>name<span class="classifier">None or str </span></dt><dd><p>If not None, variables named as name[index]</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">dict</span></dt><dd><p>The dictionary of MIP model variables.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.addVars">
+<span class="sig-name descname"><span class="pre">addVars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.addVars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.addVars" title="Link to this definition"></a></dt>
+<dd><p>Adds a dictionary of variables with keys indices to 
+the MIP model.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>indices<span class="classifier">iterable </span></dt><dd><p>Sequence of indices to be used as 
+keys of the dictionary.</p>
+</dd>
+<dt>lb<span class="classifier">iterable of int or float</span></dt><dd><p>Lower bounds to be applied for the variables.
+If None, lower bounds are zero.</p>
+</dd>
+<dt>ub<span class="classifier">iterable of int or float</span></dt><dd><p>Upper bounds to be applied for the variables.
+If None, no upper bounds are imposed.</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>Type of the variables. If None, it’s
+continuous variables, if ‘B’ binary
+variables, if ‘I’ integer variables.</p>
+</dd>
+<dt>name<span class="classifier">None or str </span></dt><dd><p>If not None, variables are named as name[index]</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h3>Returns<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">dict</span></dt><dd><p>The dictionary of MIP model variables.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.candidate_objective">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">candidate_objective</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.candidate_objective" title="Link to this definition"></a></dt>
+<dd><p>Return objective value of a candidate solution</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.cbCut">
+<span class="sig-name descname"><span class="pre">cbCut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cut</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.cbCut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.cbCut" title="Link to this definition"></a></dt>
+<dd><p>Add a global user cut from a callback to the solver.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>cut<span class="classifier">docplex.mp.constr.LinearConstraint </span></dt><dd><p>The object representing the cut as a
+linear constraint.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRealKeys">
+<span class="sig-name descname"><span class="pre">cbGetNodeRealKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.cbGetNodeRealKeys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRealKeys" title="Link to this definition"></a></dt>
+<dd><p>Return the relaxation’s solution for decision 
+variables from a dictionary and the specified
+dictionary keys.</p>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<p>dvars : dict of decision variables
+keys  : sequence of dictionary keys</p>
+</section>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<p>Solution values for the decision variables with the
+given keys as a numpy array of float</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRel">
+<span class="sig-name descname"><span class="pre">cbGetNodeRel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.cbGetNodeRel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRel" title="Link to this definition"></a></dt>
+<dd><p>Return the relaxation’s solution for the decision variables 
+dvars at the current branch-and-cut node.</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<p>dvars : sequence of decision variables</p>
+</section>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<p>solution values to the specified variables as a numpy array of float</p>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.cb_MIPSOL">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cb_MIPSOL</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.cb_MIPSOL" title="Link to this definition"></a></dt>
+<dd><p>Return the constant cplex.callbacks.Context.id.candidate</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.change_lower_bounds">
+<span class="sig-name descname"><span class="pre">change_lower_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.change_lower_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.change_lower_bounds" title="Link to this definition"></a></dt>
+<dd><p>Changes the lower bounds of a collection of variables.
+(cf. docplex.mp.model.change_var_lower_bounds)</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars<span class="classifier">iterable of decision variables</span></dt><dd><p>The variables for which the type should
+be changed.</p>
+</dd>
+<dt>lb<span class="classifier">an iterable or a single number specifying</span></dt><dd><p>the new lower bound(s).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.change_upper_bounds">
+<span class="sig-name descname"><span class="pre">change_upper_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.change_upper_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.change_upper_bounds" title="Link to this definition"></a></dt>
+<dd><p>Changes the upper bounds of a collection of variables.
+(cf. docplex.mp.model.change_var_upper_bounds)</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars<span class="classifier">iterable of decision variables</span></dt><dd><p>The variables for which the type should
+be changed.</p>
+</dd>
+<dt>ub<span class="classifier">an iterable or a single number specifying</span></dt><dd><p>the new upper bound(s).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.change_var_types">
+<span class="sig-name descname"><span class="pre">change_var_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.change_var_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.change_var_types" title="Link to this definition"></a></dt>
+<dd><p>Changes the type of a collection of variables.
+(cf. docplex.mp.model.change_var_types)</p>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars<span class="classifier">iterable of decision variables</span></dt><dd><p>The variables for which the type should
+be changed.</p>
+</dd>
+<dt>vtype<span class="classifier">an iterable of variable types or </span></dt><dd><p>the single type to which the variables
+should be changed.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.chgCoeff">
+<span class="sig-name descname"><span class="pre">chgCoeff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.chgCoeff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.chgCoeff" title="Link to this definition"></a></dt>
+<dd><p>Change the coefficient of a single variable dvar 
+in the linear constraint constr to value coef.</p>
+<section id="id19">
+<h3>Parameters<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constr<span class="classifier">docplex.mp.constr.LinearConstraint</span></dt><dd><p>The constraint to be adjusted</p>
+</dd>
+<dt>dvar<span class="classifier">docplex.mp.dvar</span></dt><dd><p>The decision variable where to change
+the coefficient.</p>
+</dd>
+<dt>coef<span class="classifier">int or float</span></dt><dd><p>The value of the (new) coefficient.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.chgCoeffs">
+<span class="sig-name descname"><span class="pre">chgCoeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeffs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.chgCoeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.chgCoeffs" title="Link to this definition"></a></dt>
+<dd><p>Changes coefficients of a number of variables
+in the linear constraint constr.</p>
+<section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>coeffs<span class="classifier">iterable/sequence of pairs</span></dt><dd><p>iterable/sequence of variable-coefficient pairs</p>
+</dd>
+<dt>constr<span class="classifier">docplex.mp.constr.LinearConstraint</span></dt><dd><p>The constraint to be adjusted</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.context">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">context</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.context" title="Link to this definition"></a></dt>
+<dd><p>Return the current instance of cplex.callbacks.Context</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.cuts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cuts</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.cuts" title="Link to this definition"></a></dt>
+<dd><p>Return value of parameter cuts</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.dettime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dettime</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.dettime" title="Link to this definition"></a></dt>
+<dd><p>Return the deterministic time. For Cplex, this
+is the total amout of CPU ticks</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.doBenders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">doBenders</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.doBenders" title="Link to this definition"></a></dt>
+<dd><p>Return Cplex parameter parameter.benders.strategy</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.end">
+<span class="sig-name descname"><span class="pre">end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.end" title="Link to this definition"></a></dt>
+<dd><p>Clean up the Cplex IP model by calling its “end” method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.export_model">
+<span class="sig-name descname"><span class="pre">export_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lp_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.export_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.export_model" title="Link to this definition"></a></dt>
+<dd><p>Exports the model to a model file of type “lp”.</p>
+<section id="id21">
+<h3>Parameters<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lp_file<span class="classifier">str    </span></dt><dd><p>Name of the file where to write the model.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.getConstraints">
+<span class="sig-name descname"><span class="pre">getConstraints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.getConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.getConstraints" title="Link to this definition"></a></dt>
+<dd><p>Return list of all linear constraints in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.getObjective">
+<span class="sig-name descname"><span class="pre">getObjective</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.getObjective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.getObjective" title="Link to this definition"></a></dt>
+<dd><p>Alias for docplex.mp.model.get_objective_expr(), which
+returns the objective expression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.getVars">
+<span class="sig-name descname"><span class="pre">getVars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.getVars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.getVars" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of the model’s variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.get_dual_values">
+<span class="sig-name descname"><span class="pre">get_dual_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.get_dual_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.get_dual_values" title="Link to this definition"></a></dt>
+<dd><p>Returns the list/sequence of dual variables to
+the linear constraints in the list/sequence
+of linear constraints constr. This is an alias
+for docplex.mp.model.dual_values()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.get_rhs">
+<span class="sig-name descname"><span class="pre">get_rhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.get_rhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.get_rhs" title="Link to this definition"></a></dt>
+<dd><p>Return the linear constraint’s constr right-hand side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.get_solution">
+<span class="sig-name descname"><span class="pre">get_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.get_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.get_solution" title="Link to this definition"></a></dt>
+<dd><p>Returns the solution values of variables X.</p>
+<section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X<span class="classifier">dict</span></dt><dd><p>Dictionary of docplex.mp.dvar</p>
+</dd>
+<dt>keep_zeros<span class="classifier">bool</span></dt><dd><p>If True, the default, all solution 
+values to variables X are returned.
+Otherwise, only non-zero values are
+returned.</p>
+</dd>
+<dt>precision<span class="classifier">float (positive)</span></dt><dd><p>Figures smaller in magnitude than precision are seen as
+zeros.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.id_relaxation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id_relaxation</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.id_relaxation" title="Link to this definition"></a></dt>
+<dd><p>Return cplex.callbacks.Context.id.relaxation</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.in_relaxation">
+<span class="sig-name descname"><span class="pre">in_relaxation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.in_relaxation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.in_relaxation" title="Link to this definition"></a></dt>
+<dd><p>Return True if Cplex solver calls callback
+after solving the relaxation.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.incument_objective">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incument_objective</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.incument_objective" title="Link to this definition"></a></dt>
+<dd><p>Return incumbent objective value</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.infinity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">infinity</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.infinity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.lbHeur">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lbHeur</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.lbHeur" title="Link to this definition"></a></dt>
+<dd><p>Return Cplex parameter parameters.mip.strategy.lbheur (local
+branching switch</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.log_output">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_output</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.log_output" title="Link to this definition"></a></dt>
+<dd><p>Return value of parameter log_output</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.lowerObjStop">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lowerObjStop</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.lowerObjStop" title="Link to this definition"></a></dt>
+<dd><p>Returns docplex.mp.model.parameters.mip.limits.lowerobjstop</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.lower_cutoff">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lower_cutoff</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.lower_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Return lower cutoff value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.maximize">
+<span class="sig-name descname"><span class="pre">maximize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.maximize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.maximize" title="Link to this definition"></a></dt>
+<dd><p>Sets the objective function of the underlying
+Cplex model to be the maximization of the 
+linear expression expr. This is just an
+alias to docplex.mp.model.minimize.</p>
+<section id="id23">
+<h3>Parameters<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>expr<span class="classifier">docplex.mp.linear.LinearExpr</span></dt><dd><p>single objective function to be minimized.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.minimize" title="Link to this definition"></a></dt>
+<dd><p>Sets the objective function of the underlying
+Cplex model to be the minimization of the 
+linear expression expr. This is just an
+alias to docplex.mp.model.minimize.</p>
+<section id="id24">
+<h3>Parameters<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>expr<span class="classifier">docplex.mp.linear.LinearExpr</span></dt><dd><p>single objective function to be minimized.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.mipEmphasis">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipEmphasis</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.mipEmphasis" title="Link to this definition"></a></dt>
+<dd><p>Return value of Cplex parameter parameters.emphasis.mip.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.mipModel">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipModel</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.mipModel" title="Link to this definition"></a></dt>
+<dd><p>Return the instance of the docplex.mp.model Model class.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.mipStrategy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipStrategy</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.mipStrategy" title="Link to this definition"></a></dt>
+<dd><p>Return value of Cplex parameter mip.strategy.search
+(dynamic search switch)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.mip_tol">
+<span class="sig-name descname"><span class="pre">mip_tol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">absgap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relgap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feas_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.mip_tol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.mip_tol" title="Link to this definition"></a></dt>
+<dd><p>Set the MIP solver’s optimality absolute 
+and relative optimality tolerances to
+the values absgap and relgap, resp.</p>
+<section id="id25">
+<h3>Parameters<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>absgap, relgap, int_tol, feas_tol<span class="classifier">float</span></dt><dd><p>Non-negative floating point numbers. If negative, the 
+tolerance is not set. absgap and relgap are the
+absolute and relative optimality tolerance, int_tol
+is the tolerance for integrality, and feas_tol the
+feasibility tolerance for the simplex method.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.nodeCount">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodeCount</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.nodeCount" title="Link to this definition"></a></dt>
+<dd><p>Return the NodeCount, i.e. the number of branch-and-cut 
+nodes explored in Cplex’s most recent optimization</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.nodelimit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodelimit</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.nodelimit" title="Link to this definition"></a></dt>
+<dd><p>Node limit for the MIP solver</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.optim">
+<span class="sig-name descname"><span class="pre">optim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.optim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.optim" title="Link to this definition"></a></dt>
+<dd><p>Calls the Cplex solver (docplex.mp.model.solve) for
+solving the current MIP model.</p>
+<section id="id26">
+<h3>Returns<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>success<span class="classifier">bool </span></dt><dd><p>True, if a feasible or optimal solution was
+found.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.reduced_costs">
+<span class="sig-name descname"><span class="pre">reduced_costs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.reduced_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.reduced_costs" title="Link to this definition"></a></dt>
+<dd><p>Returns the reduced cost of the decision variables
+dvars.</p>
+<section id="id27">
+<h3>Parameters<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars: iterable/sequence of variables</dt><dd><p>sequence of decision variables</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h3>Returns<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rc<span class="classifier">list of float</span></dt><dd><p>The list of the variables’ reduced cost</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.runtime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">runtime</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.runtime" title="Link to this definition"></a></dt>
+<dd><p>Return computation time used to solve the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.set_callback">
+<span class="sig-name descname"><span class="pre">set_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callbck</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contxtmsk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wheres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.set_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.set_callback" title="Link to this definition"></a></dt>
+<dd><p>Set callback class for the purposes defined
+by contxtmsk.</p>
+<section id="id29">
+<h3>Parameters<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>callbck<span class="classifier">class </span></dt><dd><p>The class to be called for the callback</p>
+</dd>
+<dt>contxtmask<span class="classifier">int </span></dt><dd><p>Cplex’s indicator for the context in which the
+callback might be called.</p>
+</dd>
+<dt>wheres<span class="classifier">list of int</span></dt><dd><p>GuRoBi’s list of ‘where’ codes to be enabled in
+the callback.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.set_rhs">
+<span class="sig-name descname"><span class="pre">set_rhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.set_rhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.set_rhs" title="Link to this definition"></a></dt>
+<dd><p>Sets a constraint’s “constr” right-hand side to the
+value of “rhs”.</p>
+<section id="id30">
+<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constr<span class="classifier">docplex.mp.constr.LinearConstraint</span></dt><dd><p>The constraint where to adjust the rhs.</p>
+</dd>
+<dt>rhs<span class="classifier">int or float</span></dt><dd><p>The (new) right-hand side value</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.set_vartype">
+<span class="sig-name descname"><span class="pre">set_vartype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.set_vartype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.set_vartype" title="Link to this definition"></a></dt>
+<dd><p>Set the type of the decision variable var
+to the type vtype.</p>
+<section id="id31">
+<h3>Parameters<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvar<span class="classifier">docplex.mp.dvar object</span></dt><dd><p>The variable whose type should be set.</p>
+</dd>
+<dt>vtype<span class="classifier">str </span></dt><dd><p>The type to which the variables should be set:
+‘B’ for binary, ‘I’ for integer, ‘C’ for 
+continuous.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.status">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.status" title="Link to this definition"></a></dt>
+<dd><p>Return model’s solution status</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.sum">
+<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exprs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.sum" title="Link to this definition"></a></dt>
+<dd><p>Returns the sum of a list or iterable of 
+expressions using docplex.mp.model.sum</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.terminate">
+<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.terminate" title="Link to this definition"></a></dt>
+<dd><p>Terminate computations from a callback.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.timelimit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timelimit</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.timelimit" title="Link to this definition"></a></dt>
+<dd><p>Time limit for the MIP solver</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/cpx_mip.html#CPXmodel.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.update" title="Link to this definition"></a></dt>
+<dd><p>Update the model. Only relevant for GuRoBi and
+is here just a dummpy.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.cpx_mip.CPXmodel.upper_cutoff">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">upper_cutoff</span></span><a class="headerlink" href="#pyloa.mip.cpx_mip.CPXmodel.upper_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Return upper cutoff value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.mip.grb_mip">
+<span id="pyloa-mip-grb-mip-module"></span><h2>pyloa.mip.grb_mip module<a class="headerlink" href="#module-pyloa.mip.grb_mip" title="Link to this heading"></a></h2>
+<p>Module mip.GRBmodel of package pyloa:
+Defines wrapper class for the gurobipy Model class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.mip.grb_mip.</span></span><span class="sig-name descname"><span class="pre">GRBmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Wraps some methods and attributes of the gurobipy model class for
+the purposes of synchronizing function names with docplex.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.FeasibilityTol">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FeasibilityTol</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.FeasibilityTol" title="Link to this definition"></a></dt>
+<dd><p>Return parameter FeasibilityTol</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.IntFeasTol">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">IntFeasTol</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.IntFeasTol" title="Link to this definition"></a></dt>
+<dd><p>Return parameter IntFeasTol</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.MIPGap">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MIPGap</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.MIPGap" title="Link to this definition"></a></dt>
+<dd><p>Return parameter MIPGap</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.MIPGapAbs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MIPGapAbs</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.MIPGapAbs" title="Link to this definition"></a></dt>
+<dd><p>Return parameter MIPGapAbs</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.MIQCPMethod">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MIQCPMethod</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.MIQCPMethod" title="Link to this definition"></a></dt>
+<dd><p>Returns value of parameter mip.strategy.miqcpstrat</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.ObjBound">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ObjBound</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.ObjBound" title="Link to this definition"></a></dt>
+<dd><p>Best bound on (lower for minimization, upper for
+maximization) on the optimal objective value</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.ObjVal">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ObjVal</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.ObjVal" title="Link to this definition"></a></dt>
+<dd><p>Objective value of a solution to the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.addConstraint">
+<span class="sig-name descname"><span class="pre">addConstraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.addConstraint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.addConstraint" title="Link to this definition"></a></dt>
+<dd><p>Adds the single constraint constr to the model.</p>
+<section id="id32">
+<h3>Parameters<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constr<span class="classifier">GuRoBi temporary constraint object</span></dt><dd><p>The constraint to be included to the model</p>
+</dd>
+</dl>
+</section>
+<section id="id33">
+<h3>Returns<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>cnstr<span class="classifier">gurobipy.tempConstr</span></dt><dd><p>The temporary form of the constraint included to the model.</p>
+</dd>
+<dt>return_constr<span class="classifier">bool </span></dt><dd><p>If True, the constraint object instance
+is returned.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.addConstraints">
+<span class="sig-name descname"><span class="pre">addConstraints</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.addConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.addConstraints" title="Link to this definition"></a></dt>
+<dd><p>Adds several constraints to the model.</p>
+<section id="id34">
+<h3>Parameters<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constrs<span class="classifier">iterable of gurobipy.Constr or gurobipy.tempConstr    </span></dt><dd><p>The iterable or generator expression of constraints to be included.</p>
+</dd>
+<dt>return_constr<span class="classifier">Bool</span></dt><dd><p>If True, the list of the added constraints is returned.</p>
+</dd>
+</dl>
+</section>
+<section id="id35">
+<h3>Returns<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<p>None or the list of the added constraints. Note that this
+are temporary constraints in GuRoBi until the model is updated.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.addQuadConstrs">
+<span class="sig-name descname"><span class="pre">addQuadConstrs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constrs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.addQuadConstrs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.addQuadConstrs" title="Link to this definition"></a></dt>
+<dd><p>Add a bunch of quadratic constraints to the model.
+Is actually the same as addConstraints as GuRoBi
+does not care if the constraints are linear or
+quadratic.</p>
+<section id="id36">
+<h3>Parameters<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constrs: iterable of docplex.mp.constr.QuadraticConstraint    </dt><dd><p>The quadratic constraint expressions.</p>
+</dd>
+<dt>return_constr<span class="classifier">Bool</span></dt><dd><p>If True, the added constraints are returned.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.addVar">
+<span class="sig-name descname"><span class="pre">addVar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">constr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeffs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.addVar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.addVar" title="Link to this definition"></a></dt>
+<dd><p>Adds a single variable to the model.</p>
+<section id="id37">
+<h3>Parameters<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lb<span class="classifier">float</span></dt><dd><p>Lower bound for the variable. Default: 0.0</p>
+</dd>
+<dt>ub<span class="classifier">float</span></dt><dd><p>Uppper bound on the variable. Default: None</p>
+</dd>
+<dt>obj<span class="classifier">float</span></dt><dd><p>The variables objective coefficient</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>If None, a continuous variable is created. 
+Otherwise, if vtype=’B’ a binary and if
+vtype=’I’ an integer variable.</p>
+</dd>
+<dt>name<span class="classifier">str </span></dt><dd><p>Name to be given to the variable. Default is None.</p>
+</dd>
+<dt>constr<span class="classifier">None or a sequence of constraints</span></dt><dd><p>Sequence of constraint to which the variable should 
+be added.</p>
+</dd>
+<dt>coeffs<span class="classifier">None or a single float/int or an iterable of float/int.</span></dt><dd><p>If coeffs is a single float or int, the variable
+is added to all constraints from the above sequence
+of constraints with the same coefficient ‘coeffs’.
+If coeffs is an iterable, the variable is included
+with the specified coefficient to the given sequence
+of constraints. Make sure that both sequences are
+of the same length.</p>
+</dd>
+</dl>
+</section>
+<section id="id38">
+<h3>Returns<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<p>An instance of class Var (gurobipy)</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.addVarCube">
+<span class="sig-name descname"><span class="pre">addVarCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.addVarCube"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.addVarCube" title="Link to this definition"></a></dt>
+<dd><p>Creates and return a dictionary of variables indexed by the
+the three indices.</p>
+<section id="id39">
+<h3>Parameters<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>indx<span class="classifier">tuple of three int </span></dt><dd><p>tuple of the three indices</p>
+</dd>
+<dt>lb<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Lower bounds to be applied for the variables.
+If None, lower bounds are zero.</p>
+</dd>
+<dt>ub<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Upper bounds to be applied for the variables.
+If None, no upper bounds are imposed.</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>Type of the variables. If None, it’s
+continuous variables, if ‘B’ binary
+variables, if ‘I’ integer variables.</p>
+</dd>
+<dt>name<span class="classifier">None or str </span></dt><dd><p>If not None, variables named as name[index]</p>
+</dd>
+</dl>
+</section>
+<section id="id40">
+<h3>Returns<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">dict</span></dt><dd><p>The dictionary of MIP model variables.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.addVarMatrix">
+<span class="sig-name descname"><span class="pre">addVarMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.addVarMatrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.addVarMatrix" title="Link to this definition"></a></dt>
+<dd><p>Create and return a rows x cols matrix of variables
+of type vtype.</p>
+<section id="id41">
+<h3>Parameters<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rows, cols<span class="classifier">int </span></dt><dd><p>Number of rows and columns of the matrix.</p>
+</dd>
+<dt>lb<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Lower bounds to be applied for the variables.
+If None, lower bounds are zero.</p>
+</dd>
+<dt>ub<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Upper bounds to be applied for the variables.
+If None, no upper bounds are imposed.</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>Type of the variables. If None, it’s
+continuous variables, if ‘B’ binary
+variables, if ‘I’ integer variables.</p>
+</dd>
+<dt>name<span class="classifier">None or str </span></dt><dd><p>If not None, variables are named as name[index]</p>
+</dd>
+</dl>
+</section>
+<section id="id42">
+<h3>Returns<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">dict</span></dt><dd><p>The dictionary of MIP model variables.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.addVars">
+<span class="sig-name descname"><span class="pre">addVars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.addVars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.addVars" title="Link to this definition"></a></dt>
+<dd><p>Adds a dictionary of variables with keys
+indices to the MIP model.</p>
+<section id="id43">
+<h3>Parameters<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>indices<span class="classifier">iterable </span></dt><dd><p>Sequence of indices to be used as 
+keys of the dictionary.</p>
+</dd>
+<dt>lb<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Lower bounds to be applied for the variables.
+If None, lower bounds are zero.</p>
+</dd>
+<dt>ub<span class="classifier">int or float or iterable of int or float</span></dt><dd><p>Upper bounds to be applied for the variables.
+If None, no upper bounds are imposed.</p>
+</dd>
+<dt>vtype<span class="classifier">None or str</span></dt><dd><p>Type of the variables. If None, it’s
+continuous variables, if ‘B’ binary
+variables, if ‘I’ integer variables.</p>
+</dd>
+<dt>name<span class="classifier">None or str </span></dt><dd><p>If not None, variables are named as name[index]</p>
+</dd>
+</dl>
+</section>
+<section id="id44">
+<h3>Returns<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>v<span class="classifier">dict</span></dt><dd><p>The dictionary of MIP model variables.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.candidate_objective">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">candidate_objective</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.candidate_objective" title="Link to this definition"></a></dt>
+<dd><p>Return objective value of a candidate solution</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.cbCut">
+<span class="sig-name descname"><span class="pre">cbCut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cut</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.cbCut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.cbCut" title="Link to this definition"></a></dt>
+<dd><p>Add a global user cut from a callback to the solver.</p>
+<section id="id45">
+<h3>Parameters<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>cut<span class="classifier">GuRoBi linear constraint </span></dt><dd><p>The object representing the cut as a
+linear constraint. In the form
+lhs R rhs, where R is &lt;=, =, or &gt;=</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.cbGetNodeRealKeys">
+<span class="sig-name descname"><span class="pre">cbGetNodeRealKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.cbGetNodeRealKeys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRealKeys" title="Link to this definition"></a></dt>
+<dd><p>Return the relaxation’s solution for decision 
+variables from a dictionary and the specified
+dictionary keys.</p>
+<section id="id46">
+<h3>Parameters<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<p>dvars : dict of decision variables
+keys  : sequence of dictionary keys</p>
+</section>
+<section id="id47">
+<h3>Returns<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<p>Solution values for the decision variables with the
+given keys as a numpy array of float</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.cbGetNodeRel">
+<span class="sig-name descname"><span class="pre">cbGetNodeRel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.cbGetNodeRel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRel" title="Link to this definition"></a></dt>
+<dd><p>Return the relaxation’s solution for the decision variables 
+dvars at the current branch-and-cut node.</p>
+<section id="id48">
+<h3>Parameters<a class="headerlink" href="#id48" title="Link to this heading"></a></h3>
+<p>dvars : sequence of decision variables</p>
+</section>
+<section id="id49">
+<h3>Returns<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
+<p>Solution values to the specified variables as numpy array of float</p>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.cb_MIPSOL">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cb_MIPSOL</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.cb_MIPSOL" title="Link to this definition"></a></dt>
+<dd><p>Return the constant GRB.Callback.MIPSOL</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.change_lower_bounds">
+<span class="sig-name descname"><span class="pre">change_lower_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.change_lower_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.change_lower_bounds" title="Link to this definition"></a></dt>
+<dd><p>Changes the lower bounds of a collection of variables.
+(cf. docplex.mp.model.change_var_lower_bounds)</p>
+<section id="id50">
+<h3>Parameters<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars<span class="classifier">iterable of decision variables</span></dt><dd><p>The variables for which the type should
+be changed.</p>
+</dd>
+<dt>lb<span class="classifier">an iterable or a single number specifying</span></dt><dd><p>the new lower bound(s).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.change_upper_bounds">
+<span class="sig-name descname"><span class="pre">change_upper_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ub</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.change_upper_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.change_upper_bounds" title="Link to this definition"></a></dt>
+<dd><p>Changes the upper bounds of a collection of variables.
+(cf. docplex.mp.model.change_var_upper_bounds)</p>
+<section id="id51">
+<h3>Parameters<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars<span class="classifier">iterable of decision variables</span></dt><dd><p>The variables for which the type should
+be changed.</p>
+</dd>
+<dt>ub<span class="classifier">an iterable or a single number specifying</span></dt><dd><p>the new upper bound(s).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.change_var_types">
+<span class="sig-name descname"><span class="pre">change_var_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.change_var_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.change_var_types" title="Link to this definition"></a></dt>
+<dd><p>Changes the type of a collection of variables.</p>
+<section id="id52">
+<h3>Parameters<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars<span class="classifier">iterable of decision variables</span></dt><dd><p>The variables for which the type should
+be changed.</p>
+</dd>
+<dt>vtype<span class="classifier">an iterable of variable types or </span></dt><dd><p>the single type to which the variables
+should be changed.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.chgCoeff">
+<span class="sig-name descname"><span class="pre">chgCoeff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coef</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.chgCoeff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.chgCoeff" title="Link to this definition"></a></dt>
+<dd><p>Change the coefficient of variable dvar in
+the linear constraint constr to value coef.</p>
+<section id="id53">
+<h3>Parameters<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constr<span class="classifier">gurobipy Constr</span></dt><dd><p>The constraint to be adjusted</p>
+</dd>
+<dt>dvar<span class="classifier">gurobipy Var</span></dt><dd><p>The decision variable where to change
+the coefficient.</p>
+</dd>
+<dt>coef<span class="classifier">int or float</span></dt><dd><p>The value of the (new) coefficient.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.chgCoeffs">
+<span class="sig-name descname"><span class="pre">chgCoeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeffs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.chgCoeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.chgCoeffs" title="Link to this definition"></a></dt>
+<dd><p>Changes coefficients of a number of variables
+in the linear constraint constr.</p>
+<section id="id54">
+<h3>Parameters<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>coeffs<span class="classifier">iterable/sequence of pairs</span></dt><dd><p>iterable/sequence of variable-coefficient pairs</p>
+</dd>
+<dt>constr<span class="classifier">gurobipy.Constr</span></dt><dd><p>The constraint to be adjusted</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.cuts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cuts</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.cuts" title="Link to this definition"></a></dt>
+<dd><p>Return value of GuRoBi parameter cuts</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.dettime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dettime</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.dettime" title="Link to this definition"></a></dt>
+<dd><p>Return the deterministic time. For GuRoBi, this
+is the model attribute Work, a figure that roughly
+corresponds to a second on a single thread</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.doBenders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">doBenders</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.doBenders" title="Link to this definition"></a></dt>
+<dd><p>Dummy. GuRoBi has no built-in Benders</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.end">
+<span class="sig-name descname"><span class="pre">end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.end" title="Link to this definition"></a></dt>
+<dd><p>Clean up the GuRoBi IP model by calling its “close” method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.export_model">
+<span class="sig-name descname"><span class="pre">export_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lp_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.export_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.export_model" title="Link to this definition"></a></dt>
+<dd><p>Exports the model to a model file of type “lp”.</p>
+<section id="id55">
+<h3>Parameters<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>lp_file<span class="classifier">str    </span></dt><dd><p>Name of the file where to write the model.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.getConstraints">
+<span class="sig-name descname"><span class="pre">getConstraints</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.getConstraints"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.getConstraints" title="Link to this definition"></a></dt>
+<dd><p>Alias for gurobipy.model.getConstr, which returns
+a list all linear constraints in the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.getObjective">
+<span class="sig-name descname"><span class="pre">getObjective</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.getObjective"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.getObjective" title="Link to this definition"></a></dt>
+<dd><p>Alias for gurobioy.model.getObjective, which
+returns the objective expression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.getVars">
+<span class="sig-name descname"><span class="pre">getVars</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.getVars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.getVars" title="Link to this definition"></a></dt>
+<dd><p>Alias for gurobipy.model.getVars, which returns
+a list of the model’s variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.get_dual_values">
+<span class="sig-name descname"><span class="pre">get_dual_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.get_dual_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.get_dual_values" title="Link to this definition"></a></dt>
+<dd><p>Returns the list/sequence of dual variables to
+the linear constraints in the list/sequence
+of linear constraints constr. This is an alias
+for docplex.mp.model.dual_values()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.get_rhs">
+<span class="sig-name descname"><span class="pre">get_rhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.get_rhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.get_rhs" title="Link to this definition"></a></dt>
+<dd><p>Return the linear constraint’s constr right-hand side.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.get_solution">
+<span class="sig-name descname"><span class="pre">get_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_zeros</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.get_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.get_solution" title="Link to this definition"></a></dt>
+<dd><p>Returns the solution values of variables X.</p>
+<section id="id56">
+<h3>Parameters<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X<span class="classifier">dict</span></dt><dd><p>Dictionary of docplex.mp.dvar</p>
+</dd>
+<dt>keep_zeros<span class="classifier">bool</span></dt><dd><p>If True, the default, all solution 
+values to variables X are returned.
+Otherwise, only non-zero values are
+returned.</p>
+</dd>
+<dt>precision<span class="classifier">float (positive)</span></dt><dd><p>Figures smaller in magnitude than precision are seen as
+zeros.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.id_relaxation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id_relaxation</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.id_relaxation" title="Link to this definition"></a></dt>
+<dd><p>Return GRB.Callback.MIPNODE</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.in_relaxation">
+<span class="sig-name descname"><span class="pre">in_relaxation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.in_relaxation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.in_relaxation" title="Link to this definition"></a></dt>
+<dd><p>Return True if GuRoBi solver calls callback
+after solving the relaxation.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.incument_objective">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">incument_objective</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.incument_objective" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.infinity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">infinity</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.infinity" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.lbHeur">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lbHeur</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.lbHeur" title="Link to this definition"></a></dt>
+<dd><p>Dummy. GuRoBi has no local branching heuristic</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.log_output">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_output</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.log_output" title="Link to this definition"></a></dt>
+<dd><p>Return True if value of gurobiy.model.OutputFlag=1</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.lowerObjStop">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lowerObjStop</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.lowerObjStop" title="Link to this definition"></a></dt>
+<dd><p>Returns GuRoBi parameter BestObjStop (for minimization)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.lower_cutoff">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lower_cutoff</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.lower_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Return lower cutoff value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.maximize">
+<span class="sig-name descname"><span class="pre">maximize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.maximize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.maximize" title="Link to this definition"></a></dt>
+<dd><p>Sets the objective function of the underlying GuRoBi model 
+to be the maximization of the expression expr. This is
+an alias to gurobipy.model.SetObjetive(expr, GRB.MAXIMIZE)</p>
+<section id="id57">
+<h3>Parameters<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>expr<span class="classifier">gurobi LinExpr</span></dt><dd><p>single objective function to be minimized.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.minimize">
+<span class="sig-name descname"><span class="pre">minimize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.minimize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.minimize" title="Link to this definition"></a></dt>
+<dd><p>Sets the objective function of the underlying GuRoBi model 
+to be the minimization of the expression expr. This is
+an alias to gurobipy.model.SetObjetive(expr, GRB.MINIMIZE)</p>
+<section id="id58">
+<h3>Parameters<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>expr<span class="classifier">gurobi LinExpr</span></dt><dd><p>single objective function to be minimized.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.mipEmphasis">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipEmphasis</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.mipEmphasis" title="Link to this definition"></a></dt>
+<dd><p>Return value of GuRoBi parameter MIPFocus</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.mipModel">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipModel</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.mipModel" title="Link to this definition"></a></dt>
+<dd><p>Return the instance of the gurobipy Model class.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.mipStrategy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipStrategy</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.mipStrategy" title="Link to this definition"></a></dt>
+<dd><p>Dynamic search switch, does not exist for GuRoBi</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.mip_tol">
+<span class="sig-name descname"><span class="pre">mip_tol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">absgap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relgap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feas_tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.mip_tol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.mip_tol" title="Link to this definition"></a></dt>
+<dd><p>Set the MIP solver’s mality absolute 
+and relative optimality tolerances to
+the values absgap and relgap, resp.</p>
+<section id="id59">
+<h3>Parameters<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>absgap, relgap, int_tol, feas_tol<span class="classifier">float</span></dt><dd><p>Non-negative floating point numbers. If negative, the 
+tolerance is not set. absgap and relgap are the
+absolute and relative optimality tolerance, int_tol
+is the tolerance for integrality, and feas_tol the
+feasibility tolerance for the simplex method.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.nodeCount">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodeCount</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.nodeCount" title="Link to this definition"></a></dt>
+<dd><p>Return the NodeCount, i.e. the number of branch-and-cut 
+nodes explored in GuRoBi’s most recent optimization</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.nodelimit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodelimit</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.nodelimit" title="Link to this definition"></a></dt>
+<dd><p>Node limit for the MIP solver</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.optim">
+<span class="sig-name descname"><span class="pre">optim</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.optim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.optim" title="Link to this definition"></a></dt>
+<dd><p>Calls the solver (gurobipy.model.optimize) for
+solving the current MIP model.</p>
+<section id="id60">
+<h3>Returns<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>success<span class="classifier">bool </span></dt><dd><p>True, if a feasible or optimal solution was found.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.reduced_costs">
+<span class="sig-name descname"><span class="pre">reduced_costs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.reduced_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.reduced_costs" title="Link to this definition"></a></dt>
+<dd><p>Returns the reduced cost of the decision variables
+dvars.</p>
+<section id="id61">
+<h3>Parameters<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvars: iterable/sequence of variables</dt><dd><p>sequence of decision variables</p>
+</dd>
+</dl>
+</section>
+<section id="id62">
+<h3>Returns<a class="headerlink" href="#id62" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>rc<span class="classifier">list of float</span></dt><dd><p>The list of the variables’ reduced cost</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.runtime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">runtime</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.runtime" title="Link to this definition"></a></dt>
+<dd><p>Return computation time used to solve the model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.set_callback">
+<span class="sig-name descname"><span class="pre">set_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callbck</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contxtmsk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wheres</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.set_callback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.set_callback" title="Link to this definition"></a></dt>
+<dd><p>Set callback class for the purposes (‘wheres’) defined
+by wheres.</p>
+<section id="id63">
+<h3>Parameters<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>callbck<span class="classifier">class </span></dt><dd><p>The class to be called for the callback</p>
+</dd>
+<dt>contxtmask<span class="classifier">int </span></dt><dd><p>Cplex’s indicator for the context in which the
+callback might be called.</p>
+</dd>
+<dt>wheres<span class="classifier">list of int</span></dt><dd><p>GuRoBi’s list of ‘where’ codes to be enabled in
+the callback.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.set_rhs">
+<span class="sig-name descname"><span class="pre">set_rhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rhs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.set_rhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.set_rhs" title="Link to this definition"></a></dt>
+<dd><p>Sets a constraints “constr” right-hand
+side to a value of “rhs”.</p>
+<section id="id64">
+<h3>Parameters<a class="headerlink" href="#id64" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>constr<span class="classifier">gurobipy.Constr</span></dt><dd><p>The constraint where to adjust the rhs.</p>
+</dd>
+<dt>rhs<span class="classifier">int or float</span></dt><dd><p>The (new) right-hand side value</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.set_vartype">
+<span class="sig-name descname"><span class="pre">set_vartype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dvar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.set_vartype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.set_vartype" title="Link to this definition"></a></dt>
+<dd><p>Set the type of the decision variable var
+to the type vtype.</p>
+<section id="id65">
+<h3>Parameters<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dvar<span class="classifier">gurobipy.Var object</span></dt><dd><p>The variable whose type should be set.</p>
+</dd>
+<dt>vtype<span class="classifier">str </span></dt><dd><p>The type to which the variables should be set:
+‘B’ for binary, ‘I’ for integer, ‘C’ for 
+continuous.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.status">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.status" title="Link to this definition"></a></dt>
+<dd><p>Return the model status, cf. gurobipy.Model.status</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.sum">
+<span class="sig-name descname"><span class="pre">sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exprs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.sum" title="Link to this definition"></a></dt>
+<dd><p>Returns the sum of a list or iterable of 
+expressions using gurobipy’s quicksum</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.terminate">
+<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.terminate" title="Link to this definition"></a></dt>
+<dd><p>Terminate GuRoBi’s computation on the model from a callback</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.timelimit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timelimit</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.timelimit" title="Link to this definition"></a></dt>
+<dd><p>Time limit for the MIP solver</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/grb_mip.html#GRBmodel.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.update" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.mip.grb_mip.GRBmodel.upper_cutoff">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">upper_cutoff</span></span><a class="headerlink" href="#pyloa.mip.grb_mip.GRBmodel.upper_cutoff" title="Link to this definition"></a></dt>
+<dd><p>Return (upper) cutoff value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.mip.model">
+<span id="pyloa-mip-model"></span><h2>pyloa.mip.model<a class="headerlink" href="#module-pyloa.mip.model" title="Link to this heading"></a></h2>
+<p>Module mip.model of package pyloa
+Used to either interface docplex or gurobipy</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.mip.model.Model">
+<span class="sig-prename descclassname"><span class="pre">pyloa.mip.model.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/model.html#Model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.model.Model" title="Link to this definition"></a></dt>
+<dd><p>Create and return an instance of either
+a docplex.mp.model or gurobipy model.</p>
+<section id="id66">
+<h3>Parameters<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>name<span class="classifier">str or None </span></dt><dd><p>Name of the model</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.mip.model.set_mipSolver">
+<span class="sig-prename descclassname"><span class="pre">pyloa.mip.model.</span></span><span class="sig-name descname"><span class="pre">set_mipSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/mip/model.html#set_mipSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.mip.model.set_mipSolver" title="Link to this definition"></a></dt>
+<dd><p>Set the MIP solver to be used.</p>
+<section id="id67">
+<h3>Parameters<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>solver<span class="classifier">str or None </span></dt><dd><p>If None, the name of the MIP solver is
+returned. Otherwise, the name of the
+solver to used (either ‘cplex’ or ‘gurobi’).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyloa.discrete.html" class="btn btn-neutral float-left" title="pyloa.discrete package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="pyloa" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

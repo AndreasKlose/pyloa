@@ -9,7 +9,7 @@
   <title>pyloa.plane package &mdash; PyLoa 1.00 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=26111179" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=99626c5e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -49,6 +49,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#references">References</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">pyloa.plane package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.planesolver">pyloa.plane.planesolver module</a><ul>
@@ -83,6 +84,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.parser">pyloa.plane.parser module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.parser.read_points"><code class="docutils literal notranslate"><span class="pre">read_points()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.parser.return_lola"><code class="docutils literal notranslate"><span class="pre">return_lola()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.parser.set_Nominatim_params"><code class="docutils literal notranslate"><span class="pre">set_Nominatim_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plane.parser.set_geoServer"><code class="docutils literal notranslate"><span class="pre">set_geoServer()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plane.weber">pyloa.plane.weber module</a><ul>
@@ -134,6 +137,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.mip.html">pyloa.mip package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
 </ul>
 
@@ -471,6 +476,48 @@ address names are stored in the global variables __lo, __la, __names</p>
 with_names is True, also the address names are returned.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.parser.set_Nominatim_params">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.parser.</span></span><span class="sig-name descname"><span class="pre">set_Nominatim_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_retries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/parser.html#set_Nominatim_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.parser.set_Nominatim_params" title="Link to this definition"></a></dt>
+<dd><p>Change the default values used for the min_delay and the number of
+retries when sending requests to the Nominatim geo-server. For
+going back to default values, simply use set_Nominatim_params().</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>min_delay<span class="classifier">int </span></dt><dd><p>Is the minimum delay in seconds</p>
+</dd>
+<dt>max_retries<span class="classifier">int</span></dt><dd><p>Is the maximal number of retries.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plane.parser.set_geoServer">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plane.parser.</span></span><span class="sig-name descname"><span class="pre">set_geoServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Nominatim'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/parser.html#set_geoServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.parser.set_geoServer" title="Link to this definition"></a></dt>
+<dd><p>Choose the geo-server to be used for geo-coding addresses. Possible 
+choices or Nominatim (nominatim.openstreetmap.org) or OpenCage
+(opencage.com). Note that the latter is commercial. For accessing
+the server you need to have an account at OpenCage and an API-key.
+The API-key can either be provided as an argument to this functioin
+or via the environment variable OPENCAGE_API_KEY. Note that in case 
+you use OpenCage’s free service, the number of requests (addresses to 
+geocode) is limited to 2500 per day.
+The default server is Nominatim. Also a locally installed copy
+of Nominatim could be used. In that case, you have to set the
+domain variable in function set_Nominatim_params to your localhost.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>server<span class="classifier">str </span></dt><dd><p>Name of the server to be used (eiter Nominatim or OpenCage)</p>
+</dd>
+<dt>api_key<span class="classifier">str, optional</span></dt><dd><p>Your api_key for OpenCage if not stored using environment variable.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
 </section>
 <section id="module-pyloa.plane.weber">
 <span id="pyloa-plane-weber-module"></span><h2>pyloa.plane.weber module<a class="headerlink" href="#module-pyloa.plane.weber" title="Link to this heading"></a></h2>
@@ -486,8 +533,8 @@ is to minimize the function g(X) where</p>
 </div></blockquote>
 <p>Reference: Drezner, Z. (1984). The Planar Two-Center and 
 Two-Median Problems. Transportation Science 8, 351–361.</p>
-<section id="id2">
-<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>Y[i] i stores the coordinates of the i-th customer point,
 i = 0,…,m-1</p>
@@ -501,8 +548,8 @@ customer point i.</p>
 </dd>
 </dl>
 </section>
-<section id="id3">
-<h3>Returns<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<section id="id5">
+<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>objval<span class="classifier">float</span></dt><dd><p>Objective value of the optimal solution</p>
 </dd>
@@ -517,8 +564,8 @@ customer point i.</p>
 <span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber.</span></span><span class="sig-name descname"><span class="pre">solveWeber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Drezner'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xlst</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber.html#solveWeber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber.solveWeber" title="Link to this definition"></a></dt>
 <dd><p>Solves instances of the single Weber problem with customer 
 point set Y and customer weight vector w.</p>
-<section id="id4">
-<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>Y[i] i stores the coordinates of the i-th customer point,
 i = 0,…,m-1</p>
@@ -540,8 +587,8 @@ in each iteration.</p>
 </dd>
 </dl>
 </section>
-<section id="id5">
-<h3>Returns<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<section id="id7">
+<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>obj<span class="classifier">float</span></dt><dd><p>The objective value of the optimal solution</p>
 </dd>
@@ -562,8 +609,8 @@ problem mostly relying on location-allocation.</p>
 <span class="sig-prename descclassname"><span class="pre">pyloa.plane.loc_alloc.</span></span><span class="sig-name descname"><span class="pre">locAlloc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minisum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initLA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/loc_alloc.html#locAlloc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.loc_alloc.locAlloc" title="Link to this definition"></a></dt>
 <dd><p>Applies Cooper’s location allocation heuristic using different
 initial solutions and returns the best one found.</p>
-<section id="id6">
-<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
 </dd>
@@ -590,8 +637,8 @@ to “stdout”</p>
 </dd>
 </dl>
 </section>
-<section id="id7">
-<h3>Returns<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>bestObj<span class="classifier">float</span></dt><dd><p>the objective value (as a float) of the solution</p>
 </dd>
@@ -614,8 +661,8 @@ location X[j]</p>
 first solve a p-median problem using a MIP solver in order to cluster
 the customer set. The optimal locations for each cluster are
 then used as starting point for the location-allocation method.</p>
-<section id="id8">
-<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
 </dd>
@@ -631,8 +678,8 @@ the computations are printed to the screen.</p>
 </dd>
 </dl>
 </section>
-<section id="id9">
-<h3>Returns<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
 <p>objv : float</p>
 <p>Xsol : px2 numpy array of float</p>
 <dl class="simple">
@@ -650,8 +697,8 @@ location X[j]</p>
 <dd><p>Solves the two-facility Weber or 2-center problem by investigating all
 possible partitions of the customer set in two non-overlapping
 convex hulls.</p>
-<section id="id10">
-<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
 </dd>
@@ -664,8 +711,8 @@ is printed to the screen.</p>
 </dd>
 </dl>
 </section>
-<section id="id11">
-<h3>Returns<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>objv<span class="classifier">float  </span></dt><dd><p>The solution’s objective value</p>
 </dd>
@@ -695,8 +742,8 @@ closest to that customer is closed.</p>
 <p>Reference: Brimberg et al. (2000). Improvements and comparison of 
 heuristics for solving the multi-source Weber problem. Operations 
 Research 48: 444-460.</p>
-<section id="id12">
-<h3>Parameters<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
 </dd>
@@ -715,8 +762,8 @@ the computations are printed to the screen.</p>
 </dd>
 </dl>
 </section>
-<section id="id13">
-<h3>Returns<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<section id="id15">
+<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
 <p>objv : float</p>
 <p>X : px2 numpy array of float</p>
 <dl class="simple">
@@ -809,8 +856,8 @@ reduced cost and corresponding column</p>
 <dt class="sig sig-object py" id="pyloa.plane.weber_cg.colgen">
 <span class="sig-prename descclassname"><span class="pre">pyloa.plane.weber_cg.</span></span><span class="sig-name descname"><span class="pre">colgen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mip_pricing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/weber_cg.html#colgen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.weber_cg.colgen" title="Link to this definition"></a></dt>
 <dd><p>Solve multi-source Weber problem by means of column generation.</p>
-<section id="id14">
-<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">intLB, objv, Xsol, a, itr</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
 </dd>
@@ -830,8 +877,8 @@ is printed to stdout.</p>
 </dd>
 </dl>
 </section>
-<section id="id15">
-<h3>Returns<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<section id="id17">
+<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>objv<span class="classifier">float</span></dt><dd><p>objective value of the best solution found</p>
 </dd>
@@ -868,8 +915,8 @@ Methods for the 1-center problem in Euclidian plane.</p>
 problem in the plane.</p>
 <p>Reference: Charalambous, C. (1982). Extension of the Elzinga-Hearn
 Algorithm to the Weighted Case. Operations Research 30:591–594.</p>
-<section id="id16">
-<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<section id="id18">
+<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
 </dd>
@@ -882,8 +929,8 @@ to the list Xlst.</p>
 </dd>
 </dl>
 </section>
-<section id="id17">
-<h3>Returns<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<section id="id19">
+<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>UB<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
 </dd>
@@ -901,8 +948,8 @@ circle of m points in Euclidian plane.</p>
 <p>Reference: Elzinga, J. and Hearn, D. W. (1972).  Geometrical 
 Solutions of Some Minimax Location Problems.Transportation 
 Science 6:370–394.</p>
-<section id="id18">
-<h3>Parameters<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<section id="id20">
+<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
 </dd>
@@ -913,8 +960,8 @@ to the list Xlst.</p>
 </dd>
 </dl>
 </section>
-<section id="id19">
-<h3>Returns<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<section id="id21">
+<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>R<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
 </dd>
@@ -934,8 +981,8 @@ is solved. Then additional uncovered points are included and
 the adjusted 1-center problem on a small subset of points is
 solved. The method continues this way until all points are
 covered.</p>
-<section id="id20">
-<h3>Parameters<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<section id="id22">
+<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
 </dd>
@@ -948,8 +995,8 @@ are stored in this list.</p>
 </dd>
 </dl>
 </section>
-<section id="id21">
-<h3>Returns<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<section id="id23">
+<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>UB<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
 </dd>
@@ -978,8 +1025,8 @@ the boundary.</p>
 ellipsoids). In Maurer, H., ed., New Results and New Trends in 
 Computer Science. Lecture Notes in Computer Science, Vol. 555, 
 Springer-Verlag, pp. 359–370, doi:10.1007/BFb0038202.</p>
-<section id="id22">
-<h3>Parameters<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<section id="id24">
+<h3>Parameters<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
 </dd>
@@ -989,8 +1036,8 @@ Springer-Verlag, pp. 359–370, doi:10.1007/BFb0038202.</p>
 </dd>
 </dl>
 </section>
-<section id="id23">
-<h3>Returns<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<section id="id25">
+<h3>Returns<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>UB<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
 </dd>
@@ -1013,8 +1060,8 @@ by means of Cplex’s or GuRoBi’s solver.</p>
 constrained continuous convex optimization problem using 
 a MIP solver. For reasons of numerical stability, we normalize 
 the weights w by dividing it by the average weight.</p>
-<section id="id24">
-<h3>Parameters<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<section id="id26">
+<h3>Parameters<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">numpy mx2 array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
 </dd>
@@ -1024,8 +1071,8 @@ the weights w by dividing it by the average weight.</p>
 </dd>
 </dl>
 </section>
-<section id="id25">
-<h3>Returns<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<section id="id27">
+<h3>Returns<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>r<span class="classifier">float</span></dt><dd><p>“radius” of the computed center location</p>
 </dd>
@@ -1040,8 +1087,8 @@ the weights w by dividing it by the average weight.</p>
 <span class="sig-prename descclassname"><span class="pre">pyloa.plane.mip.</span></span><span class="sig-name descname"><span class="pre">SOCPweber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/mip.html#SOCPweber"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.mip.SOCPweber" title="Link to this definition"></a></dt>
 <dd><p>Solves the Fermat-Weber problem as a 2nd order cone problem
 using Cplex’s solver.</p>
-<section id="id26">
-<h3>Parameters<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<section id="id28">
+<h3>Parameters<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Y<span class="classifier">mx2 numpy array of float</span></dt><dd><p>m customer points in Euclidian plane</p>
 </dd>
@@ -1052,8 +1099,8 @@ the computations are printed to the screen.</p>
 </dd>
 </dl>
 </section>
-<section id="id27">
-<h3>Returns<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<section id="id29">
+<h3>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>objv<span class="classifier">float</span></dt><dd><p>Sum of weighted distances to the optimal facility location</p>
 </dd>
@@ -1068,8 +1115,8 @@ the computations are printed to the screen.</p>
 <span class="sig-prename descclassname"><span class="pre">pyloa.plane.mip.</span></span><span class="sig-name descname"><span class="pre">pcenter_mipq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeLim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/mip.html#pcenter_mipq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.mip.pcenter_mipq" title="Link to this definition"></a></dt>
 <dd><p>Formulates the planar p-center problem as a quadratically
 constrained MIP and solves it using a MIP solver.</p>
-<section id="id28">
-<h3>Parameters<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<section id="id30">
+<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
 </dd>
@@ -1091,8 +1138,8 @@ the computations are printed to the screen.</p>
 </dd>
 </dl>
 </section>
-<section id="id29">
-<h3>Returns<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<section id="id31">
+<h3>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>objv<span class="classifier">float</span></dt><dd><p>objective value of the optimal solution (smallest
 weighted distance to the nearest center point)</p>
@@ -1116,8 +1163,8 @@ location X[j]</p>
 <span class="sig-prename descclassname"><span class="pre">pyloa.plane.mip.</span></span><span class="sig-name descname"><span class="pre">weber_mipq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'off'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timLim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plane/mip.html#weber_mipq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plane.mip.weber_mipq" title="Link to this definition"></a></dt>
 <dd><p>Formulates the multi-source Weber problem as a quadratically
 constrained MIP and solves it using a MIP solver.</p>
-<section id="id30">
-<h3>Parameters<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<section id="id32">
+<h3>Parameters<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>p<span class="classifier">int</span></dt><dd><p>number of facilities to locate (1 &lt; p &lt; #customers)</p>
 </dd>
@@ -1139,8 +1186,8 @@ the computations are printed to the screen.</p>
 </dd>
 </dl>
 </section>
-<section id="id31">
-<h3>Returns<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<section id="id33">
+<h3>Returns<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
 <p>objv : float</p>
 <p>Xsol : px2 numpy array of float</p>
 <dl class="simple">

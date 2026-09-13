@@ -8,7 +8,7 @@
   <title>pyloa.plane.parser &mdash; PyLoa 1.00 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=99626c5e" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
@@ -46,8 +46,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#references">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.mip.html">pyloa.mip package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
 </ul>
 
@@ -85,14 +88,120 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">tsplib95</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tsp</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">geopy.geocoders</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nominatim</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lla2xy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spec</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">geopy.geocoders</span><span class="w"> </span><span class="kn">import</span> <span class="n">Nominatim</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geopy.point</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">geopy.extra.rate_limiter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RateLimiter</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lla2xy</span>
 
 <span class="n">_lo</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># list of longitude data</span>
 <span class="n">_la</span> <span class="o">=</span> <span class="kc">None</span>     <span class="c1"># list of latitude data</span>
 <span class="n">_names</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># list of customer/city names</span>
+
+<span class="c1"># The applicable geo-servers</span>
+<span class="n">_geo_server</span> <span class="o">=</span> <span class="s1">&#39;Nominatim&#39;</span> <span class="c1"># Alternative is OpenCage (https://opencagedata.com/)</span>
+
+<span class="c1"># Parameters for Nominatim</span>
+<span class="n">_min_delay</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c1"># minimal delay in seconds between success requests </span>
+<span class="n">_max_retries</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># Number of retries for such requests</span>
+<span class="n">_domain</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># If None, default domain nominatim.openstreetmap.org is used</span>
  
+<span class="c1"># OpenCage geocoding if present</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">find_spec</span><span class="p">(</span><span class="s1">&#39;opencage&#39;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">opencage.geocoder</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenCageGeocode</span>
+
+<span class="n">_api_key</span> <span class="o">=</span> <span class="kc">None</span>   <span class="c1"># API key for the geo-server   </span>
+<span class="n">_geo_coder</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># The geocoding function applied</span>
+    
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="set_geoServer">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.parser.set_geoServer">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_geoServer</span><span class="p">(</span> <span class="n">server</span> <span class="o">=</span> <span class="s1">&#39;Nominatim&#39;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Choose the geo-server to be used for geo-coding addresses. Possible </span>
+<span class="sd">    choices or Nominatim (nominatim.openstreetmap.org) or OpenCage</span>
+<span class="sd">    (opencage.com). Note that the latter is commercial. For accessing</span>
+<span class="sd">    the server you need to have an account at OpenCage and an API-key.</span>
+<span class="sd">    The API-key can either be provided as an argument to this functioin</span>
+<span class="sd">    or via the environment variable OPENCAGE_API_KEY. Note that in case </span>
+<span class="sd">    you use OpenCage&#39;s free service, the number of requests (addresses to </span>
+<span class="sd">    geocode) is limited to 2500 per day.</span>
+<span class="sd">    The default server is Nominatim. Also a locally installed copy</span>
+<span class="sd">    of Nominatim could be used. In that case, you have to set the</span>
+<span class="sd">    domain variable in function set_Nominatim_params to your localhost.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    server : str </span>
+<span class="sd">        Name of the server to be used (eiter Nominatim or OpenCage)</span>
+<span class="sd">    api_key : str, optional</span>
+<span class="sd">        Your api_key for OpenCage if not stored using environment variable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_geo_server</span><span class="p">,</span> <span class="n">_api_key</span> 
+    
+    <span class="n">_geo_server</span> <span class="o">=</span> <span class="n">server</span> 
+    <span class="k">if</span> <span class="n">server</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;opencage&#39;</span><span class="p">:</span>
+        <span class="n">_api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OPENCAGE_API_KEY&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">api_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">api_key</span>
+        <span class="k">if</span> <span class="n">_api_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">_geo_server</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="set_Nominatim_params">
+<a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.parser.set_Nominatim_params">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_Nominatim_params</span><span class="p">(</span> <span class="n">min_delay</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_retries</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change the default values used for the min_delay and the number of</span>
+<span class="sd">    retries when sending requests to the Nominatim geo-server. For</span>
+<span class="sd">    going back to default values, simply use set_Nominatim_params().</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    min_delay : int </span>
+<span class="sd">        Is the minimum delay in seconds</span>
+<span class="sd">    max_retries : int</span>
+<span class="sd">        Is the maximal number of retries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_min_delay</span><span class="p">,</span> <span class="n">_max_retries</span><span class="p">,</span> <span class="n">_domain</span>
+    
+    <span class="k">if</span> <span class="n">min_delay</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">_min_delay</span> <span class="o">=</span> <span class="n">min_delay</span> 
+    <span class="k">if</span> <span class="n">max_retries</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">_max_retries</span> <span class="o">=</span> <span class="n">max_retries</span> 
+    <span class="n">_domain</span> <span class="o">=</span> <span class="n">domain</span></div>
+
+    
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__open_cage_geocode</span><span class="p">(</span> <span class="n">address</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Geocode address using OpenCage&#39;s geocoder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">_geo_coder</span><span class="o">.</span><span class="n">geocode</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">no_annotations</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">)</span>
+    <span class="n">lng</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;lng&#39;</span><span class="p">],</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;geometry&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Point</span><span class="p">(</span><span class="n">latitude</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="n">lng</span> <span class="p">)</span> 
+    
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__get_geocoder</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the function for geo-coding addresses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_geo_coder</span>
+    
+    <span class="n">my_server</span> <span class="o">=</span> <span class="n">_geo_server</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">my_server</span> <span class="o">==</span> <span class="s1">&#39;nominatim&#39;</span><span class="p">:</span>
+        <span class="n">_geo_coder</span> <span class="o">=</span> <span class="n">Nominatim</span><span class="p">(</span><span class="n">user_agent</span><span class="o">=</span><span class="s1">&#39;get_long_lat&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">_domain</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> \
+                     <span class="n">Nominatim</span><span class="p">(</span><span class="n">user_agent</span><span class="o">=</span><span class="s1">&#39;get_long_lat&#39;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">_domain</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RateLimiter</span><span class="p">(</span> <span class="n">_geo_coder</span><span class="o">.</span><span class="n">geocode</span><span class="p">,</span> <span class="n">min_delay_seconds</span><span class="o">=</span><span class="n">_min_delay</span><span class="p">,</span>\
+                           <span class="n">max_retries</span><span class="o">=</span><span class="n">_max_retries</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">my_server</span> <span class="o">==</span> <span class="s1">&#39;opencage&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_api_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">_geo_coder</span> <span class="o">=</span> <span class="n">OpenCageGeocode</span><span class="p">(</span> <span class="n">_api_key</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">__open_cage_geocode</span>
+    
+    <span class="k">return</span> <span class="kc">None</span>
+
 <span class="c1">#----------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="read_points">
@@ -196,16 +305,20 @@
     <span class="k">if</span> <span class="n">has_XY</span><span class="p">:</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)))</span> <span class="p">)</span>
     <span class="k">if</span> <span class="n">has_lola</span><span class="p">:</span> <span class="n">lo</span><span class="p">,</span> <span class="n">la</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;long&#39;</span><span class="p">)),</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lat&#39;</span><span class="p">))</span> 
     <span class="k">if</span> <span class="n">Y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_lola</span><span class="p">:</span>    
-        <span class="c1"># Try to get geo-coordinates from geopy</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trying to get geo-coordinates from geopy. This can take a while.&#39;</span><span class="p">)</span>
-        <span class="n">geolocator</span> <span class="o">=</span> <span class="n">Nominatim</span><span class="p">(</span><span class="n">user_agent</span><span class="o">=</span><span class="s2">&quot;get_long_latt&quot;</span><span class="p">)</span>
+        <span class="n">geocode</span> <span class="o">=</span> <span class="n">__get_geocoder</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">_geo_server</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No geo-server available.&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">names</span> 
+        <span class="c1"># Try to get geo-coordinates from the geo-server</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trying to get geo-coordinates from the geo-server. This can take a while.&#39;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">locations</span> <span class="o">=</span> <span class="p">[</span> <span class="n">geolocator</span><span class="o">.</span><span class="n">geocode</span><span class="p">(</span> <span class="n">city</span> <span class="p">)</span> <span class="k">for</span> <span class="n">city</span> <span class="ow">in</span> <span class="n">names</span> <span class="p">]</span>
+            <span class="n">locations</span> <span class="o">=</span> <span class="p">[</span> <span class="n">geocode</span><span class="p">(</span> <span class="n">city</span> <span class="p">)</span> <span class="k">for</span> <span class="n">city</span> <span class="ow">in</span> <span class="n">names</span> <span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No success. Maybe time out happened.&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">names</span>
         <span class="n">lo</span> <span class="o">=</span> <span class="p">[</span> <span class="n">loc</span><span class="o">.</span><span class="n">longitude</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">locations</span> <span class="p">]</span>
-        <span class="n">la</span> <span class="o">=</span> <span class="p">[</span> <span class="n">loc</span><span class="o">.</span><span class="n">latitude</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">locations</span> <span class="p">]</span>        
+        <span class="n">la</span> <span class="o">=</span> <span class="p">[</span> <span class="n">loc</span><span class="o">.</span><span class="n">latitude</span> <span class="k">for</span> <span class="n">loc</span> <span class="ow">in</span> <span class="n">locations</span> <span class="p">]</span>    
+        <span class="n">has_lola</span> <span class="o">=</span> <span class="kc">True</span>    
       
     <span class="k">if</span> <span class="n">has_lola</span><span class="p">:</span> <span class="n">origin</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">lo</span><span class="p">),</span><span class="nb">min</span><span class="p">(</span><span class="n">la</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lla2xy</span><span class="p">(</span> <span class="n">lx</span><span class="p">,</span><span class="n">ly</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span> <span class="k">for</span> <span class="n">lx</span><span class="p">,</span><span class="n">ly</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span><span class="n">la</span><span class="p">)]</span> <span class="p">)</span>
@@ -228,7 +341,7 @@
     <span class="k">if</span> <span class="n">with_names</span><span class="p">:</span> <span class="k">return</span> <span class="n">_lo</span><span class="p">,</span> <span class="n">_la</span><span class="p">,</span> <span class="n">_names</span>
     <span class="k">return</span> <span class="n">_lo</span><span class="p">,</span><span class="n">_la</span></div>
 
-    
+
 </pre></div>
 
            </div>

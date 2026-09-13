@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.discrete.CFLsg &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=99626c5e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.mip.html">pyloa.mip package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.discrete.CFLsg</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.discrete.CFLsg</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Python interface to CFLsg, a C-library of a branch-and-bound algorithm </span>
+<span class="sd">    based on Lagrangian relaxation and subgradient optimization for solving </span>
+<span class="sd">    the CFLP.    </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ctypes</span><span class="o">,</span><span class="w"> </span><span class="nn">pathlib</span><span class="o">,</span><span class="w"> </span><span class="nn">platform</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">site</span><span class="o">,</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">__CFL_Lib</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">__CPX_Lib</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">__int</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_int</span>
+<span class="n">__double</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_double</span>
+<span class="n">__bool</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_bool</span>
+<span class="n">__char</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_char</span>
+<span class="n">__p_void</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_void_p</span>
+<span class="n">__p_int</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span> <span class="n">__int</span> <span class="p">)</span>
+<span class="n">__p_double</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span> <span class="n">__double</span> <span class="p">)</span>
+<span class="n">__p_bool</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span> <span class="n">__bool</span> <span class="p">)</span>
+<span class="n">__p_char</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">POINTER</span><span class="p">(</span> <span class="n">__char</span> <span class="p">)</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__loadCFLsg</span><span class="p">(</span> <span class="n">with_cplex</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Find and load cplex and the CFLsg library.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    with_cplex : bool</span>
+<span class="sd">        If False, then libCFLsg.so is assumed to be independent of Cplex,</span>
+<span class="sd">        which is the case if this library was linked with MCF for solving</span>
+<span class="sd">        transportation problems instead of using Cplex to accomplish this</span>
+<span class="sd">        task. Otherwise, with_cplex need to be True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="n">cplexLib</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">CFLsgLib</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">onWindows</span> <span class="o">=</span> <span class="s1">&#39;Windows&#39;</span> <span class="ow">in</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span>
+    <span class="n">onMac</span> <span class="o">=</span> <span class="s1">&#39;darwin&#39;</span> <span class="ow">in</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">onWindows</span><span class="p">:</span>
+        <span class="n">cplexDLL</span> <span class="o">=</span> <span class="s1">&#39;cplex*.dll&#39;</span> <span class="k">if</span> <span class="n">with_cplex</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">CFLsgDLL</span> <span class="o">=</span> <span class="s1">&#39;CFLsg.dll&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cplexDLL</span> <span class="o">=</span> <span class="s1">&#39;cplex/**/py*_cplex*.so&#39;</span>
+        <span class="n">CFLsgDLL</span> <span class="o">=</span> <span class="s1">&#39;libCFLsg.so&#39;</span>
+   
+    <span class="c1"># Check if the CPLEX callable library is present. On Linux and Mac, we</span>
+    <span class="c1"># will also have to explicitly load this library before CFLsg is</span>
+    <span class="c1"># is loaded, as CFLsg depends on Cplex. </span>
+    <span class="k">if</span> <span class="n">with_cplex</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">onWindows</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">cpxEnv</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="k">if</span> <span class="s1">&#39;CPLEX_STUDIO_BINARIES&#39;</span> <span class="ow">in</span> <span class="n">p</span> <span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">cpxEnv</span> <span class="o">=</span> <span class="s1">&#39;PATH&#39;</span>
+            <span class="n">cpxBins</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">cpxEnv</span><span class="p">)</span>
+            <span class="n">dirLst</span> <span class="o">=</span> <span class="p">[</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">cpxBins</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;cplex&#39;</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>            
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">usrSitePack</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span> <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="s1">&#39;site-packages&#39;</span> <span class="ow">in</span> <span class="n">p</span><span class="p">)</span>
+            <span class="n">dirLst</span> <span class="o">=</span> <span class="n">site</span><span class="o">.</span><span class="n">getsitepackages</span><span class="p">()</span>
+            <span class="n">dirLst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">usrSitePack</span> <span class="p">)</span>
+        <span class="k">for</span> <span class="n">direc</span> <span class="ow">in</span> <span class="n">dirLst</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pathName</span> <span class="ow">in</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span> <span class="n">direc</span> <span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span> <span class="n">cplexDLL</span> <span class="p">):</span>
+                <span class="n">cplexLib</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">pathName</span><span class="p">))</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">cplexLib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">onWindows</span><span class="p">:</span> <span class="k">break</span>
+                    <span class="k">if</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="p">(</span><span class="n">cplexLib</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span> <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cplexLib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">break</span>    
+
+        <span class="k">if</span> <span class="n">cplexLib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not find CPLEX dynamic link library.&quot;</span><span class="p">)</span>
+            <span class="k">return</span><span class="p">(</span> <span class="kc">False</span> <span class="p">)</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cplex loaded. Library is&quot;</span><span class="p">,</span><span class="n">cplexLib</span><span class="p">)</span> 
+
+    <span class="c1"># The dynamic link library libCFLsg.so (libCFLsg.dll on Windows)</span>
+    <span class="c1"># is expected to reside in the same directory as this module.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Searching for&quot;</span><span class="p">,</span><span class="n">CFLsgDLL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">onWindows</span><span class="p">:</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;win//&#39;</span>
+    <span class="k">elif</span> <span class="n">onMac</span><span class="p">:</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;mac/arm64/&#39;</span> <span class="k">if</span> <span class="s1">&#39;arm64&#39;</span> <span class="ow">in</span> <span class="n">platform</span><span class="o">.</span><span class="n">platform</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;mac/x86_64/&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;linux/&#39;</span>
+    <span class="n">CFLsgHome</span><span class="o">=</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">CFLsgFile</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">CFLsgHome</span><span class="p">,</span><span class="n">prefix</span><span class="o">+</span><span class="n">CFLsgDLL</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">CFLsgFile</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="n">CFLsgLib</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span> <span class="n">CFLsgFile</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not find CFLsg dynamic link library.&quot;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span> <span class="kc">False</span> <span class="p">)</span>
+
+    <span class="c1"># Libraries found. Now try to load them. </span>
+    <span class="c1"># If Cplex need to be used, the load Cplex first.</span>
+    <span class="k">global</span> <span class="n">__CPX_Lib</span>
+    <span class="k">global</span> <span class="n">__CFL_Lib</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">onWindows</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">with_cplex</span><span class="p">:</span>
+            <span class="n">__CPX_Lib</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="n">cplexLib</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">ctypes</span><span class="o">.</span><span class="n">RTLD_GLOBAL</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">__CPX_Lib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span><span class="p">(</span> <span class="kc">False</span> <span class="p">)</span>
+        <span class="n">__CFL_Lib</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="n">CFLsgLib</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">ctypes</span><span class="o">.</span><span class="n">RTLD_GLOBAL</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">__CFL_Lib</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">CDLL</span><span class="p">(</span><span class="n">CFLsgLib</span><span class="p">,</span> <span class="n">winmode</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">__CFL_Lib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error occured when loading library &quot;</span><span class="p">,</span><span class="n">CFLsgLib</span> <span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span> <span class="kc">False</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Library&quot;</span><span class="p">,</span><span class="n">CFLsgLib</span><span class="p">,</span><span class="s2">&quot;loaded.&quot;</span><span class="p">)</span>    
+
+    <span class="k">return</span><span class="p">(</span> <span class="kc">True</span> <span class="p">)</span>
+    
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="solveCFLP">
+<a class="viewcode-back" href="../../../pyloa.discrete.html#pyloa.discrete.CFLsg.solveCFLP">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">solveCFLP</span><span class="p">(</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">nodeLim</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">screenOn</span><span class="o">=</span><span class="mi">1</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Invokes the CFLsg solver for the CFLP.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d : numpy array of int </span>
+<span class="sd">        customer demands</span>
+<span class="sd">    s : numpy array of int </span>
+<span class="sd">        facility capacities</span>
+<span class="sd">    f : numpy array of float</span>
+<span class="sd">        fixed facility costs</span>
+<span class="sd">    c : numpy 2d-array of float </span>
+<span class="sd">        c[j][i] is the total cost of supplying all of customer</span>
+<span class="sd">        i&#39;s demand from facility j, where 0&lt;=i&lt;m and 0&lt;=j&lt;n.    </span>
+<span class="sd">    nodeLim: int (optional)</span>
+<span class="sd">        limit on number of nodes (if 0, no limit is set)</span>
+<span class="sd">    screenOn: int (optional) </span>
+<span class="sd">        if 1, the solver sends information to the screen   </span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    status : int</span>
+<span class="sd">        status of the result     </span>
+<span class="sd">    UB : float</span>
+<span class="sd">        best upper bound found in the search</span>
+<span class="sd">    OPN: list of int</span>
+<span class="sd">        set of open facilities</span>
+<span class="sd">    TIM: float</span>
+<span class="sd">        CPU time spent               </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">__CFL_Lib</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CFLsg Library not loaded!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[],</span> <span class="mf">0.0</span>
+
+    <span class="n">nn</span><span class="p">,</span> <span class="n">mm</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="n">__int</span><span class="p">(</span> <span class="n">nn</span> <span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">__int</span><span class="p">(</span> <span class="n">mm</span> <span class="p">)</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">__p_void</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">flow</span> <span class="o">=</span> <span class="n">__bool</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">ndeLim</span> <span class="o">=</span> <span class="n">__int</span><span class="p">(</span> <span class="n">nodeLim</span> <span class="p">)</span>
+    <span class="n">doDisplay</span> <span class="o">=</span> <span class="n">__bool</span><span class="p">(</span> <span class="n">screenOn</span> <span class="p">)</span>
+    
+    <span class="n">__CFL_Lib</span><span class="o">.</span><span class="n">CFLsetScreen</span><span class="p">(</span> <span class="n">doDisplay</span> <span class="p">)</span>
+    <span class="n">__CFL_Lib</span><span class="o">.</span><span class="n">CFLsetNodeLim</span><span class="p">(</span> <span class="n">ndeLim</span> <span class="p">);</span>
+    
+    <span class="n">dd</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">__int</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">d</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span> <span class="n">mm</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">__int</span> <span class="p">)</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">__int</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span> <span class="n">nn</span><span class="p">,</span> <span class="n">dd</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">__int</span> <span class="p">)</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">__double</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+    <span class="n">pff</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span> <span class="n">__p_double</span> <span class="p">)</span> 
+    <span class="n">pss</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span> <span class="n">__p_int</span> <span class="p">)</span>
+    <span class="n">pdd</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span> <span class="n">__p_int</span> <span class="p">)</span> 
+
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">__double</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+    <span class="n">pcc</span> <span class="o">=</span> <span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">__array_interface__</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> 
+      <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">cc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">cc</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uintp</span><span class="p">)</span> 
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="n">nn</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">__bool</span> <span class="p">)</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">ctypes</span><span class="o">.</span><span class="n">data_as</span><span class="p">(</span> <span class="n">__p_bool</span> <span class="p">)</span>
+    <span class="n">objv</span> <span class="o">=</span> <span class="n">__double</span><span class="p">(</span> <span class="mf">0.0</span> <span class="p">)</span>
+    
+    <span class="c1"># Call CFLsg solver </span>
+    <span class="n">__pp_double</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ctypeslib</span><span class="o">.</span><span class="n">ndpointer</span><span class="p">(</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uintp</span><span class="p">,</span> <span class="n">ndim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="s1">&#39;C&#39;</span> <span class="p">)</span> 
+    <span class="n">__CFL_Lib</span><span class="o">.</span><span class="n">CFLoptim</span><span class="o">.</span><span class="n">argtypes</span> <span class="o">=</span> <span class="p">[</span> <span class="n">__p_void</span><span class="p">,</span> <span class="n">__int</span><span class="p">,</span> <span class="n">__int</span><span class="p">,</span> <span class="n">__bool</span><span class="p">,</span> <span class="n">__p_int</span><span class="p">,</span> <span class="n">__p_int</span><span class="p">,</span>\
+                                    <span class="n">__p_double</span><span class="p">,</span> <span class="n">__pp_double</span><span class="p">,</span> <span class="n">__p_double</span><span class="p">,</span> <span class="n">__p_bool</span><span class="p">]</span>
+    <span class="n">__CFL_Lib</span><span class="o">.</span><span class="n">CFLoptim</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="n">__int</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">__CFL_Lib</span><span class="o">.</span><span class="n">CFLoptim</span><span class="p">(</span> <span class="n">env</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">flow</span><span class="p">,</span> <span class="n">pss</span><span class="p">,</span> <span class="n">pdd</span><span class="p">,</span> <span class="n">pff</span><span class="p">,</span> <span class="n">pcc</span><span class="p">,</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">objv</span><span class="p">),</span> <span class="n">py</span> <span class="p">)</span>
+    <span class="n">__CFL_Lib</span><span class="o">.</span><span class="n">CFLgetTtim</span><span class="o">.</span><span class="n">restype</span> <span class="o">=</span> <span class="n">__double</span>
+    <span class="n">TIM</span> <span class="o">=</span> <span class="n">__CFL_Lib</span><span class="o">.</span><span class="n">CFLgetTtim</span><span class="p">()</span>
+    <span class="n">OPN</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="nb">filter</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> <span class="n">y</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="nb">range</span><span class="p">(</span><span class="n">nn</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">status</span><span class="p">,</span> <span class="n">objv</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">OPN</span><span class="p">,</span> <span class="n">TIM</span>     </div>
+
+    
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="n">is_ready</span> <span class="o">=</span> <span class="n">__loadCFLsg</span><span class="p">()</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

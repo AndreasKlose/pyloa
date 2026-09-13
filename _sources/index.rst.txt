@@ -13,6 +13,8 @@ PyLoa documentation
    intro
    pyloa.plane
    pyloa.net
+   pyloa.discrete
+   pyloa.mip
    modules
 
 Indices and tables

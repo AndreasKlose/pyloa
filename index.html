@@ -9,7 +9,7 @@
   <title>PyLoa documentation &mdash; PyLoa 1.00 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=26111179" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=99626c5e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
@@ -17,6 +17,7 @@
       <script src="_static/documentation_options.js?v=da1d7f10"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -48,8 +49,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#references">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.mip.html">pyloa.mip package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
 </ul>
 
@@ -86,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="intro.html#data-input">Data input</a></li>
 <li class="toctree-l2"><a class="reference internal" href="intro.html#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#remark">Remark</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a><ul>
@@ -93,7 +98,12 @@
 <li class="toctree-l2"><a class="reference internal" href="intro.html#id2">Usage</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#id3">Data input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#id4">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#references">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyloa.plane.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyloa.plane.html#module-pyloa.plane.planesolver">pyloa.plane.planesolver module</a><ul>
@@ -128,6 +138,8 @@
 <li class="toctree-l2"><a class="reference internal" href="pyloa.plane.html#module-pyloa.plane.parser">pyloa.plane.parser module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pyloa.plane.html#pyloa.plane.parser.read_points"><code class="docutils literal notranslate"><span class="pre">read_points()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyloa.plane.html#pyloa.plane.parser.return_lola"><code class="docutils literal notranslate"><span class="pre">return_lola()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.plane.html#pyloa.plane.parser.set_Nominatim_params"><code class="docutils literal notranslate"><span class="pre">set_Nominatim_params()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.plane.html#pyloa.plane.parser.set_geoServer"><code class="docutils literal notranslate"><span class="pre">set_geoServer()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="pyloa.plane.html#module-pyloa.plane.weber">pyloa.plane.weber module</a><ul>
@@ -248,6 +260,260 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.discrete.html">pyloa.discrete package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.discrete.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.discrete.html#module-pyloa.discrete.dflprob">pyloa.discrete.dflprob module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem"><code class="docutils literal notranslate"><span class="pre">DFLProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.addVubs"><code class="docutils literal notranslate"><span class="pre">DFLProblem.addVubs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.assigned"><code class="docutils literal notranslate"><span class="pre">DFLProblem.assigned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.bound"><code class="docutils literal notranslate"><span class="pre">DFLProblem.bound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.c"><code class="docutils literal notranslate"><span class="pre">DFLProblem.c</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.ccnst"><code class="docutils literal notranslate"><span class="pre">DFLProblem.ccnst</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.cost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.cost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.ctime"><code class="docutils literal notranslate"><span class="pre">DFLProblem.ctime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.cuts"><code class="docutils literal notranslate"><span class="pre">DFLProblem.cuts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.d"><code class="docutils literal notranslate"><span class="pre">DFLProblem.d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.default_options"><code class="docutils literal notranslate"><span class="pre">DFLProblem.default_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.f"><code class="docutils literal notranslate"><span class="pre">DFLProblem.f</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.facilities"><code class="docutils literal notranslate"><span class="pre">DFLProblem.facilities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.fcost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.fcost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.get_fcost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.get_fcost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mipSolver"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mipSolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mipStrategy"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mipStrategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mip_time"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mip_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.mip_work"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mip_work</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.model"><code class="docutils literal notranslate"><span class="pre">DFLProblem.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.nodeCount"><code class="docutils literal notranslate"><span class="pre">DFLProblem.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.nodeLim"><code class="docutils literal notranslate"><span class="pre">DFLProblem.nodeLim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.optTol"><code class="docutils literal notranslate"><span class="pre">DFLProblem.optTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.s"><code class="docutils literal notranslate"><span class="pre">DFLProblem.s</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.scale_costs"><code class="docutils literal notranslate"><span class="pre">DFLProblem.scale_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.set_data"><code class="docutils literal notranslate"><span class="pre">DFLProblem.set_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.silent"><code class="docutils literal notranslate"><span class="pre">DFLProblem.silent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.stages"><code class="docutils literal notranslate"><span class="pre">DFLProblem.stages</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.supply"><code class="docutils literal notranslate"><span class="pre">DFLProblem.supply</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.tcost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.tcost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.timeLim"><code class="docutils literal notranslate"><span class="pre">DFLProblem.timeLim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.totalDemand"><code class="docutils literal notranslate"><span class="pre">DFLProblem.totalDemand</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.two_level"><code class="docutils literal notranslate"><span class="pre">DFLProblem.two_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.uncap"><code class="docutils literal notranslate"><span class="pre">DFLProblem.uncap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.unitCost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.unitCost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.unscale_costs"><code class="docutils literal notranslate"><span class="pre">DFLProblem.unscale_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.useBenders"><code class="docutils literal notranslate"><span class="pre">DFLProblem.useBenders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.useLB"><code class="docutils literal notranslate"><span class="pre">DFLProblem.useLB</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.v"><code class="docutils literal notranslate"><span class="pre">DFLProblem.v</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.x"><code class="docutils literal notranslate"><span class="pre">DFLProblem.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.y"><code class="docutils literal notranslate"><span class="pre">DFLProblem.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.dflprob.DFLProblem.z"><code class="docutils literal notranslate"><span class="pre">DFLProblem.z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.discrete.html#module-pyloa.discrete.parser">pyloa.discrete.parser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.parser.read_cflp"><code class="docutils literal notranslate"><span class="pre">read_cflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.parser.read_tlcflp"><code class="docutils literal notranslate"><span class="pre">read_tlcflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.parser.read_tscflp"><code class="docutils literal notranslate"><span class="pre">read_tscflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.parser.read_uflp"><code class="docutils literal notranslate"><span class="pre">read_uflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.parser.store_cflp_GK"><code class="docutils literal notranslate"><span class="pre">store_cflp_GK()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.discrete.html#module-pyloa.discrete.cflp">pyloa.discrete.cflp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP"><code class="docutils literal notranslate"><span class="pre">CFLP</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP.comp_flows"><code class="docutils literal notranslate"><span class="pre">CFLP.comp_flows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP.solve"><code class="docutils literal notranslate"><span class="pre">CFLP.solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.cflp.CFLP.solver"><code class="docutils literal notranslate"><span class="pre">CFLP.solver</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.cflp.VubGenerator"><code class="docutils literal notranslate"><span class="pre">VubGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.cflp.VubGenerator.invoke"><code class="docutils literal notranslate"><span class="pre">VubGenerator.invoke()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.discrete.html#module-pyloa.discrete.CFLsg">pyloa.discrete.CFLsg module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.CFLsg.solveCFLP"><code class="docutils literal notranslate"><span class="pre">solveCFLP()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.discrete.html#module-pyloa.discrete.uflp">pyloa.discrete.uflp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP"><code class="docutils literal notranslate"><span class="pre">UFLP</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.alpha"><code class="docutils literal notranslate"><span class="pre">UFLP.alpha</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.default_subgr_params"><code class="docutils literal notranslate"><span class="pre">UFLP.default_subgr_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.half"><code class="docutils literal notranslate"><span class="pre">UFLP.half</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.itr"><code class="docutils literal notranslate"><span class="pre">UFLP.itr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.sg_iter"><code class="docutils literal notranslate"><span class="pre">UFLP.sg_iter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.uflp.UFLP.solve"><code class="docutils literal notranslate"><span class="pre">UFLP.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.discrete.html#module-pyloa.discrete.tlcflp">pyloa.discrete.tlcflp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.MCFVubGen"><code class="docutils literal notranslate"><span class="pre">MCFVubGen</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.MCFVubGen.invoke"><code class="docutils literal notranslate"><span class="pre">MCFVubGen.invoke()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP"><code class="docutils literal notranslate"><span class="pre">TLCFLP</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.cflp_solver"><code class="docutils literal notranslate"><span class="pre">TLCFLP.cflp_solver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.get_full_solution"><code class="docutils literal notranslate"><span class="pre">TLCFLP.get_full_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.heuristic"><code class="docutils literal notranslate"><span class="pre">TLCFLP.heuristic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.TLCFLP.solve"><code class="docutils literal notranslate"><span class="pre">TLCFLP.solve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.VubGenerator"><code class="docutils literal notranslate"><span class="pre">VubGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.discrete.html#pyloa.discrete.tlcflp.VubGenerator.invoke"><code class="docutils literal notranslate"><span class="pre">VubGenerator.invoke()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.mip.html">pyloa.mip package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.mip.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.mip.html#module-pyloa.mip.cpx_mip">pyloa.mip.cpx_mip module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel"><code class="docutils literal notranslate"><span class="pre">CPXmodel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.FeasibilityTol"><code class="docutils literal notranslate"><span class="pre">CPXmodel.FeasibilityTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.IntFeasTol"><code class="docutils literal notranslate"><span class="pre">CPXmodel.IntFeasTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.MIPGap"><code class="docutils literal notranslate"><span class="pre">CPXmodel.MIPGap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.MIPGapAbs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.MIPGapAbs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.MIQCPMethod"><code class="docutils literal notranslate"><span class="pre">CPXmodel.MIQCPMethod</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.ObjBound"><code class="docutils literal notranslate"><span class="pre">CPXmodel.ObjBound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.ObjVal"><code class="docutils literal notranslate"><span class="pre">CPXmodel.ObjVal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addConstraint"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addConstraint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addConstraints"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addQuadConstrs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addQuadConstrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVar"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVarCube"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVarCube()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVarMatrix"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVarMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVars"><code class="docutils literal notranslate"><span class="pre">CPXmodel.addVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.candidate_objective"><code class="docutils literal notranslate"><span class="pre">CPXmodel.candidate_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbCut"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cbCut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRealKeys"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cbGetNodeRealKeys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRel"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cbGetNodeRel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cb_MIPSOL"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cb_MIPSOL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_lower_bounds"><code class="docutils literal notranslate"><span class="pre">CPXmodel.change_lower_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_upper_bounds"><code class="docutils literal notranslate"><span class="pre">CPXmodel.change_upper_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_var_types"><code class="docutils literal notranslate"><span class="pre">CPXmodel.change_var_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.chgCoeff"><code class="docutils literal notranslate"><span class="pre">CPXmodel.chgCoeff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.chgCoeffs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.chgCoeffs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.context"><code class="docutils literal notranslate"><span class="pre">CPXmodel.context</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cuts"><code class="docutils literal notranslate"><span class="pre">CPXmodel.cuts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.dettime"><code class="docutils literal notranslate"><span class="pre">CPXmodel.dettime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.doBenders"><code class="docutils literal notranslate"><span class="pre">CPXmodel.doBenders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.end"><code class="docutils literal notranslate"><span class="pre">CPXmodel.end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.export_model"><code class="docutils literal notranslate"><span class="pre">CPXmodel.export_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getConstraints"><code class="docutils literal notranslate"><span class="pre">CPXmodel.getConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getObjective"><code class="docutils literal notranslate"><span class="pre">CPXmodel.getObjective()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getVars"><code class="docutils literal notranslate"><span class="pre">CPXmodel.getVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_dual_values"><code class="docutils literal notranslate"><span class="pre">CPXmodel.get_dual_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_rhs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.get_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_solution"><code class="docutils literal notranslate"><span class="pre">CPXmodel.get_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.id_relaxation"><code class="docutils literal notranslate"><span class="pre">CPXmodel.id_relaxation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.in_relaxation"><code class="docutils literal notranslate"><span class="pre">CPXmodel.in_relaxation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.incument_objective"><code class="docutils literal notranslate"><span class="pre">CPXmodel.incument_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.infinity"><code class="docutils literal notranslate"><span class="pre">CPXmodel.infinity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.lbHeur"><code class="docutils literal notranslate"><span class="pre">CPXmodel.lbHeur</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.log_output"><code class="docutils literal notranslate"><span class="pre">CPXmodel.log_output</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.lowerObjStop"><code class="docutils literal notranslate"><span class="pre">CPXmodel.lowerObjStop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.lower_cutoff"><code class="docutils literal notranslate"><span class="pre">CPXmodel.lower_cutoff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.maximize"><code class="docutils literal notranslate"><span class="pre">CPXmodel.maximize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.minimize"><code class="docutils literal notranslate"><span class="pre">CPXmodel.minimize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mipEmphasis"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mipEmphasis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mipModel"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mipModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mipStrategy"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mipStrategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mip_tol"><code class="docutils literal notranslate"><span class="pre">CPXmodel.mip_tol()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.nodeCount"><code class="docutils literal notranslate"><span class="pre">CPXmodel.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.nodelimit"><code class="docutils literal notranslate"><span class="pre">CPXmodel.nodelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.optim"><code class="docutils literal notranslate"><span class="pre">CPXmodel.optim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.reduced_costs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.reduced_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.runtime"><code class="docutils literal notranslate"><span class="pre">CPXmodel.runtime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_callback"><code class="docutils literal notranslate"><span class="pre">CPXmodel.set_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_rhs"><code class="docutils literal notranslate"><span class="pre">CPXmodel.set_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_vartype"><code class="docutils literal notranslate"><span class="pre">CPXmodel.set_vartype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.status"><code class="docutils literal notranslate"><span class="pre">CPXmodel.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.sum"><code class="docutils literal notranslate"><span class="pre">CPXmodel.sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.terminate"><code class="docutils literal notranslate"><span class="pre">CPXmodel.terminate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.timelimit"><code class="docutils literal notranslate"><span class="pre">CPXmodel.timelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.update"><code class="docutils literal notranslate"><span class="pre">CPXmodel.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.upper_cutoff"><code class="docutils literal notranslate"><span class="pre">CPXmodel.upper_cutoff</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.mip.html#module-pyloa.mip.grb_mip">pyloa.mip.grb_mip module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel"><code class="docutils literal notranslate"><span class="pre">GRBmodel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.FeasibilityTol"><code class="docutils literal notranslate"><span class="pre">GRBmodel.FeasibilityTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.IntFeasTol"><code class="docutils literal notranslate"><span class="pre">GRBmodel.IntFeasTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.MIPGap"><code class="docutils literal notranslate"><span class="pre">GRBmodel.MIPGap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.MIPGapAbs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.MIPGapAbs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.MIQCPMethod"><code class="docutils literal notranslate"><span class="pre">GRBmodel.MIQCPMethod</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.ObjBound"><code class="docutils literal notranslate"><span class="pre">GRBmodel.ObjBound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.ObjVal"><code class="docutils literal notranslate"><span class="pre">GRBmodel.ObjVal</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addConstraint"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addConstraint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addConstraints"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addQuadConstrs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addQuadConstrs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVar"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVarCube"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVarCube()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVarMatrix"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVarMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.addVars"><code class="docutils literal notranslate"><span class="pre">GRBmodel.addVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.candidate_objective"><code class="docutils literal notranslate"><span class="pre">GRBmodel.candidate_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cbCut"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cbCut()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRealKeys"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cbGetNodeRealKeys()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cbGetNodeRel"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cbGetNodeRel()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cb_MIPSOL"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cb_MIPSOL</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.change_lower_bounds"><code class="docutils literal notranslate"><span class="pre">GRBmodel.change_lower_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.change_upper_bounds"><code class="docutils literal notranslate"><span class="pre">GRBmodel.change_upper_bounds()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.change_var_types"><code class="docutils literal notranslate"><span class="pre">GRBmodel.change_var_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.chgCoeff"><code class="docutils literal notranslate"><span class="pre">GRBmodel.chgCoeff()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.chgCoeffs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.chgCoeffs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.cuts"><code class="docutils literal notranslate"><span class="pre">GRBmodel.cuts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.dettime"><code class="docutils literal notranslate"><span class="pre">GRBmodel.dettime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.doBenders"><code class="docutils literal notranslate"><span class="pre">GRBmodel.doBenders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.end"><code class="docutils literal notranslate"><span class="pre">GRBmodel.end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.export_model"><code class="docutils literal notranslate"><span class="pre">GRBmodel.export_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.getConstraints"><code class="docutils literal notranslate"><span class="pre">GRBmodel.getConstraints()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.getObjective"><code class="docutils literal notranslate"><span class="pre">GRBmodel.getObjective()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.getVars"><code class="docutils literal notranslate"><span class="pre">GRBmodel.getVars()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.get_dual_values"><code class="docutils literal notranslate"><span class="pre">GRBmodel.get_dual_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.get_rhs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.get_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.get_solution"><code class="docutils literal notranslate"><span class="pre">GRBmodel.get_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.id_relaxation"><code class="docutils literal notranslate"><span class="pre">GRBmodel.id_relaxation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.in_relaxation"><code class="docutils literal notranslate"><span class="pre">GRBmodel.in_relaxation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.incument_objective"><code class="docutils literal notranslate"><span class="pre">GRBmodel.incument_objective</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.infinity"><code class="docutils literal notranslate"><span class="pre">GRBmodel.infinity</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.lbHeur"><code class="docutils literal notranslate"><span class="pre">GRBmodel.lbHeur</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.log_output"><code class="docutils literal notranslate"><span class="pre">GRBmodel.log_output</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.lowerObjStop"><code class="docutils literal notranslate"><span class="pre">GRBmodel.lowerObjStop</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.lower_cutoff"><code class="docutils literal notranslate"><span class="pre">GRBmodel.lower_cutoff</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.maximize"><code class="docutils literal notranslate"><span class="pre">GRBmodel.maximize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.minimize"><code class="docutils literal notranslate"><span class="pre">GRBmodel.minimize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mipEmphasis"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mipEmphasis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mipModel"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mipModel</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mipStrategy"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mipStrategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.mip_tol"><code class="docutils literal notranslate"><span class="pre">GRBmodel.mip_tol()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.nodeCount"><code class="docutils literal notranslate"><span class="pre">GRBmodel.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.nodelimit"><code class="docutils literal notranslate"><span class="pre">GRBmodel.nodelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.optim"><code class="docutils literal notranslate"><span class="pre">GRBmodel.optim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.reduced_costs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.reduced_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.runtime"><code class="docutils literal notranslate"><span class="pre">GRBmodel.runtime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.set_callback"><code class="docutils literal notranslate"><span class="pre">GRBmodel.set_callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.set_rhs"><code class="docutils literal notranslate"><span class="pre">GRBmodel.set_rhs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.set_vartype"><code class="docutils literal notranslate"><span class="pre">GRBmodel.set_vartype()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.status"><code class="docutils literal notranslate"><span class="pre">GRBmodel.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.sum"><code class="docutils literal notranslate"><span class="pre">GRBmodel.sum()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.terminate"><code class="docutils literal notranslate"><span class="pre">GRBmodel.terminate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.timelimit"><code class="docutils literal notranslate"><span class="pre">GRBmodel.timelimit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.update"><code class="docutils literal notranslate"><span class="pre">GRBmodel.update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.grb_mip.GRBmodel.upper_cutoff"><code class="docutils literal notranslate"><span class="pre">GRBmodel.upper_cutoff</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyloa.mip.html#module-pyloa.mip.model">pyloa.mip.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.model.Model"><code class="docutils literal notranslate"><span class="pre">Model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyloa.mip.html#pyloa.mip.model.set_mipSolver"><code class="docutils literal notranslate"><span class="pre">set_mipSolver()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules.html#modules">Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules.html#module-pyloa.util">pyloa.util module</a><ul>
@@ -255,7 +521,9 @@
 <li class="toctree-l3"><a class="reference internal" href="modules.html#pyloa.util.all_two_parts"><code class="docutils literal notranslate"><span class="pre">all_two_parts()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules.html#pyloa.util.euclid"><code class="docutils literal notranslate"><span class="pre">euclid()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules.html#pyloa.util.geo_dist"><code class="docutils literal notranslate"><span class="pre">geo_dist()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules.html#pyloa.util.int_array"><code class="docutils literal notranslate"><span class="pre">int_array()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules.html#pyloa.util.lla2xy"><code class="docutils literal notranslate"><span class="pre">lla2xy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules.html#pyloa.util.real_array"><code class="docutils literal notranslate"><span class="pre">real_array()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules.html#pyloa.util.xy2lla"><code class="docutils literal notranslate"><span class="pre">xy2lla()</span></code></a></li>
 </ul>
 </li>

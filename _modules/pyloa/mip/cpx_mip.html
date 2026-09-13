@@ -1,0 +1,1226 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.mip.cpx_mip &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=99626c5e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.mip.html">pyloa.mip package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.mip.cpx_mip</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.mip.cpx_mip</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Module mip.cpx_mip of package pyloa:</span>
+<span class="sd">    Defines wrapper class for the docplex.mp.model Model class.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cplex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">docplex.mp.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">docplex.mp.callbacks.cb_mixin</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCallbackMixin</span>
+             
+<span class="c1">#--------------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="CPXmodel">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CPXmodel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps some methods and attributes of the docplex.mp.model class for</span>
+<span class="sd">    the purposes of synchronizing function names with GuRoBi. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">name</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str, optional</span>
+<span class="sd">            Name of the model, default is None</span>
+<span class="sd">        &quot;&quot;&quot;</span>            
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">Model</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instance of the docplex.mp.model class&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__s</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Docplex.mp.solution object&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__log_output</span> <span class="o">=</span> <span class="kc">False</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If True, Cplex&#39;s optimizer will send log output to stdout&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__callbck</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instance of a callback class&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cuts</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Global cuts parameter as for GuRoBi. Value of -1 means</span>
+<span class="sd">        automatic cut generation&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__contxtmsk</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Context mask used by a callback function&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__context</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Instance of class cplex.callbacks.Context&quot;&quot;&quot;</span>
+                      
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.set_callback">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_callback">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_callback</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">callbck</span><span class="p">,</span> <span class="n">contxtmsk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wheres</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set callback class for the purposes defined</span>
+<span class="sd">        by contxtmsk. </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callbck : class </span>
+<span class="sd">            The class to be called for the callback</span>
+<span class="sd">        contxtmask : int </span>
+<span class="sd">            Cplex&#39;s indicator for the context in which the</span>
+<span class="sd">            callback might be called.</span>
+<span class="sd">        wheres : list of int</span>
+<span class="sd">            GuRoBi&#39;s list of &#39;where&#39; codes to be enabled in</span>
+<span class="sd">            the callback.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__callbck</span> <span class="o">=</span> <span class="n">callbck</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__contxtmsk</span> <span class="o">=</span> <span class="n">contxtmsk</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">callbck</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">contxtmsk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">cplex</span><span class="o">.</span><span class="n">set_callback</span><span class="p">(</span> <span class="n">callbck</span><span class="p">,</span> <span class="n">contxtmsk</span> <span class="p">)</span> </div>
+
+            
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.in_relaxation">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.in_relaxation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">in_relaxation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return True if Cplex solver calls callback</span>
+<span class="sd">        after solving the relaxation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">context</span><span class="o">.</span><span class="n">in_relaxation</span><span class="p">()</span></div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.cbGetNodeRel">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cbGetNodeRel</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dvars</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the relaxation&#39;s solution for the decision variables </span>
+<span class="sd">        dvars at the current branch-and-cut node.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dvars : sequence of decision variables</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        solution values to the specified variables as a numpy array of float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">v</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__context</span><span class="o">.</span><span class="n">get_relaxation_point</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">index</span><span class="p">),</span><span class="n">dvars</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.cbGetNodeRealKeys">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbGetNodeRealKeys">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cbGetNodeRealKeys</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dvars</span><span class="p">,</span> <span class="n">keys</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the relaxation&#39;s solution for decision </span>
+<span class="sd">        variables from a dictionary and the specified</span>
+<span class="sd">        dictionary keys.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters </span>
+<span class="sd">        ----------</span>
+<span class="sd">        dvars : dict of decision variables</span>
+<span class="sd">        keys  : sequence of dictionary keys </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Solution values for the decision variables with the</span>
+<span class="sd">        given keys as a numpy array of float </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__context</span><span class="o">.</span><span class="n">get_relaxation_point</span><span class="p">(</span><span class="n">dvars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">),</span><span class="n">keys</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+    
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.cbCut">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.cbCut">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cbCut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cut</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a global user cut from a callback to the solver.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cut : docplex.mp.constr.LinearConstraint </span>
+<span class="sd">           The object representing the cut as a</span>
+<span class="sd">           linear constraint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lhs</span><span class="p">,</span> <span class="n">sense</span><span class="p">,</span> <span class="n">rhs</span> <span class="o">=</span> <span class="n">ModelCallbackMixin</span><span class="o">.</span><span class="n">linear_ct_to_cplex</span><span class="p">(</span> <span class="n">cut</span> <span class="p">)</span>
+        <span class="n">purge</span> <span class="o">=</span> <span class="n">cplex</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">UserCutCallback</span><span class="o">.</span><span class="n">use_cut</span><span class="o">.</span><span class="n">purge</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__context</span><span class="o">.</span><span class="n">add_user_cut</span><span class="p">(</span> <span class="n">cut</span><span class="o">=</span><span class="n">lhs</span><span class="p">,</span> <span class="n">sense</span><span class="o">=</span><span class="n">sense</span><span class="p">,</span> <span class="n">rhs</span><span class="o">=</span><span class="n">rhs</span><span class="p">,</span> \
+                                     <span class="n">cutmanagement</span><span class="o">=</span><span class="n">purge</span><span class="p">,</span> <span class="n">local</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.addConstraint">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addConstraint">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addConstraint</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">constr</span><span class="p">,</span> <span class="n">return_constr</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds the single constraint constr to the model.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        constr : docplex.mp.constr.LinearConstraint  </span>
+<span class="sd">            The constraint to be included </span>
+<span class="sd">        return_constr : bool </span>
+<span class="sd">            If True, the constraint object instance</span>
+<span class="sd">            is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>             
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">constr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_constr</span><span class="p">:</span> <span class="k">return</span> <span class="n">c</span></div>
+
+              
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.addConstraints">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addConstraints">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addConstraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constrs</span><span class="p">,</span> <span class="n">return_constr</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds several constraints to the IP model.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        constrs : iterable of docplex.mp.constr.LinearConstraint    </span>
+<span class="sd">            The list of constraints to be included        </span>
+<span class="sd">        return_constr : Bool</span>
+<span class="sd">            If True, the list of added constraints is returned.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None or the list of the added constraints.</span>
+<span class="sd">        &quot;&quot;&quot;</span>   
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">(</span> <span class="n">constrs</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_constr</span><span class="p">:</span> <span class="k">return</span> <span class="n">c</span> </div>
+
+                 
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.addQuadConstrs">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addQuadConstrs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addQuadConstrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constrs</span><span class="p">,</span> <span class="n">return_constr</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add a bunch of quadratic constraints to the model</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        constrs: iterable of docplex.mp.constr.QuadraticConstraint    </span>
+<span class="sd">            The quadratic constraint expressions.    </span>
+<span class="sd">        return_constr : Bool</span>
+<span class="sd">            If True, the added constraints are returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">add_quadratic_constraints</span><span class="p">(</span> <span class="n">constrs</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_constr</span> <span class="p">:</span> <span class="k">return</span> <span class="n">c</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+        
+<div class="viewcode-block" id="CPXmodel.set_rhs">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_rhs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constr</span><span class="p">,</span> <span class="n">rhs</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets a constraint&#39;s &quot;constr&quot; right-hand side to the</span>
+<span class="sd">        value of &quot;rhs&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        constr : docplex.mp.constr.LinearConstraint</span>
+<span class="sd">            The constraint where to adjust the rhs.</span>
+<span class="sd">        rhs : int or float</span>
+<span class="sd">            The (new) right-hand side value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">constr</span><span class="o">.</span><span class="n">rhs</span><span class="o">.</span><span class="n">constant</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span></div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.get_rhs">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_rhs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constr</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the linear constraint&#39;s constr right-hand side.</span>
+<span class="sd">         &quot;&quot;&quot;</span>  
+        <span class="k">return</span> <span class="n">constr</span><span class="o">.</span><span class="n">rhs</span></div>
+
+
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.minimize">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.minimize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">minimize</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the objective function of the underlying</span>
+<span class="sd">        Cplex model to be the minimization of the </span>
+<span class="sd">        linear expression expr. This is just an</span>
+<span class="sd">        alias to docplex.mp.model.minimize.</span>
+<span class="sd">                </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expr : docplex.mp.linear.LinearExpr</span>
+<span class="sd">            single objective function to be minimized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.maximize">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.maximize">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">maximize</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expr</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the objective function of the underlying</span>
+<span class="sd">        Cplex model to be the maximization of the </span>
+<span class="sd">        linear expression expr. This is just an</span>
+<span class="sd">        alias to docplex.mp.model.minimize.</span>
+<span class="sd">                </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        expr : docplex.mp.linear.LinearExpr</span>
+<span class="sd">            single objective function to be minimized.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">maximize</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span></div>
+
+        
+    <span class="c1">#------------------s---------------------------</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getObjVal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the objective value of the solution</span>
+<span class="sd">        to the underlying docplex.mp MIP model (and</span>
+<span class="sd">        None if there is no solution).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="kc">None</span> 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">objective_value</span>
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.addVar">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVar">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addVar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>\
+               <span class="n">constr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coeffs</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a single variable to the model.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lb : float</span>
+<span class="sd">            Lower bound for the variable. Default: 0.0</span>
+<span class="sd">        ub : float or None</span>
+<span class="sd">            Uppper bound on the variable.</span>
+<span class="sd">        obj : float</span>
+<span class="sd">            The variables objective coefficient</span>
+<span class="sd">        vtype : None or str</span>
+<span class="sd">            If None, a continuous variable is created. </span>
+<span class="sd">            Otherwise, if vtype=&#39;B&#39; a binary and if</span>
+<span class="sd">            vtype=&#39;I&#39; an integer variable.</span>
+<span class="sd">        name : None or str </span>
+<span class="sd">            If not None, the variable name </span>
+<span class="sd">        constr : None or a sequence of constraints</span>
+<span class="sd">            Sequence of constraint to which the variable should </span>
+<span class="sd">            be added. </span>
+<span class="sd">        coeffs : None or a single float/int or an iterable of float/int.</span>
+<span class="sd">            If coeffs is a single float or int, the variable</span>
+<span class="sd">            is added to all constraints from the above sequence</span>
+<span class="sd">            of constraints with the same coefficient &#39;coeffs&#39;.</span>
+<span class="sd">            If coeffs is an iterable, the variable is included</span>
+<span class="sd">            with the specified coefficient to the given sequence</span>
+<span class="sd">            of constraints. Make sure that both sequences are</span>
+<span class="sd">            of the same length.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A docplex.mp.dvar</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">if</span> <span class="n">vtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">continuous_var</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">vtype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;B&#39;</span><span class="p">:</span> 
+            <span class="n">dvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">binary_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dvar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">integer_var</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">obj</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span> 
+            <span class="n">objf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">get_objective_expr</span><span class="p">()</span>
+            <span class="n">objf</span> <span class="o">+=</span> <span class="n">obj</span><span class="o">*</span><span class="n">dvar</span>
+        
+        <span class="k">if</span> <span class="n">constr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">coeffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">dvar</span>
+        
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">cnstr</span><span class="p">,</span> <span class="n">coef</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">constr</span><span class="p">,</span><span class="n">coeffs</span><span class="p">):</span> <span class="n">cnstr</span><span class="o">.</span><span class="n">lhs</span> <span class="o">+=</span> <span class="n">coef</span><span class="o">*</span><span class="n">dvar</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">constr</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">lhs</span> <span class="o">+=</span> <span class="n">coeffs</span><span class="o">*</span><span class="n">dvar</span>
+            
+        <span class="k">return</span> <span class="n">dvar</span> </div>
+
+            
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.addVars">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addVars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a dictionary of variables with keys indices to </span>
+<span class="sd">        the MIP model.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : iterable </span>
+<span class="sd">            Sequence of indices to be used as </span>
+<span class="sd">            keys of the dictionary.</span>
+<span class="sd">        lb : iterable of int or float</span>
+<span class="sd">            Lower bounds to be applied for the variables.</span>
+<span class="sd">            If None, lower bounds are zero.</span>
+<span class="sd">        ub : iterable of int or float</span>
+<span class="sd">            Upper bounds to be applied for the variables.</span>
+<span class="sd">            If None, no upper bounds are imposed.</span>
+<span class="sd">        vtype : None or str</span>
+<span class="sd">            Type of the variables. If None, it&#39;s</span>
+<span class="sd">            continuous variables, if &#39;B&#39; binary</span>
+<span class="sd">            variables, if &#39;I&#39; integer variables.</span>
+<span class="sd">        name : None or str </span>
+<span class="sd">            If not None, variables are named as name[index] </span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        v : dict</span>
+<span class="sd">            The dictionary of MIP model variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">vtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">continuous_var_dict</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="n">vtype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">binary_var_dict</span><span class="p">(</span> <span class="n">indices</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">integer_var_dict</span><span class="p">(</span> <span class="n">indices</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="p">)</span>    </div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.addVarMatrix">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVarMatrix">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addVarMatrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create and return a rows x cols matrix of variables</span>
+<span class="sd">        of type vtype.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rows, cols : int </span>
+<span class="sd">            Number of rows and columns of the matrix. </span>
+<span class="sd">        lb : int or float or iterable of int or float</span>
+<span class="sd">            Lower bounds to be applied for the variables.</span>
+<span class="sd">            If None, lower bounds are zero.</span>
+<span class="sd">        ub : int or float or iterable of int or float</span>
+<span class="sd">            Upper bounds to be applied for the variables.</span>
+<span class="sd">            If None, no upper bounds are imposed.</span>
+<span class="sd">        vtype : None or str</span>
+<span class="sd">            Type of the variables. If None, it&#39;s</span>
+<span class="sd">            continuous variables, if &#39;B&#39; binary</span>
+<span class="sd">            variables, if &#39;I&#39; integer variables.</span>
+<span class="sd">        name : None or str </span>
+<span class="sd">            If not None, variables named as name[index] </span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        v : dict</span>
+<span class="sd">            The dictionary of MIP model variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">vtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">continuous_var_matrix</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span><span class="n">cols</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="n">vtype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">binary_var_matrix</span><span class="p">(</span> <span class="n">rows</span><span class="p">,</span><span class="n">cols</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">integer_var_matrix</span><span class="p">(</span> <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="p">)</span>    </div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.addVarCube">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.addVarCube">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">addVarCube</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indx</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates and return a dictionary of variables indexed by the</span>
+<span class="sd">        the three indices.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indx : tuple of three int </span>
+<span class="sd">            tuple of the three indices </span>
+<span class="sd">        lb : int or float or iterable of int or float</span>
+<span class="sd">            Lower bounds to be applied for the variables.</span>
+<span class="sd">            If None, lower bounds are zero.</span>
+<span class="sd">        ub : int or float or iterable of int or float</span>
+<span class="sd">            Upper bounds to be applied for the variables.</span>
+<span class="sd">            If None, no upper bounds are imposed.</span>
+<span class="sd">        vtype : None or str</span>
+<span class="sd">            Type of the variables. If None, it&#39;s</span>
+<span class="sd">            continuous variables, if &#39;B&#39; binary</span>
+<span class="sd">            variables, if &#39;I&#39; integer variables.</span>
+<span class="sd">        name : None or str </span>
+<span class="sd">            If not None, variables named as name[index] </span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        v : dict</span>
+<span class="sd">            The dictionary of MIP model variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">vtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">continuous_var_cube</span><span class="p">(</span><span class="n">indx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">indx</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>\
+                                                  <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="n">vtype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">==</span><span class="s1">&#39;B&#39;</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">binary_var_cube</span><span class="p">(</span> <span class="n">indx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">indx</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">integer_var_cube</span><span class="p">(</span> <span class="n">indx</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">indx</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">indx</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="n">ub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span> <span class="p">)</span>    </div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.set_vartype">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.set_vartype">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_vartype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dvar</span><span class="p">,</span> <span class="n">vtype</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the type of the decision variable var</span>
+<span class="sd">        to the type vtype.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dvar : docplex.mp.dvar object</span>
+<span class="sd">            The variable whose type should be set.</span>
+<span class="sd">        vtype : str </span>
+<span class="sd">            The type to which the variables should be set:</span>
+<span class="sd">            &#39;B&#39; for binary, &#39;I&#39; for integer, &#39;C&#39; for </span>
+<span class="sd">            continuous.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vtype</span> <span class="o">=</span> <span class="n">vtype</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">vtype</span> <span class="o">==</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span>
+            <span class="n">Vtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">binary_vartype</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Vtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">integer_vartype</span> <span class="k">if</span> <span class="n">vtype</span><span class="o">==</span><span class="s1">&#39;I&#39;</span> <span class="k">else</span> \
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">continuous_vartype</span>
+        <span class="n">dvar</span><span class="o">.</span><span class="n">set_vartype</span><span class="p">(</span><span class="n">Vtype</span><span class="p">)</span> </div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.change_var_types">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_var_types">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_var_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dvars</span><span class="p">,</span> <span class="n">vtype</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the type of a collection of variables.</span>
+<span class="sd">        (cf. docplex.mp.model.change_var_types)</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dvars : iterable of decision variables</span>
+<span class="sd">            The variables for which the type should</span>
+<span class="sd">            be changed.</span>
+<span class="sd">        vtype : an iterable of variable types or </span>
+<span class="sd">            the single type to which the variables</span>
+<span class="sd">            should be changed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">change_var_types</span><span class="p">(</span> <span class="n">dvars</span><span class="p">,</span> <span class="n">vtype</span> <span class="p">)</span></div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.change_upper_bounds">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_upper_bounds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_upper_bounds</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dvars</span><span class="p">,</span> <span class="n">ub</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the upper bounds of a collection of variables.</span>
+<span class="sd">        (cf. docplex.mp.model.change_var_upper_bounds)</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dvars : iterable of decision variables</span>
+<span class="sd">            The variables for which the type should</span>
+<span class="sd">            be changed.</span>
+<span class="sd">        ub : an iterable or a single number specifying</span>
+<span class="sd">            the new upper bound(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">change_var_upper_bounds</span><span class="p">(</span> <span class="n">dvars</span><span class="p">,</span> <span class="n">ub</span> <span class="p">)</span></div>
+
+
+<span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.change_lower_bounds">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.change_lower_bounds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">change_lower_bounds</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dvars</span><span class="p">,</span> <span class="n">lb</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the lower bounds of a collection of variables.</span>
+<span class="sd">        (cf. docplex.mp.model.change_var_lower_bounds)</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dvars : iterable of decision variables</span>
+<span class="sd">            The variables for which the type should</span>
+<span class="sd">            be changed.</span>
+<span class="sd">        lb : an iterable or a single number specifying</span>
+<span class="sd">            the new lower bound(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">change_var_lower_bounds</span><span class="p">(</span> <span class="n">dvars</span><span class="p">,</span> <span class="n">lb</span> <span class="p">)</span></div>
+
+
+    <span class="c1">#---------------------------------------------</span>
+        
+<div class="viewcode-block" id="CPXmodel.sum">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.sum">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exprs</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the sum of a list or iterable of </span>
+<span class="sd">        expressions using docplex.mp.model.sum</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">exprs</span><span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.mip_tol">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.mip_tol">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mip_tol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">absgap</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">relgap</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">int_tol</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">feas_tol</span><span class="o">=-</span><span class="mf">1.0</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the MIP solver&#39;s optimality absolute </span>
+<span class="sd">        and relative optimality tolerances to</span>
+<span class="sd">        the values absgap and relgap, resp.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        absgap, relgap, int_tol, feas_tol : float</span>
+<span class="sd">            Non-negative floating point numbers. If negative, the </span>
+<span class="sd">            tolerance is not set. absgap and relgap are the</span>
+<span class="sd">            absolute and relative optimality tolerance, int_tol</span>
+<span class="sd">            is the tolerance for integrality, and feas_tol the</span>
+<span class="sd">            feasibility tolerance for the simplex method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">absgap</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">absmipgap</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">absgap</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">relgap</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">mipgap</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">relgap</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">int_tol</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">integrality</span><span class="p">(</span><span class="n">int_tol</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">feas_tol</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">simplex</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">feasibility</span><span class="p">(</span><span class="n">feas_tol</span><span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.optim">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.optim">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">optim</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calls the Cplex solver (docplex.mp.model.solve) for</span>
+<span class="sd">        solving the current MIP model.</span>
+<span class="sd">                  </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        success : bool </span>
+<span class="sd">            True, if a feasible or optimal solution was</span>
+<span class="sd">            found. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">log_output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__log_output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__s</span> <span class="ow">is</span> <span class="kc">None</span></div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.get_solution">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_solution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_solution</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">1.0E-06</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the solution values of variables X.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : dict</span>
+<span class="sd">            Dictionary of docplex.mp.dvar</span>
+<span class="sd">        keep_zeros : bool</span>
+<span class="sd">            If True, the default, all solution </span>
+<span class="sd">            values to variables X are returned.</span>
+<span class="sd">            Otherwise, only non-zero values are</span>
+<span class="sd">            returned.</span>
+<span class="sd">        precision : float (positive)</span>
+<span class="sd">            Figures smaller in magnitude than precision are seen as</span>
+<span class="sd">            zeros.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__s</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__s</span><span class="o">.</span><span class="n">get_value_dict</span><span class="p">(</span> <span class="n">X</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="n">keep_zeros</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">)</span></div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.get_dual_values">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.get_dual_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_dual_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constr</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the list/sequence of dual variables to</span>
+<span class="sd">        the linear constraints in the list/sequence</span>
+<span class="sd">        of linear constraints constr. This is an alias</span>
+<span class="sd">        for docplex.mp.model.dual_values()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">dual_values</span><span class="p">(</span> <span class="n">constr</span> <span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+        
+<div class="viewcode-block" id="CPXmodel.getVars">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getVars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getVars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of the model&#39;s variables.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">iter_variables</span><span class="p">()</span> <span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.getConstraints">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getConstraints">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getConstraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return list of all linear constraints in the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">iter_linear_constraints</span><span class="p">())</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.getObjective">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.getObjective">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getObjective</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alias for docplex.mp.model.get_objective_expr(), which</span>
+<span class="sd">        returns the objective expression.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">get_objective_expr</span><span class="p">()</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.reduced_costs">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.reduced_costs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reduced_costs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dvars</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the reduced cost of the decision variables</span>
+<span class="sd">        dvars.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dvars: iterable/sequence of variables</span>
+<span class="sd">            sequence of decision variables</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rc : list of float</span>
+<span class="sd">            The list of the variables&#39; reduced cost</span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">reduced_costs</span><span class="p">(</span> <span class="n">dvars</span> <span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.chgCoeff">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.chgCoeff">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chgCoeff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constr</span><span class="p">,</span> <span class="n">dvar</span><span class="p">,</span> <span class="n">coef</span><span class="o">=</span><span class="mf">0.0</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Change the coefficient of a single variable dvar </span>
+<span class="sd">        in the linear constraint constr to value coef.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        constr : docplex.mp.constr.LinearConstraint</span>
+<span class="sd">            The constraint to be adjusted</span>
+<span class="sd">        dvar : docplex.mp.dvar</span>
+<span class="sd">            The decision variable where to change</span>
+<span class="sd">            the coefficient.</span>
+<span class="sd">        coef : int or float</span>
+<span class="sd">            The value of the (new) coefficient.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">constr</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">set_coefficient</span><span class="p">(</span><span class="n">dvar</span><span class="p">,</span><span class="n">coef</span><span class="p">)</span></div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.chgCoeffs">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.chgCoeffs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">chgCoeffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constr</span><span class="p">,</span> <span class="n">coeffs</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes coefficients of a number of variables</span>
+<span class="sd">        in the linear constraint constr.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        coeffs : iterable/sequence of pairs</span>
+<span class="sd">             iterable/sequence of variable-coefficient pairs</span>
+<span class="sd">        constr : docplex.mp.constr.LinearConstraint</span>
+<span class="sd">            The constraint to be adjusted</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">d</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="n">coeffs</span><span class="p">:</span> <span class="n">constr</span><span class="o">.</span><span class="n">lhs</span><span class="o">.</span><span class="n">set_coefficient</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">c</span><span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.export_model">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.export_model">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export_model</span> <span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">lp_file</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exports the model to a model file of type &quot;lp&quot;. </span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        lp_file : str    </span>
+<span class="sd">            Name of the file where to write the model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">export_as_lp</span><span class="p">(</span> <span class="n">lp_file</span> <span class="p">)</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.update">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.update">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the model. Only relevant for GuRoBi and</span>
+<span class="sd">        is here just a dummpy.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span> </div>
+
+        
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.end">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">end</span> <span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up the Cplex IP model by calling its &quot;end&quot; method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+<div class="viewcode-block" id="CPXmodel.terminate">
+<a class="viewcode-back" href="../../../pyloa.mip.html#pyloa.mip.cpx_mip.CPXmodel.terminate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Terminate computations from a callback.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__context</span><span class="o">.</span><span class="n">abort</span><span class="p">()</span></div>
+
+    
+    <span class="c1">#---------------------------------------------</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipModel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the instance of the docplex.mp.model Model class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span> 
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ObjVal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Objective value of a solution to the model&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getObjVal</span><span class="p">()</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ObjBound</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Best bound on (lower for minimization, upper for</span>
+<span class="sd">        maximization) on the optimal objective value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">solve_details</span><span class="o">.</span><span class="n">best_bound</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">runtime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return computation time used to solve the model&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">solve_details</span><span class="o">.</span><span class="n">time</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">dettime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the deterministic time. For Cplex, this</span>
+<span class="sd">        is the total amout of CPU ticks&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">get_cplex</span><span class="p">()</span><span class="o">.</span><span class="n">get_dettime</span><span class="p">(</span> <span class="p">)</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return model&#39;s solution status&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">solve_details</span><span class="o">.</span><span class="n">status</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">nodeCount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the NodeCount, i.e. the number of branch-and-cut </span>
+<span class="sd">        nodes explored in Cplex&#39;s most recent optimization&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">solve_details</span><span class="o">.</span><span class="n">nb_nodes_processed</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">infinity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;docplex.mp.model.infinity&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">infinity</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">MIPGapAbs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return parameter mip.tolerances.absmipgap&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">absmipgap</span><span class="p">()</span>
+    
+    <span class="nd">@MIPGapAbs</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">MIPGapAbs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameter mip.tolerances.absmipgap to value&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">absmipgap</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">MIPGap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return parameter mip.tolerances.mipgap&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">mipgap</span><span class="p">()</span>
+    
+    <span class="nd">@MIPGap</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">MIPGap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameter mip.tolerances.mipgap to value&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">mipgap</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">IntFeasTol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return parameter mip.tolerance.integrality&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">integrality</span><span class="p">()</span>
+    
+    <span class="nd">@IntFeasTol</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">IntFeasTol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameter mip.tolerance.integrality to value&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">integrality</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">FeasibilityTol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return parameter simplex.tolerances.feasibility&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">simplex</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">feasibility</span><span class="p">()</span>
+    
+    <span class="nd">@FeasibilityTol</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">FeasibilityTol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set parameter simplex.tolerances.feasibility&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">simplex</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">feasibility</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">MIQCPMethod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns value of parameter mip.strategy.miqcpstrat&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">miqcpstrat</span><span class="p">()</span>
+    
+    <span class="nd">@MIQCPMethod</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">MIQCPMethod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets parameter mip.strategy.miqcpstrat&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">miqcpstrat</span><span class="p">(</span><span class="n">strategy</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">timelimit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Time limit for the MIP solver&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">timelimit</span>  
+    
+    <span class="nd">@timelimit</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">timelimit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time limit for the MIP solver&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">timelimit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>   
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">timelimit</span><span class="p">(</span><span class="mf">1.0E75</span><span class="p">)</span>
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">nodelimit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Node limit for the MIP solver&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">nodes</span><span class="p">()</span>  
+    
+    <span class="nd">@nodelimit</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">nodelimit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the time limit for the MIP solver&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="mi">9223372036800000000</span><span class="p">)</span>   
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">upper_cutoff</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return upper cutoff value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">uppercutoff</span>
+    
+    <span class="nd">@upper_cutoff</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">upper_cutoff</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set an upper cutoff value.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">uppercutoff</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">lower_cutoff</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return lower cutoff value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">lowercutoff</span>
+    
+    <span class="nd">@lower_cutoff</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">lower_cutoff</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set a lower cutoff value.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">tolerances</span><span class="o">.</span><span class="n">lowercutoff</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">lowerObjStop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns docplex.mp.model.parameters.mip.limits.lowerobjstop </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">lowerobjstop</span><span class="p">()</span>
+    
+    <span class="nd">@lowerObjStop</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">lowerObjStop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set Cplex parameter mip.limits.lowerobjstop to the given value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">lowerobjstop</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return value of parameter log_output&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__log_output</span> 
+    
+    <span class="nd">@log_output</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on_off</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set log_output on (True) or off (False)&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__log_output</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">on_off</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipStrategy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return value of Cplex parameter mip.strategy.search</span>
+<span class="sd">        (dynamic search switch)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">search</span><span class="p">()</span>
+    
+    <span class="nd">@mipStrategy</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipStrategy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set Cplex parameter mip.parameters.strategy to the</span>
+<span class="sd">        given value of 0 (automatic), 1 (traditional), 2</span>
+<span class="sd">        (dynamic search)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">search</span><span class="p">()</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipEmphasis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return value of Cplex parameter parameters.emphasis.mip.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">emphasis</span><span class="o">.</span><span class="n">mip</span><span class="p">()</span>
+    
+    <span class="nd">@mipEmphasis</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mipEmphasis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set Cplex parameter parameters.emphasis.mip to value. We do</span>
+<span class="sd">        not make use of value=4 (HIDDENFEAS)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">emphasis</span><span class="o">.</span><span class="n">mip</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">lbHeur</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return Cplex parameter parameters.mip.strategy.lbheur (local</span>
+<span class="sd">        branching switch&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">lbheur</span><span class="p">()</span>
+    
+    <span class="nd">@lbHeur</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">lbHeur</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Switch Cplex&#39;s local branching off (0) or on (1).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">strategy</span><span class="o">.</span><span class="n">lbheur</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">cuts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return value of parameter cuts&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cuts</span> 
+               
+    <span class="nd">@cuts</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">cuts</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set strategy for certain cuts. A value of -1 means automatic</span>
+<span class="sd">        (Cplex decides), 0 means cuts are switched off, 1 for</span>
+<span class="sd">        moderate generation of certain cuts, 2 for agressive</span>
+<span class="sd">        cut generation and 3 even activates disjunctive cuts.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__cuts</span> <span class="o">=</span> <span class="n">value</span>  
+        <span class="k">if</span> <span class="n">value</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Switch off cut generation </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">cutsfactor</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Automatic cut generation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">cutsfactor</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">covers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gubcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">flowcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">mircut</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gomory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">implied</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">liftproj</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">disjunctive</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Moderate generation of these cuts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">cutsfactor</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">covers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gubcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">flowcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">mircut</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gomory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">implied</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">liftproj</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">disjunctive</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span> 
+            <span class="c1"># Aggressive generation of these cuts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">cutsfactor</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">covers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gubcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">flowcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">mircut</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gomory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">implied</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">liftproj</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">disjunctive</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">value</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># Even use disjunctive cuts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">limits</span><span class="o">.</span><span class="n">cutsfactor</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">covers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gubcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">flowcovers</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">mircut</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">gomory</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">implied</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">liftproj</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">mip</span><span class="o">.</span><span class="n">cuts</span><span class="o">.</span><span class="n">disjunctive</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">doBenders</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return Cplex parameter parameter.benders.strategy&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">benders</span><span class="o">.</span><span class="n">strategy</span><span class="p">()</span>
+    
+    <span class="nd">@doBenders</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">doBenders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set Cplex parameter parameter.benders.strategy. Note</span>
+<span class="sd">        that value = -1, switches Benders off.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">benders</span><span class="o">.</span><span class="n">strategy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">cb_MIPSOL</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the constant cplex.callbacks.Context.id.candidate&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cplex</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">candidate</span>
+
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current instance of cplex.callbacks.Context&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__context</span>
+    
+    <span class="nd">@context</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cntxt</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Keep a handle to the Cplex&#39;s callback context instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__context</span> <span class="o">=</span> <span class="n">cntxt</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">id_relaxation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return cplex.callbacks.Context.id.relaxation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cplex</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">relaxation</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">candidate_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return objective value of a candidate solution&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__context</span><span class="o">.</span><span class="n">get_candidate_objective</span><span class="p">()</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">incument_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return incumbent objective value&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__context</span><span class="o">.</span><span class="n">get_incumbent_objective</span><span class="p">()</span> </div>
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

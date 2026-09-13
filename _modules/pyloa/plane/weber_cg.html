@@ -8,7 +8,7 @@
   <title>pyloa.plane.weber_cg &mdash; PyLoa 1.00 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=26111179" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=99626c5e" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
@@ -46,8 +46,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#references">References</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.mip.html">pyloa.mip package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
 </ul>
 
@@ -507,12 +510,11 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Solve the final master as an integer program.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__master_integer</span><span class="p">():</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_sol</span><span class="p">()</span>
+        <span class="c1">#if self.__master_integer(): return self.__get_sol()</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span> 
-        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">y</span><span class="o">.</span><span class="n">lb</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">ub</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">set_vartype</span><span class="p">(</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">change_upper_bounds</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="mf">1.0</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">change_var_types</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="s1">&#39;B&#39;</span> <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solving the integer master program&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_sol</span><span class="p">(</span>  <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merde alors! No integer master solution&quot;</span><span class="p">)</span>
