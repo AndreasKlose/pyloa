@@ -8,5 +8,5 @@ scikit-learn
 tsplib95
 cplex
 docplex
-gurobi
+gurobipy
 sphinx-rtd-theme
