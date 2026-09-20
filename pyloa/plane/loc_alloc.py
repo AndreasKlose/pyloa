@@ -1,5 +1,4 @@
 """
-    Module plane.loc_alloc of package pyloa:
     Methods for solving the multi-source Weber and planar p-center
     problem mostly relying on location-allocation.
 """
@@ -37,7 +36,7 @@ def _locAlloc( p, Y, w, X0=None, minisum=True, screen='off' ):
     p : int
         number of facilities to locate (1 < p < #customers)
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane
     w : numpy array of m float or int
         positive customer weights
     X0 : None or a px2 numpy array of float
@@ -117,41 +116,41 @@ def locAlloc( p, Y, w=None, minisum=True, initLA='random', repeat=1,\
     Parameters
     ----------
     p : int
-        number of facilities to locate (1 < p < #customers) 
+        Number of facilities to locate (1 < p < #customers). 
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : None or a numpy array of m float or int
-        positive customer weights (if None weights will be set to 1)
+        Positive customer weights (if None, weights will be set to 1).
     minisum : bool
         If True, a multi-source Weber problem is solved. Otherwise,
         a planar p-center problem.
-    initLA : string
-        method to be applied for finding initial solution.
+    initLA : str
+        Method to be applied for finding initial solutions.
         Currently the following two options can be chosen.
         (i) 'random' means a random initial solution at the 
-        customer points
-        (ii) 'cluster' means initial solution from clustering
+        customer points.
+        (ii) 'cluster' means initial solutions from clustering
         using the kmeans as well as hierarchical methods 
-        based on complete, single linkage and Ward's method
+        based on complete, single linkage and Ward's method.
     repeat : int
-        number of times location-allocation is repeated with
-        different start solution (only applies if initLA='random')
-    screen: string
+        Number of times location-allocation is repeated with a
+        different start solution (only applies if initLA='random').
+    screen: str
         If 'on', the result of the current iteration is printed 
-        to "stdout"
+        to stdout.
 
     Returns
     -------
     bestObj : float
-        the objective value (as a float) of the solution
+        The objective value (as a float) of the solution.
     Xbest : px2 numpy array of float
-        the solution's p facility locations,
+        The solution's p facility locations.
     a : list of int
-        the assignment of customer points to the facilities,
+        The assignment of customer points to the facilities,
         i.e., a[i]=j if point Y[i] is assigned to facility at 
-        location X[j]
+        location X[j].
     itr : int
-        the total number of location-allocation iterations.
+        The total number of location-allocation iterations.
     """
     locFunc = solveWeber if minisum else charalambous
     screen = screen.lower()
@@ -207,28 +206,30 @@ def pmedian_heuristic( p, Y, w=None, minisum=True, screen='off' ):
     Parameters
     ----------
     p : int
-        number of facilities to locate (1 < p < #customers) 
+        Number of facilities to locate (1 < p < #customers).
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : None or a numpy array of m float or int
-        positive customer weights (if None all weights are set to 1)
+        Positive customer weights (if None, all weights are set to 1).
     minisum : bool
         If True, a multi-source Weber problem is solved; otherwise
-        a planar p-center problem
+        a planar p-center problem.
     screen: 
-        If 'on', Cplex's intermediate output on the state of
-        the computations are printed to the screen.
+        If 'on', the MIP solver's intermediate output on the state of
+        the computations is printed to the screen.
 
     Returns
     -------
     objv : float  
+        The solution's objective value.
     
     Xsol : px2 numpy array of float    
+        The solution's p facility locations.
     
     a : list of int  
-        the assignment of customer points to the facilities,
+        The assignment of customer points to the facilities,
         i.e., a[i]=j if point Y[i] is assigned to facility at 
-        location X[j]    
+        location X[j].   
     """
     pmed = Model('p-median')
     m = Y.shape[0]
@@ -293,20 +294,20 @@ def weber_vns( p, Y, w=None, X=None, minisum=True, screen='off' ):
     We choose the k customers with a probability proportional to the 
     weighted distance to their nearest facility. In exchange of locating 
     a facility at a selected customer point, the currently open facility 
-    closest to that customer is closed.
+    nearest to that customer is closed.
     
-    Reference: Brimberg et al. (2000). Improvements and comparison of 
+    **Reference**: Brimberg et al. (2000). Improvements and comparison of 
     heuristics for solving the multi-source Weber problem. Operations 
     Research 48: 444-460.
     
     Parameters
     ----------
     p : int
-        number of facilities to locate (1 < p < #customers) 
+        Number of facilities to locate (1 < p < #customers).
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : None or numpy array of m float or int
-        positive customer weights (if None all weights are set to 1)
+        Positive customer weights (if None all weights are set to 1).
     X : None or px2 numpy array of float
         If not none, X is the initial solution with X[j] specifying
         the two coordinates of the j-th facility, j=0,...,p-1.
@@ -314,17 +315,19 @@ def weber_vns( p, Y, w=None, X=None, minisum=True, screen='off' ):
         If True, a multi-source Weber problem is solved; otherwise
         a planar p-center problem.
     screen : str 
-        If 'on', Cplex's intermediate output on the state of
-        the computations are printed to the screen.
+        If 'on', intermediate output on the state of
+        the computations is printed to the screen.
 
     Returns
     -------
     objv : float
+        The solution's objective value.
     
     X : px2 numpy array of float
+        The locations of the p facilities.
     
     a : list of int
-        the assignment of customer points to the facilities,
+        The assignment of customer points to the facilities,
         i.e., a[i]=j if point Y[i] is assigned to facility at 
         location X[j]
     """
@@ -418,11 +421,11 @@ def twoFacility( Y, w, minisum=False, screen='off'):
     Parameters
     ----------
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : None or numpy array of m float or int
-        positive customer weights (if None all weights are set to 1)
+        Positive customer weights (if None, all weights are set to 1).
     minisum : bool 
-        If True, a 2-Weber is solved; otherwise a 2-center problem
+        If True, a 2-Weber problem is solved; otherwise a 2-center problem
     screen : str 
         If 'on', intermediate output on the state of the computations 
         is printed to the screen.
@@ -433,11 +436,11 @@ def twoFacility( Y, w, minisum=False, screen='off'):
         The solution's objective value 
     X : 2x2 numpy array of float
         X[0] and X[1] are the coordinate vectors of the two facility
-        locations
+        locations.
     a : list of int
-        the assignment of customer points to the facilities,
+        The assignment of customer points to the facilities,
         i.e., a[i]=j if point Y[i] is assigned to facility at 
-        location X[j], j=0 or 1
+        location X[j], j = 0 or 1.
     """
     talk = screen.lower()=='on'
     if talk:

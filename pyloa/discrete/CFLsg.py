@@ -75,8 +75,8 @@ def __loadCFLsg( with_cplex = False ):
         else:
             print("Cplex loaded. Library is",cplexLib) 
 
-    # The dynamic link library libCFLsg.so (libCFLsg.dll on Windows)
-    # is expected to reside in the same directory as this module.
+    # The dynamic link library libCFLsg.so (CFLsg.dll on Windows)
+    # is expected to reside in a subfolder of this directory.
     print("Searching for",CFLsgDLL)
     if onWindows:
         prefix = 'win//'
@@ -120,29 +120,29 @@ def solveCFLP( d, s, f, c, nodeLim=0, screenOn=1 ):
     Parameters
     ----------
     d : numpy array of int 
-        customer demands
+        Customer demands.
     s : numpy array of int 
-        facility capacities
+        Facility capacities.
     f : numpy array of float
-        fixed facility costs
+        Fixed facility costs.
     c : numpy 2d-array of float 
         c[j][i] is the total cost of supplying all of customer
         i's demand from facility j, where 0<=i<m and 0<=j<n.    
     nodeLim: int (optional)
-        limit on number of nodes (if 0, no limit is set)
+        Limit on number of nodes (if 0, no limit is set).
     screenOn: int (optional) 
-        if 1, the solver sends information to the screen   
+        If 1, the solver sends information to the screen.   
     
     Returns
     -------
     status : int
-        status of the result     
+        Status of the result.     
     UB : float
-        best upper bound found in the search
+        Best upper bound found in the search.
     OPN: list of int
-        set of open facilities
+        List of open facilities.
     TIM: float
-        CPU time spent               
+        CPU time spent.               
     """
     if __CFL_Lib is None:
         print("CFLsg Library not loaded!")

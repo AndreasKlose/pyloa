@@ -1,5 +1,4 @@
 """
-    Module net.pmedian of package pyloa:
     Methods for solving the p-median problem.
 """
 
@@ -23,25 +22,25 @@ class PMedian( NetProblem ):
         
         Parameters
         ----------   
-        see base class NetProblem in module pyloa.net_prob for a description
+        See base class NetProblem in module pyloa.net_prob for a description
         of the parameters.
         
         Remark: If the greedy add or subgradient procedure is used, 
-            then it is recommended to let d be a numpy (mxn)-array. The 
-            procedures then rely on numpy operations and run many times 
-            faster. In case that the fname is not None, the same is achieved
-            by choosing dstmat='matrix'.    
+        then it is recommended to let d be a numpy (mxn)-array. The 
+        procedures then rely on numpy operations and run many times 
+        faster. In case that the fname is not None, the same is achieved
+        by choosing dstmat='matrix'.    
         """
         super().__init__(fname=fname, dstmat=dstmat, orlib=orlib, d=d, m=m, n=n, w=w, p=p)
 
         self.__alpha = 2.0 
-        """Step size parameter used in the subgradient procedure"""
+        """Step size parameter used in the subgradient procedure."""
         
         self.__half = 5
-        """Parameter determining when to halve step size parameter alpha"""
+        """Parameter determining when to halve step size parameter alpha."""
         
         self.__miter = 1 
-        """Determines number of subgradient steps to equal m+n times this factor"""
+        """Determines number of subgradient steps to equal m+n times this factor."""
         
         self.__epsi = 1.0E-04 
         """Subgradient method stops when step size parameter falls below this value or
@@ -101,10 +100,10 @@ class PMedian( NetProblem ):
         Parameters
         ----------
         save_facilities : bool 
-            If True the set of facilities open in the obtained
+            If True, the set of facilities open in the obtained
             solution is remembered in the class field self.facilities 
         save_assignment : bool 
-            If True the assignment of customers to the open facilities
+            If True, the assignment of customers to the open facilities
             in the obtained solution is remembered in the class field 
             self.assigned. 
         """
@@ -180,7 +179,7 @@ class PMedian( NetProblem ):
         """
         Solve Lagrangian subproblem arising when dualizing assignment constraints
         in the p-median problem with Lagrangian multipliers dualv. 
-        Distances are assumed to be stored as dictionary or vector 
+        Distances are assumed to be stored as dictionary or vector. 
         """
         m, n, p, w, d = self._m, self._n, self._p, self._w, self._d  
         rho = np.fromiter((sum(min(0, w[i]*d(i,j) - dualv[i]) for i in range(m)) \
@@ -195,7 +194,7 @@ class PMedian( NetProblem ):
         """
         Solves Lagrangian subproblem arising when dualizing assignment constraints
         in the p-median problem with Lagrangian multipliers dualv. 
-        Assumption is that the distances are provided by a numpy matrix 
+        Assumption is that the distances are provided by a numpy matrix. 
         """
         rho = np.minimum(0, np.vstack(self._w)*self._dmat - np.vstack(dualv) ).sum(axis=0)
         S = np.argsort(rho)[:self._p]
@@ -331,9 +330,9 @@ class PMedian( NetProblem ):
                 using Lagrangian relaxation and subgradient optimization.
         
         keep_model : bool
-            If True, the docplex model is kept for later purposes,
+            If True, the MIP model is kept for later purposes,
             otherwise destroyed after the computations. This option
-            only applies if docplex is used as solver.
+            only applies if the MIP solver is used as solver.
         """ 
         meth = method.lower()
         if 'greedy' in meth:
@@ -350,7 +349,7 @@ class PMedian( NetProblem ):
     def default_subgr_params(self):
         """
         Sets the subgradient parameters to default values:
-        alpha=2, half=5 and itr=1
+        alpha=2, half=5 and itr=1.
         """
         self.__alpha, self.__half, self.__miter = 2.0, 5, 1
      
@@ -358,7 +357,7 @@ class PMedian( NetProblem ):
  
     @property 
     def alpha(self):
-        """Step length parameter alpha in subgradient procedure"""
+        """Step length parameter alpha in subgradient procedure."""
         return self.__alpha 
     
     @alpha.setter
@@ -377,7 +376,7 @@ class PMedian( NetProblem ):
     @property 
     def sg_iter(self):
         """Fixes the number of subgradient iterations not to exceed
-           miter times (m+n)"""
+           miter times (m+n)."""
         return self.__miter 
     
     @sg_iter.setter 

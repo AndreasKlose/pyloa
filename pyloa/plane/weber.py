@@ -1,5 +1,4 @@
 """
-    Module plane.weber of package pyloa:
     Methods for solving the Fermat-Weber problem.
 """
 import numpy as np
@@ -203,25 +202,25 @@ def _drezner(Y, w, screen='off', Xlst=None):
 
 def solveWeber(Y,w,l=1.0,method='Drezner',screen='off', Xlst=None):
     """
-    Solves instances of the single Weber problem with customer 
+    Solves instances of the Fermat-Weber problem with customer 
     point set Y and customer weight vector w. 
 
     Parameters
     ----------
     Y : mx2 numpy array of float
-        Y[i] i stores the coordinates of the i-th customer point,
-        i = 0,...,m-1
+        Y[i] stores the coordinates of the i-th customer point,
+        i = 0,...,m-1s
     w : numpy array of float or int
-        customer weights
+        Customer weights.
     l : float
-        Parameter for adjusting step length in Ostresh's method,
-        default value is 1, which is equivalent to Weiszfeld's method.
+        Parameter for adjusting the step length in Ostresh's method.
+        Default value is 1, which is equivalent to Weiszfeld's method.
     method : str
-        Solution method to apply, i.e. Weiszfeld, Ostresh or
-        Drezner. Note that parameter l only need to be supplied 
+        Solution method to apply, i.e. 'Weiszfeld', 'Ostresh' or
+        'Drezner'. Note that parameter l only need to be supplied 
         for Ostresh's method and then should be different from 1.  
     screen : str
-        If 'on', the result of the current iteration is printed to "stdout"
+        If 'on', the result of the current iteration is printed to stdout.
     Xlst : None or an empty list
         If not None, then Xlst is assumed to be an empyt list on input. On 
         output it will contain the list of the solutions X=(x1,x2) generated 
@@ -230,9 +229,9 @@ def solveWeber(Y,w,l=1.0,method='Drezner',screen='off', Xlst=None):
     Returns
     -------
     obj : float
-        The objective value of the optimal solution
+        The objective value of the optimal solution.
     X : numpy array of two float
-        The optimal location of the facility
+        The optimal location of the facility.
     """        
 
     if method.lower() == 'weiszfeld' or method.lower() == 'ostresh':
@@ -253,31 +252,33 @@ def limitedDist (Y, w, max_dist, screen='off' ):
     """
     Solves the single Weber problem with limited distances, which
     is to minimize the function g(X) where 
+
+    .. math::
     
-          g(X) = \sum_i w(i) min{ || X-Y(i)||, D(i) }
+        g(X) = \\sum_i w_i \\min\{ \\lVert X-Y_i \\rVert, D_i \}
           
-    Reference: Drezner, Z. (1984). The Planar Two-Center and 
+    **Reference**: Drezner, Z. (1984). The Planar Two-Center and 
     Two-Median Problems. Transportation Science 8, 351–361.
     
     Parameters
     ----------
     Y : mx2 numpy array of float
-        Y[i] i stores the coordinates of the i-th customer point,
-        i = 0,...,m-1
+        Y[i] stores the coordinates of the i-th customer point,
+        i = 0,...,m-1.
     w : numpy array of float or int
-        customer weights
+        Customer weights.
     max_dists : list or numpy array of float or int 
         max_dists[i] is the limited distance that applies for
         customer point i.
     screen : str
-        If 'on', the result of the current iteration is printed to "stdout"
+        If 'on', the result of the current iteration is printed to stdout.
         
     Returns
     -------
     objval : float
-         Objective value of the optimal solution
+         Objective value of the optimal solution.
     X : numpy array of two float
-        The coordinates of the optimal location
+        The coordinates of the optimal location.
     """
     m = len(Y)
     itr = 0

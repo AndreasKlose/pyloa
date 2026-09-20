@@ -1,15 +1,13 @@
 """
-    Module plane.planesolver 
-    
-    Implements a class for solving a planar minisum or minimax
-    location problem.
+    Implements a class for solving planar minisum or minimax
+    location problems.
 """
 import numpy as np 
 from os.path import basename
 from timeit import time
 from pyloa.mip.model import set_mipSolver
 from pyloa.util import lla2xy, euclid
-from pyloa.plane.parser import read_points
+from pyloa.plane.parser import read_points, return_lola
 from pyloa.plane.weber import solveWeber
 from pyloa.plane.center import elzinga_hearn, charalambous, welzl, growRadius
 from pyloa.plane.mip import weber_mipq, pcenter_mipq, SOCPcenter, SOCPweber
@@ -21,60 +19,63 @@ from pyloa.plot import plot_points
 
 class PlaneSolver:
     """
-    Class for addressing a planar location problem
+    Class for addressing a planar location problem.
     """
     
-    def __init__(self, fname=None, Y=None, geospatial=False, w=None, names=None):
+    def __init__(self, fname=None, Y=None, geospatial=False, w=None, g_coo=None, names=None):
         """
         Creates an instance of a planar location problem.
         
         Parameters
         ----------   
-        * fname : str, optional  
+        fname : str, optional  
             None or name of the input file or problem instance to be solved.
             If None, it is assumed that the data are provided via arguments
             Y and w. Otherwise, fname need to be the name (and path if 
             required) of a text/csv file keeping the data of the problem 
             instance. See the module plane.parser for information on how
             the data file need to look like.
-        * Y : None or a mx2 numpy array of float  
+        Y : None or a mx2 numpy array of float  
             This argument is only used in case that fname=None. If it is
-            not None, then Y must contain the in each row the coordinates of 
+            not None, then Y must contain in each row the coordinates of 
             the m customer locations.
-        * geospatial: bool, optional  
+        geospatial: bool, optional  
             If False (the default), it is assumed that the rows of Y give 
-            coordinates in Euclidian plane. Otherwise, it is assumed
+            coordinates in the Euclidean plane. Otherwise, it is assumed
             that Y[i,0] gives the longitude and Y[i,1] the latitude
             of customer point i. 
-        * w : None or numpy array of m float or int  
+        w : None or numpy array of m float or int  
             This argument is only used if fname=None. In this case,
-            it gives the array positive customer weights if not None.
+            it gives the array of positive customer weights if not None.
             If None but fname and Y aren't, the weights are set to 1 for 
             all customer points.
-        * names : None or list/array of str, optional  
-            Names of the customer points if not None
+        g_coo : Tuple of two lists, optional
+            Longitude and latitude data of the customer points if not
+            Y already contains these data (geospatial=True).
+        names : None or list/array of str, optional  
+            Names of the customer points if not None.
         """
         self.prob_name = None if fname is None else basename(fname).split('.')[0]
-        """Name of data file or None"""
+        """Name of the data file or None."""
         
         self.__Y = None  
-        """Array of customer coordinates in Euclidian plane"""
+        """Array of customer coordinates in Euclidean plane."""
         
         self.__w = None  
-        """Array of customer weights"""
+        """Array of customer weights."""
         
         self.__X = None 
         """(px2) array of facility coordinates in a solution where p facilities
-           had to be located"""
+           had to be located."""
            
         self.__lo = None 
-        """Longitude data of customer points if provided"""
+        """Longitude data of customer points if provided."""
         
         self.__la = None 
-        """Latitude data of customer points if provided"""
+        """Latitude data of customer points if provided."""
         
         self.__names = None 
-        """Names of customer points if provided"""
+        """Names of customer points if provided."""
            
         self.__sum_wdist = None 
         """
@@ -83,44 +84,44 @@ class PlaneSolver:
         
         self.__max_wdist = None 
         """
-        The maximal weighted distance to nearest facility in a solution 
+        The maximal weighted distance to nearest facility in a solution.
         """
         
         self.__sum_dist = None 
         """
-        The total (unweighted) sum of distances to the nearest facility in a solution
+        The total (unweighted) sum of distances to the nearest facility in a solution.
         """
         
         self.__max_dist = None 
         """
-        The maximal (unweighted) distance to nearest facility in a solution
+        The maximal (unweighted) distance to nearest facility in a solution.
         """
         
         self.__lobnd = 0 
-        """Any lower bound on optimal objective function value"""
+        """Any lower bound on optimal objective function value."""
         
         self.__assigned = None 
         """
-        Gives for each customer point the index of the nearest facility in self.__X
+        Gives for each customer point the index of the nearest facility in self.__X.
         """
 
         self.__stime = (0.0, 0.0)
-        """Start time of a solution procedure"""
+        """Start time of a solution procedure."""
         
         self.__ctime = (0.0, 0.0)
-        """Computation time (CPU and Walltime) required to solve a problem instance""" 
+        """Computation time (CPU and Walltime) required to solve a problem instance.""" 
         
         self.__mip_time = 0.0
-        """Computation time (walltime seconds) spent by the MIP solver"""
+        """Computation time (walltime seconds) spent by the MIP solver."""
         
         self.__cg_iter = float('inf')
-        """Maximal number of column generation iterations"""
+        """Maximal number of column generation iterations."""
         
         self.__pricing_method = 'Drezner'
         
         self.__timLimit = None 
         """Time limit to be applied when solving a problem as a MIQCP using 
-        a MIP solver"""
+        a MIP solver."""
         
         self.__strategy = 0 
         """Strategy to be used by the MIQCP solver: If 0, the solver decides 
@@ -130,26 +131,39 @@ class PlaneSolver:
         gurobipy.model.params.MIQCPMethod."""
         
         self.__nodes_processed = 0
-        """Number of nodes processed in total for solving a problem with the MIP solver"""
-        
-        self.__geospatial = False 
-        """Will be True if data do not come from a file and coordinates in the
-        aray Y are longitude-latitude data"""
-        
+        """Number of nodes processed in total for solving a problem with the MIP solver."""
+
         if not fname is None:
             Y, w, names = read_points(fname) 
+            g_coo = return_lola()
             assert not Y is None, "Unable to read file"+fname
         if not Y is None:
-            self.set_data(Y, geospatial=geospatial, w=w, names=names)
+            self.set_data(Y, geospatial=geospatial, w=w, g_coo = g_coo, names=names)
         
     #---------------------------------------------
 
-    def set_data(self, Y, w=None, geospatial=False, names=None):
+    def set_data(self, Y, w=None, geospatial=False, g_coo=None, names=None):
         """
-        Pass data to this instance of a planar location problem
+        Pass data to this instance of a planar location problem.
+
+        Parameters
+        ----------
+        Y : mx2 numpy array of float
+            Coordinates of the m customer points.
+        w : numpy array of int or float or None
+            Array of customer weights. If None all weights will
+            be set to 1.
+        geospatial : bool, optional
+            If True, the coordinates in Y are assumed to be longitude
+            and latitude. Default: False.
+        g_coo : tuple of two lists, optional
+            If not None and Y does not already contain geospatial coordinates,
+            g_coo should a tuple of two lists, the first one giving the
+            longitudes, the second one the latitudes of the customer points.
+        names : list of str or None
+            Addresses/names of the m customer points. 
         """ 
         self.__names = names
-        self.__geospatial = geospatial 
         if geospatial: 
             self.__lo = Y[:, 0]
             self.__la = Y[:, 1]
@@ -157,6 +171,9 @@ class PlaneSolver:
             self.__Y = np.array(list(map(lambda y: lla2xy(y[0], y[1], origin), Y)))
         else:
             self.customers = Y 
+            if not g_coo is None: 
+                self.__lo = g_coo[0]
+                self.__la = g_coo[1]
         self.weights = w   
         self.__sum_dist = None 
         self.__sum_wdist = None 
@@ -193,12 +210,12 @@ class PlaneSolver:
     
     @property 
     def customers(self):
-        """Return the customer point coordinates"""
+        """The customer point coordinates."""
         return self.__Y 
     
     @customers.setter 
     def customers(self, Y):
-        """Set the customer coordinates to the numpy array Y.
+        """Sets the customer coordinates to the numpy array Y.
         Note that Y is an array of 2-dimensional arrays."""
         if isinstance(Y,np.ndarray) and Y.shape[1]==2:
             self.__Y = Y 
@@ -207,7 +224,7 @@ class PlaneSolver:
     
     @property
     def weights(self):
-        """Return the customer point weights"""
+        """The customer point weights."""
         if self.__w is None: return np.ones(len(self.__Y), dtype=int) 
         return self.__w
     
@@ -221,15 +238,25 @@ class PlaneSolver:
             self.__w = w
         else: 
             print("Weights must be a positive numpy array!")
-        
+
+    @property 
+    def names(self):
+        """Addresses/names of the customer points."""
+        return self.__names 
+
+    @property 
+    def lola(self):
+        """Longitude and latitude coordinates of the customer points"""
+        return self.__lo, self.__la 
+
     @property 
     def weighted_distance(self):
-        """Sum of weighted distances to nearest facility in a solution"""
+        """Sum of weighted distances to nearest facility in a solution."""
         return self.__sum_wdist 
     
     @weighted_distance.getter 
     def weighted_distance(self):
-        """Return sum of weighted distances to nearest facility in a solution"""
+        """Sum of weighted distances to nearest facility in a solution."""
         if not self.__sum_wdist is None: return self.__sum_wdist
         if not self.__X is None: 
             self.__get_dist()
@@ -238,12 +265,12 @@ class PlaneSolver:
     
     @property 
     def distance(self):
-        """Sum of (unweighted) distances to nearest facility in a solution"""
+        """Sum of (unweighted) distances to nearest facility in a solution."""
         return self.__sum_dist 
     
     @distance.getter 
     def distance(self):
-        """Return sum of (unweighted distances to nearest facility in a solution"""
+        """Sum of (unweighted distances to nearest facility in a solution."""
         if not self.__sum_dist is None: return self.__sum_dist
         if not self.__X is None: 
             self.__get_dist()
@@ -252,12 +279,12 @@ class PlaneSolver:
     
     @property 
     def max_weighted_distance(self):
-        """Maximal weighted distances to nearest facility in a solution"""
+        """The maximal weighted distance to nearest facility in a solution."""
         return self.__max_wdist 
     
     @max_weighted_distance.getter 
     def max_weighted_distance(self):
-        """Return maximal weighted distances to nearest facility in a solution"""
+        """Returns the maximal weighted distance to nearest facility in a solution."""
         if not self.__max_wdist is None: return self.__max_wdist
         if not self.__X is None: 
             self.__get_maxdist()
@@ -266,12 +293,12 @@ class PlaneSolver:
     
     @property 
     def max_distance(self):
-        """Maximal (unweighted) distances to nearest facility in a solution"""
+        """The maximal (unweighted) distances to nearest facility in a solution."""
         return self.__max_dist 
     
     @max_distance.getter 
     def max_distance(self):
-        """Return maximal (unweighted) distances to nearest facility in a solution"""
+        """The maximal (unweighted) distance to nearest facility in a solution."""
         if not self.__max_dist is None: return self.__max_dist
         if not self.__X is None: 
             self.__get_maxdist()
@@ -280,45 +307,45 @@ class PlaneSolver:
     
     @property
     def lowBound(self):
-        """Return lower bound on objective value (only for multi-source Weber if 
-           solved by column generation)"""
+        """Lower bound on objective value (only for multi-source Weber if 
+           solved by column generation)."""
         return self.__lobnd    
     
     @property
     def facilities(self):
-        """Return array of the p facility coordinates"""
+        """Array of the p facility coordinates."""
         return self.__X 
     
     @property
     def assigned(self):
-        """Return assignment of customer locations to facility (indices)"""
+        """Assignment of customer locations to facility (indices)."""
         if len(self.__X.shape)==1 or self.__X.shape[0] == 1: return [0]*len(self.__Y)
         return self.__assigned
     
     @property 
     def mip_time(self):
-        """Return Cplex solver computation time (wall time) in seconds"""
+        """The MIP solver's computation time (wall time) in seconds."""
         return self.__mip_time 
     
     @property 
     def mip_nodes(self):
-        """Return number of branch-and-cut tree nodes enumerated"""
+        """The number of branch-and-cut tree nodes enumerated."""
         return self.__nodes_processed 
     
     @property 
     def cpuTime(self): 
-        """Return CPU time in seconds"""
+        """Returns CPU time in seconds"""
         return self.__ctime[0]
 
     @property 
     def wallTime(self): 
-        """Return CPU time in seconds"""
+        """Computation time (walltime) in seconds"""
         return self.__ctime[1]
     
     @property 
     def mipSolver(self):
         """
-        Return the MIP solver's name used for solving MIPs.
+        The MIP solver used for solving MIPs.
         """
         return set_mipSolver( )
     
@@ -329,8 +356,7 @@ class PlaneSolver:
     @property 
     def timeLimit(self):
         """
-        Return the MIP solver's time limit (seconds) available
-        for solving a MIQCP.
+        The time limit to be applied for the MIQCP solver.
         """
         return self.__timLimit 
     
@@ -344,7 +370,7 @@ class PlaneSolver:
     @property 
     def miqcp_strategy(self):
         """
-        Return the MIP solver's MIQCP solving strategy.
+        The MIP solver's MIQCP solving strategy.
         """
         return self.__strategy 
     
@@ -359,7 +385,7 @@ class PlaneSolver:
     @property 
     def cg_iter(self):
         """
-        Return maximal number of column generation iteration
+        The maximal number of column generation iterations
         to be done within the column generation method for
         the multi-source Weber problem. 
         """
@@ -376,7 +402,7 @@ class PlaneSolver:
     @property 
     def pricing_method(self):
         """
-        Return the method to solve the pricing problem within
+        The method to solve the pricing problem within
         a column generation for the multi-source Weber problem.
         """
         return self.__pricing_method 
@@ -384,17 +410,17 @@ class PlaneSolver:
     @pricing_method.setter
     def pricing_method(self, value):
         """
-        Use method 'value' for solving the pricing problem within
+        Use method *value* for solving the pricing problem within
         a column generation for the multi-source Weber problem.
-        value must equal 'Drezner' or 'MIQCP'
+        value must equal *Drezner* or *MIQCP*
         """
         self.__pricing_method = value  
         
     @property 
     def optTol(self):
         """
-        Return the relative optimality tolerance value to 
-        be used within the column generation
+        The relative optimality tolerance value to 
+        be used within the column generation.
         """
         return set_optTol()
     
@@ -402,7 +428,7 @@ class PlaneSolver:
     def optTol(self, value):
         """
         Set the column generation's relative optimality
-        tolerance to the given value 
+        tolerance to the given value.
         """
         set_optTol(value)
     
@@ -415,60 +441,58 @@ class PlaneSolver:
         Parameters
         ----------
         p : int 
-            Number of facility locations to find (default=1)
+            Number of facility locations to find (default=1).
         minisum : bool
-            If True, the minisum location problem (Fermat-Weber,
+            If True, a minisum location problem (Fermat-Weber,
             or multi-source Weber) is solved; otherwise the
             1-center (p=1) or p-center problem is solved.
-            (default=True)
+            (default=True).
         method : str 
             Determines the method to be applied for solving
-            the problem. Note that method need to be specified
+            the problem. Note that *method* need to be specified
             except if Drezner's method for solving the 
             Fermat-Weber problem should be applied. The following
             methods are available:
             
             1. For the Fermat-Weber problem (p=1, minisum=True)
             
-                - 'Drezner'     : Drezner's method (Default method)
-                - 'Ostresh-val' : Ostresh's method with step size parameter lambda set to value
-                
-                                  For example, Ostresh-2. If val is not specified, the step size parameter is set to 2.
-                - 'Weiszfeld'   : Weiszfeld's method (same as Ostresh-1)
-                - 'SOCP'        : Solves the problem using Cplex's solver for 2nd order cone problems
+            - *Drezner* : Drezner's method (Default method).
+            - *Ostresh-val* : Ostresh's method with step size parameter lambda 
+              set to the value *val*. For example, Ostresh-2. If *val* is not 
+              specified, the step size parameter is set to 2.
+            - *Weiszfeld* : Weiszfeld's method (same as Ostresh-1).
+            - *SOCP* : Solves the problem using the MIP solver for 2nd order cone problems.
             
             2. For the 1-center problem in plane 
             
-                - 'PrimDual'    : a primal dual convex optimization method
-                - 'Elzinga'     : Elzinga and Hearn's method (can only be applied if all weights are identical)
-                - 'Charalambous': Charalambous' method
-                - 'Welzl'       : Welzl' method
-                - 'SOCP'        : Solve as 2nd order cone using Cplex
+            - *PrimDual* : A primal-dual convex optimization method.
+            - *Elzinga* : Elzinga and Hearn's method (can only be 
+              applied if all weights are identical).
+            - *Charalambous* : Charalambous' method.
+            - *Welzl* : Welzl' method.
+            - *SOCP* : Solves as 2nd order cone problem using the MIP solver.
             
-            The default is Elzinga for equal weights and Charalambous
+            The default is *Elzinga* for equal weights and *Charalambous*
             otherwise.            
                 
             3. For the multi-source Weber and planar p-center problem:
             
-                - 'LOCA-num': Location allocation heuristic. 
-                
-                              If num is specified, then num is the number of times the procedure 
-                              is repeated with different random initial solutions.
-                              
-                              If num is not specified clustering methods are used get initial solutions.
-                - 'pmedian' : p-median heuristic for the multi-source Weber problem
-                - 'VNS'     : variable neighbourhood search heuristic
-                              
-                              A local search procedures that tries to improve some current solution. 
-                              If no initial solution has already been obtained, LOCA is used to this end.   
-                - 'ColGen'  : column generation procedure 
-                - 'MIPQ'    : Uses Cplex to solve the problem when modelled as 2nd order cone MIP
-                - 'Ostresh' : Ostresh's method for the two-Weber problem
-                
-                              Exact method for the case of p=2.
+            - *LOCA-num* : Location allocation heuristic. If *num* is specified, 
+              then *num* is the number of times the procedure is repeated with 
+              different random initial solutions. If *num* is not specified, 
+              clustering methods are used to obtain initial solutions.
+            - *pmedian* : p-median heuristic for the multi-source Weber problem.
+            - *VNS* : A variable neighbourhood search heuristic, that is,
+              a local search procedures that tries to improve tjhe 
+              current solution. If no initial solution has already 
+              been obtained, LOCA is used to this end.   
+            - *ColGen* : Column generation procedure.
+            - *MIPQ* : Applies the MIP solver for solving the problem when modelled as 
+              a 2nd order cone MIP. 
+            - *Ostresh* : Ostresh's method for the two-Weber problem.
                            
-            If no method is specified, the default is applied, which
-            is LOCA if p > 2 and Ostresh for p=2.
+            If no method is specified, the default is applied, which is LOCA 
+            if p > 2 and Ostresh for p=2.
         """
         X, a = None, None  
         screen = 'off' if silent else 'on'
@@ -552,11 +576,6 @@ class PlaneSolver:
     
     def plot(self):
         """
-        Plot solution
+        Plots a solution.
         """
-        if self.__geospatial:
-            plot_points( self.__Y, self.__X, lola = (self.__lo,self.__la), cust_id=self.__names ) 
-        else:
-            plot_points( self.__Y, self.__X )
-
-                
+        plot_points( self.__Y, self.__X, lola = (self.__lo,self.__la), cust_id=self.__names )        

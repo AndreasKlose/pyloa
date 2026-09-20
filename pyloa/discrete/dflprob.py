@@ -1,5 +1,4 @@
 """
-    Module discrete.dflprob of package pyloa:
     Base class for a discrete facility location problem.
 """
 import math
@@ -30,44 +29,43 @@ class DFLProblem:
             c, f, d and s or later passed to the class instance using the 
             method "set_data".  
         formt : str, optional  
-            Format of the input file, that is, 
-               * 'CFL-AO'     for the old Avella-Boccia CFLP instances  
-               * 'CFL-AN'     for the new Avella-Boccia CFLP instances  
-               * 'CFL-G'      for the Guastaroba CFLP instances  
-               * 'CFL-GK'     for the Goertz-Klose CFLP instances (the default)  
-               * 'CFL-OR'     for an CFLP instance in OR library format  
-               * 'UFL-OR'     for an UFLP instance in CFLP OR library format similar  
-                              to the M-instances from UflLib (Max Planck Informatik)  
-               * 'UFL-SIMPLE' for the UflLib instances in the "simple" format 
-               * 'TSCFL'      for the 2-stage instances from Klose (1999,2000)
-               * 'TLCFL-AK'   for 2-level instances using the similar file format
-                              as the 2-stage instances from Klose (1999,2000)
-               * 'TLCFL-FRA'  for 2-level instances from Fernandes et al (2014).
+            Format of the input file, that is,  
+
+            * 'CFL-AO'     for the old Avella-Boccia CFLP instances  
+            * 'CFL-AN'     for the new Avella-Boccia CFLP instances  
+            * 'CFL-G'      for the Guastaroba CFLP instances  
+            * 'CFL-GK'     for the Goertz-Klose CFLP instances (the default)  
+            * 'CFL-OR'     for an CFLP instance in OR library format  
+            * 'UFL-OR'     for an UFLP instance in CFLP OR library format similar to the M-instances from UflLib (Max Planck Informatik)  
+            * 'UFL-SIMPLE' for the UflLib instances in the "simple" format 
+            * 'TSCFL'      for the 2-stage instances from Klose (1999,2000)
+            * 'TLCFL-AK'   for 2-level instances using the similar file format as the 2-stage instances from Klose (1999,2000)
+            * 'TLCFL-FRA'  for 2-level instances from Fernandes et al (2014).
         unitCost : bool, optional   
             If True, the supply cost c[j][i] (resp. c[i,j,k]) are expected to 
             be the unit cost of supplying customer i from facility j (resp.
-            to supply k via facilities i and j). Otherwise, it need to be 
+            to supply customer k via facilities i and j). Otherwise, it need to be 
             the cost of supplying all of customer i's demand from the facility
             (or facilities in case of a two-level problem). If data are read 
-            from file, unitCost is set to false in case of formt is from
-            ('GK','OR','SIMPLE','TSCFLP','TLCFLP'). Note that unitCost requires 
+            from file, unitCost is set to false if *formt* is from
+            ('GK', 'OR', 'SIMPLE', 'TSCFLP', 'TLCFLP'). Note that unitCost requires 
             that demand data are passed to this class instance. In case that d 
             remains None, unitCost will be set to false and the problem assumed
             to be uncapacitated. For a two-level problem (location decisions 
-            on both levels), the cost matrix can also be a 3d-array. Then unitcost=True 
+            on both levels), the cost matrix can also be a 3d-array. Then, unitcost=True 
             indicates if c[i,j,k] is the unit cost or the cost to meet all of customer 
             k's demand from facility pair (i,j). (Default=True)  
         scale : int or float, optional  
             Is only used for Guastaroba instances. In case of these instances,
             demands and capacities might be non-integral. They are, therefore,
-            multiplied by scale and then rounded to integers (demands rounded
+            multiplied by *scale* and then rounded to integers (demands rounded
             down, capacities to the nearest integer). Unit cost data are
-            accordingly divided by scale.
+            accordingly divided by *scale*.
         mcf : bool, optional  
             Is only used in case of a two-level problem where fname is defined
-            and the data thus read from file. If mcf is True, then the 
+            and the data thus read from file. If mcf is True, the 
             multi-commodity formulation of the problem will be used and the
-            cost matrix be a 3-dimensional so that c[i,j,k] is the (unit)
+            cost matrix be 3-dimensional so that c[i,j,k] is the (unit)
             cost to supply customer k from facilities i and j. Note that
             if argument c is defined (and fname not), then the multi-commodity
             formulation will be used if c is a 3d-numpy array.
@@ -179,10 +177,10 @@ class DFLProblem:
         on the i-th stage"""
         
         self.__d = d 
-        """Customer demands"""
+        """Customer demands."""
          
         self.__totD = 0
-        """Total customer demand"""
+        """Total customer demand."""
         
         self.__f = f 
         """Fixed facility/depot costs for a one-stage problem and the two arrays 
@@ -225,16 +223,16 @@ class DFLProblem:
         are the plant-depot and depot-customer transportation costs, resp."""
         
         self.cost = 0
-        """Total cost of a solution"""
+        """Total cost of a solution."""
         
         self.ccnst = 0 
-        """Constant in the total cost to supply the customers"""
+        """Constant in the total cost to supply the customers."""
         
         self._c_scale = 1
-        """ Factor by which cost data are divided to avoid too large numbers""" 
+        """Factor by which cost data are divided to avoid too large numbers.""" 
         
         self.bound = 0 
-        """Best objective value lower bound obtained""" 
+        """Best objective value lower bound obtained.""" 
         
         self.__unitCost = unitCost
         """If True, if costs[j,i] (costs[1][j,i] or costs[i,j,k] for a two-stage or
@@ -242,17 +240,17 @@ class DFLProblem:
            of supplying customer i's  demand from a facility/depot at site j."""  
         
         self.__model = None 
-        """Instance of the MIP solver model"""
+        """Instance of the MIP solver model."""
         
         self.__x = None 
-        """Demand allocation decision variables"""
+        """Demand allocation decision variables."""
         
         self.__y = None 
-        """Locational decision variables (depots)"""
+        """Locational decision variables (depots)."""
 
         self.__z = None 
         """
-        Locational decision variables for the first stage (Plants)
+        Locational decision variables for the first stage (Plants).
         """
 
         self.__v = None 
@@ -261,13 +259,13 @@ class DFLProblem:
         """
 
         self.__silent = False 
-        """If False, solvers send log-output to stdout"""
+        """If False, solvers send log-output to stdout."""
         
         self.__stime = (0.0,0.0)
-        """Start time of a solution procedure"""
+        """Start time of a solution procedure."""
         
         self.ctime = (0.0,0.0)
-        """Computation time (CPU and Walltime) required to solve a problem instance""" 
+        """Computation time (CPU and Walltime) required to solve a problem instance.""" 
         
         self.mip_time = 0.0
         """Computation time (walltime seconds) spent by the MIP solver"""
@@ -278,7 +276,7 @@ class DFLProblem:
         thread."""
         
         self.nodeCount = 0
-        """Number of nodes processed in total by branch-and-bound / branch-and-cut"""
+        """Number of nodes processed in total by branch-and-bound / branch-and-cut."""
         
         self.__useBenders = 0
         """Possible values are 0, 1, and 2. If 0, no Benders' decomposition is
@@ -392,7 +390,7 @@ class DFLProblem:
             Note that if c is two-matrices, the first one is always unit cost. That
             also means that in this case d cannot be None, as demand data need to
             be known to compute costs on the first stage of distribution.   
-        d : numpu array of int, optional
+        d : numpy array of int, optional
             Customer demands. d can be None in case of an uncapacitated
             problem.
         s : One or two numpy arrays of int, optional
@@ -517,7 +515,7 @@ class DFLProblem:
     @property
     def c(self):
         """
-        Returns the supply cost matrix/matrices.
+        The supply cost matrix/matrices.
         """
         return self.__c 
     
@@ -536,7 +534,7 @@ class DFLProblem:
             
     @property
     def d(self):
-        """Returns the array of customer demand."""
+        """The array of customer demand."""
         return self.__d 
     
     @d.setter 
@@ -562,7 +560,7 @@ class DFLProblem:
         
     @property 
     def s(self):
-        """Returns the array(s) of facility capacities"""
+        """The array(s) of facility capacities"""
         return self.__s 
     
     @s.setter  
@@ -602,7 +600,7 @@ class DFLProblem:
         
     @property 
     def f(self):
-        """Returns the array(s) of facility fixed costs"""
+        """The array(s) of facility fixed costs"""
         return self.__f 
      
     @f.setter 
@@ -679,7 +677,7 @@ class DFLProblem:
     @property 
     def mipSolver(self):
         """
-        Return the MIP solver's name used for solving MIPs.
+        The MIP solver's name used for solving MIPs.
         """
         return set_mipSolver( )
     
@@ -778,7 +776,7 @@ class DFLProblem:
 
     @property
     def useBenders(self):
-        """Property: Use of Benders' decomposition.""" 
+        """Use of Benders' decomposition."""
         return self.__useBenders  
     
     @useBenders.setter
@@ -792,8 +790,8 @@ class DFLProblem:
     def addVubs(self):
         """Property: 
             0 if Vubs should not be included, 
-            1 if Vubs should be include delayed (user cuts), 
-            2 if Vubs should be included
+            1 if Vubs should be included delayed (user cuts), 
+            2 if Vubs should be included.
         """ 
         return self.__addVubs 
     
@@ -803,7 +801,7 @@ class DFLProblem:
     
     @property 
     def timeLim(self):
-        """Property: Limit on time a solver may use""" 
+        """Property: Limit on the computation time a solver may use.""" 
         return self.__timeLim 
     
     @timeLim.setter 
@@ -812,7 +810,7 @@ class DFLProblem:
     
     @property 
     def nodeLim(self):
-        """Property: Limit on number of nodes the MIP solver may enumerate""" 
+        """Property: Limit on the number of nodes the MIP solver may enumerate""" 
         return self.__nodeLim 
     
     @nodeLim.setter 
@@ -821,7 +819,7 @@ class DFLProblem:
 
     @property 
     def optTol(self): 
-        """Property: Optimality tolerance used by the MIP solver""" 
+        """Property: Optimality tolerance used by the MIP solver,""" 
         return self.__optTol 
     
     @optTol.setter 
@@ -831,13 +829,13 @@ class DFLProblem:
 
     @property 
     def useLB(self):
-        """Property: useLB (should Cplex employ local branching)""" 
+        """Property: useLB (should Cplex employ local branching).""" 
         return self.__useLB
     
     @useLB.setter 
     def useLB(self, value : bool ): 
         """Switch Cplex's local branching heuristic on (True)
-        or off (False)"""
+        or off (False)."""
         self.__useLB = value
         if not self.__model is None: self.__model.lbHeur = int(value) 
     
@@ -858,15 +856,15 @@ class DFLProblem:
     @property 
     def mipStrategy(self):
         """Cplex's search strategy:
-               0 : automatic
-               1 : traditional branch-and-cut
-               2 : dynamic search
+               0 : automatic,
+               1 : traditional branch-and-cut,
+               2 : dynamic search.
         """
         return self.__mipStrategy
     
     @mipStrategy.setter 
     def mipStrategy(self, value : int):
-        """Set Cplex's mip search strategy"""
+        """Set Cplex's mip search strategy."""
         if value in (0,1,2):
             self.__mipStrategy = value 
             if not self.__model is None: 
@@ -875,7 +873,7 @@ class DFLProblem:
     @property
     def silent( self ):
         """
-        If silent is True, solution methods do not give log-output
+        If silent is True, solution methods do not give log-output.
         """
         return self.__silent 
     
@@ -890,7 +888,7 @@ class DFLProblem:
     
     def default_options(self):
         """
-        Set solver options to default values
+        Set solver options to default values.
         """
         self.__useBenders = 0
         """Usage of Benders. Default is: do not use"""

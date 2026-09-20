@@ -1,5 +1,4 @@
 """
-    Module net.netsolve:
     Implements a class that inherits the solver methods
     from classes MaxCover, PCenter and PMedian.
 """
@@ -16,7 +15,7 @@ class NetSolver(PMedian,MaxCover,PCenter):
         
         Parameters
         ----------   
-        see base class NetProblem in module pyloa.net_prob for a description
+        See the base class *NetProblem* in module pyloa.netprob for a description
         of the parameters.
         """
         super().__init__(fname=fname, dstmat=dstmat, orlib=orlib, d=d, dmax=dmax,\

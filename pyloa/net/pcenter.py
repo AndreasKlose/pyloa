@@ -1,5 +1,4 @@
 """
-    Module net.pcenter of package pyloa:
     Methods for solving the vertex p-center problem.
 """
 import numpy as np
@@ -18,25 +17,25 @@ class PCenter( NetProblem ):
         
         Parameters
         ----------   
-        see base class NetProblem in module pyloa.net_prob for a description
+        See base class NetProblem in module pyloa.net_prob for a description
         of the parameters.
         """
         super().__init__(fname=fname, dstmat=dstmat, orlib=orlib, d=d, m=m, n=n, w=w, p=p)
                        
         self.radius = 0 
-        """Largest weighted distance of a customer to a facility in a solution"""
+        """Largest weighted distance of a customer to a facility in a solution."""
                     
         self.__epsi = 1.0E-05 
-        """Tolerance value"""
+        """Tolerance value."""
         
         self.__x_continuous = True 
-        """True if allocation variables are treated as continuous variables"""
+        """True if allocation variables are treated as continuous variables."""
         
     #---------------------------------------------
 
     def __set_solution( self, S, objv=None ):
         """
-        Register solution with facilities from S
+        Register solution with facilities from S.
         """
         self.facilities = S
         self.assigned = self.get_assigned( S )
@@ -60,7 +59,7 @@ class PCenter( NetProblem ):
     
     def __one_center( self ):
         """
-        Return the optimal 1-vertex center
+        Return the optimal 1-vertex center.
         """
         if self._is_matrix:
             self.__set_solution([((np.vstack(self._w)*self._dmat).max(axis=0)).argmin()])
@@ -124,7 +123,7 @@ class PCenter( NetProblem ):
    
     def __get_wdist_list( self ):
         """
-        Return sorted list of different weighted distance values
+        Return sorted list of different weighted distance values.
         """
         if self._is_matrix:
             return np.unique( np.vstack(self._w)*self._dmat )
@@ -331,7 +330,7 @@ class PCenter( NetProblem ):
             
             method = 'Elloumi'
                 Use the set-covering based solution algorithm
-                suggested by Elloumi, Labbe and Pochet.
+                suggested by Elloumi, Labbe and Pochet (2004).
             
             method = 'MIP-Traditional'
                 Use the traditional MIP formulation and solve it  

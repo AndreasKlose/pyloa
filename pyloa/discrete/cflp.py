@@ -1,5 +1,4 @@
 """
-    Module discrete.cflp of package pyloa:
     Methods for solving the capacitated facility location problem.
 """
 import networkx as nx
@@ -15,7 +14,7 @@ from pyloa.discrete.CFLsg import solveCFLP
 class VubGenerator:
     """
     Callback class that looks for violated variable upper bound constraints
-    x(i,j) \\le y(j) and passes them to the solver. We add for each
+    :math:`x_{ij} \\le y_j` and passes them to the solver. We add for each
     facility j the most violated of these inequalities.
     """
 
@@ -41,7 +40,7 @@ class VubGenerator:
                 
     def invoke(self, context):
         """
-        Method called by Cplex's solver using the single argument cplex.callbacks.Context
+        Method called by Cplex's solver using the single argument cplex.callbacks.Context.
         """
         if self.M.in_relaxation( context ):
             self.M.context = context 
@@ -59,15 +58,14 @@ class VubGenerator:
 class CFLP( DFLProblem ):
     """
     Class implementing methods for solving the (un-)capacitated facility
-    location problem
+    location problem.
     """
  
     def __init__( self, fname=None, formt='CFL-GK', unitCost=True, scale=1, \
                   d=None, s=None, f=None, c=None ):
         """
-        Creates instance of a CFLP. 
-        
-        See base class 'DFLProblem' in module dflprob.
+        Creates an instance of a CFLP, cf. the base class 'DFLProblem' in 
+        module dflprob.
         """
         super().__init__(fname=fname, formt=formt, unitCost=unitCost, scale=scale,\
                           d=d, s=s, f=f, c=c )
@@ -76,7 +74,7 @@ class CFLP( DFLProblem ):
         
         self.__solver = 'mip'
         """Solver used for solving a problem instance. Possible values are
-        mip: use a MIP solver and sg: use Lagrangian based B&B."""
+        'mip': use a MIP solver and 'sg': use Lagrangian based B&B."""
         
     #---------------------------------------------
     # Class properties
@@ -84,7 +82,8 @@ class CFLP( DFLProblem ):
     
     @property 
     def solver(self):
-        """Property: Fixes the solver to use, which is either Cplex or SG""" 
+        """Defines the solver to use, which is either the MIP solver
+        or SG.""" 
         return self.__solver  
     
     @solver.setter 
@@ -95,7 +94,7 @@ class CFLP( DFLProblem ):
     
     def __build_model(self):
         """
-        Set up the MILP model
+        Set up the MILP model.
         """
         d, s, f, c = self.d, self.s, self.f, self.c
         n, m = c.shape
@@ -143,7 +142,7 @@ class CFLP( DFLProblem ):
     
     def __MIP_options ( self ):
         """
-        Pass options to the MIP solver
+        Pass options to the MIP solver.
         """ 
         M = self.model
         M.timelimit = self.timeLim  # Time limit 
@@ -160,7 +159,7 @@ class CFLP( DFLProblem ):
     #---------------------------------------------
     
     def __get_mip_solution( self ):
-        """Extract solution from the MIP solver"""
+        """Extract solution from the MIP solver."""
         M = self.model
         self.facilities = list(M.get_solution( self.y, keep_zeros=False, precision=0.1).keys() )
         self.fcost = self.get_fcost*self._c_scale
@@ -241,12 +240,12 @@ class CFLP( DFLProblem ):
     
     def solve(self, keep_model=False, get_flows=True ):
         """
-        Solve the instance of a (un-)capacitated facility location problem.
+        Solve the instance of the (un-)capacitated facility location problem.
         
         Parameters
         ----------
         keep_model: bool, optional 
-            If True, the created instance of MIP model is not destroyed but kept.
+            If True, the created instance of the MIP model is not destroyed but kept.
         get_flows : bool, optional
             Only applies if self.solver = 'sg'. If True, the flow variable values
             are determined and stored in the dictionary self.supply. 

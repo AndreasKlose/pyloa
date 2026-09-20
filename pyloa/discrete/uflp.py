@@ -1,5 +1,4 @@
 """
-    Module discrete.uflp of package pyloa:
     Methods for solving the uncapacitated facility location problem.
 """
 import numpy as np
@@ -16,9 +15,8 @@ class UFLP( DFLProblem ):
     """
     def __init__( self, fname=None, formt='UFL-OR', f=None, c=None, d=None ):
         """
-        Creates instance of an UFLP. 
-        
-        See base class 'DFLProblem' in module dflprob.
+        Creates an instance of the UFLP, cf. the base class 'DFLProblem' in 
+        module dflprob.
         """
         super().__init__(fname=fname, formt=formt, unitCost=not d is None,\
                          f=f, c=c, d=d )
@@ -87,8 +85,7 @@ class UFLP( DFLProblem ):
 
     def __dropProc(self):
         """
-        Drop heuristic for the UFLP
-        Still to be implemented
+        Drop heuristic for the UFLP.
         """ 
         self._set_starttime( )
         if not self.silent:
@@ -325,7 +322,7 @@ class UFLP( DFLProblem ):
  
     @property 
     def alpha(self):
-        """Step length parameter alpha in subgradient procedure"""
+        """Step length parameter alpha in the subgradient procedure."""
         return self.__alpha 
     
     @alpha.setter
@@ -343,8 +340,8 @@ class UFLP( DFLProblem ):
     
     @property 
     def sg_iter(self):
-        """Fixes the number of subgradient iterations not to exceed
-           miter times (m+n)"""
+        """The maximal number of subgradient iterations applied does exceed
+           :math:`\\text{sg_iter} \\times (m+n)`"""
         return self.__miter 
     
     @sg_iter.setter 

@@ -64,7 +64,7 @@ def comp_dist_mat( G, dmatrix ):
     Returns
     -------
     d : dict or numpy array 
-        distances between nodes as explained above.            
+        Distances between nodes as explained above.            
     """
     n = G.number_of_nodes()
     spl = nx.shortest_path_length(G, weight='weight')
@@ -89,11 +89,11 @@ def comp_dist_mat( G, dmatrix ):
 def read_graph( fname, dmatrix = None, orlib=False ):
     """
     Reads data of a graph from a text file called 'fname'. The
-    data in the graph need to structured as follows:
+    data in the graph need to be structured as follows:
     
-        number of nodes, number of edges, number p of facilities
-        For every edge e: end node 1, end node 2, length
-        for each node: weight of the node, covering distance
+        * number of nodes, number of edges, number p of facilities
+        * For every edge e: end node 1, end node 2, length
+        * For each node: weight of the node, covering distance
     
     Thereby, p is the number of facilities to establish.
     Data on the nodes' weight and covering distance is optional.
@@ -113,41 +113,38 @@ def read_graph( fname, dmatrix = None, orlib=False ):
     dmatrix : None or str  
         If None, the underlying graph is read from file and
         returned as a networkx graph object. Otherwise,
-        the length of the shortest path in the graph are
+        the length of the shortest paths in the graph are
         computed and returned in a way specified by 'dmatrix'
         as follows:
-        dmatrix = 'dict' : In this case a dictionary d
-        is returned so that d[(i,j)] gives the distance
-        between nodes i=1,...,n-1 and j=0,...,i-1.
-        dmatrix = 'matrix' : In this case a nxn numpy
-        array d is returned and d[i,j] is the distance
-        between nodes i=0,...,n-1 and j=0,...,n-1,
-        dmatrix = 'vector': In this case a numpy array d
-        of dimension (n-2)*(n+1)//2 is returned so that
-        d[ i*(i-1)//2 + j] gives the distance between
-        node i=1,...,n-1 and node j=0,...,i-1.
+
+        * dmatrix = 'dict' : In this case a dictionary d
+          is returned so that d[(i,j)] gives the distance
+          between nodes i=1,...,n-1 and j=0,...,i-1.
+        * dmatrix = 'matrix' : In this case a nxn numpy
+          array d is returned and d[i,j] is the distance
+          between nodes i=0,...,n-1 and j=0,...,n-1,
+        * dmatrix = 'vector': In this case a numpy array d
+          of dimension (n-2)*(n+1)//2 is returned so that
+          d[ i*(i-1)//2 + j] gives the distance between
+          node i=1,...,n-1 and node j=0,...,i-1.
     orlib : bool, optional
         If True, the data file is assumed to be from Beasley's
         OR library. The graph data does then not include
         weights of the nodes. Node weights are thus assumed
-        to equal 1.  If the file cannot  be found locally, it 
+        to equal 1. If the file cannot be found locally, it 
         is tried to download the file from the OR-lib web page.
-            
+        If the data file cannot be found or downloaded, None is
+        returned. Note that yhe OR-lib data have a small flaw. 
+        Sometimes, an edge is listed twice. In this case, the last 
+        read edge is supposed to give the correct data. 
+                         
     Returns
     -------
     p : int
-        Number of facilities to locate
-    G or d : either the networkx graph object or matrix d 
-        Note that the data files are structured as follows:
-        number of nodes, number of edges, number p of facilities
-        For every edge e: end node 1, end node 1, length
-            
-        The OR-lib data have a small flaw. Sometimes, an edge is
-        listed twice. In this case, the last read edge is supposed
-        to give the correct data. 
-            
-        If the data file cannot be found or downloaded, None is
-        returned.  
+        Number of facilities to locate.
+    G or d : networkx graph or distance matrix d 
+        If dmatrix is None, the networkx graph is returned,
+        other the distances as specfied by the parameter dmatrix.
     w : None or numpy array of int
         Weights of the nodes. If the file does not contain node weights
         None is returned.    

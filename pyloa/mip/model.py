@@ -1,5 +1,4 @@
 """
-    Module mip.model of package pyloa
     Used to either interface docplex or gurobipy
 """
 from importlib.util import find_spec
@@ -47,7 +46,7 @@ def Model( name=None ):
     Parameters
     ----------
     name : str or None 
-        Name of the model
+        Name of the model.
     """
     if __mipSolver == 'cplex': return CPXmodel(name)
     if __mipSolver == 'gurobi':  return GRBmodel(name)

@@ -1,6 +1,5 @@
 """
-    Module discrete.tlcflp of package pyloa:
-    Methods for solving a two-stage or two-level CFLPs.
+    Methods for solving two-stage or two-level CFLPs.
 """
 import numpy as np
 from itertools import product
@@ -76,7 +75,7 @@ class MCFVubGen:
     """
     Callback class that looks for violated variable upper bound constraints
     :math:`\\sum_i x_{ijk} \\le y_j` and :math:`\\sum_j x_{ijk} \\le z_i` for
-    for the case of the TLCFLP's multi-commodity formulation. We add for each 
+    the case of the TLCFLP's multi-commodity formulation. We add for each 
     facility i and j the most violated of these inequalities. 
     """
     def __init__(self, M, p, m, n, x, y, z ):
@@ -124,7 +123,7 @@ class MCFVubGen:
               
     def invoke(self, context):
         """
-        Method called by Cplex's solver using the single argument cplex.callbacks.Context
+        Method called by Cplex's solver using the single argument cplex.callbacks.Context.
         """
         if self.M.in_relaxation( context ):
             self.M.context = context 
@@ -148,9 +147,8 @@ class TLCFLP( DFLProblem ):
     def __init__( self, fname=None, formt='TSCFLP', unitCost=True, scale=1, mcf=False, \
                   d=None, s=None, f=None, c=None ):
         """
-        Creates instance of a two-stage or two-level CFLP. 
-        
-        See base class 'DFLProblem' in module dflprob.
+        Creates an instance of the two-stage or two-level CFLP; cf. the base class 
+        'DFLProblem' in module dflprob.
         """    
         super().__init__(fname=fname, formt=formt, unitCost=unitCost, scale=scale, mcf=mcf,\
                           d=d, s=s, f=f, c=c )
@@ -192,7 +190,7 @@ class TLCFLP( DFLProblem ):
        
     @property 
     def cflp_solver(self):
-        """Property: Solver to be used for an underlying CFLP. Either Cplex or SG""" 
+        """Solver to be used for an underlying CFLP. Either Cplex or SG.""" 
         return self.__cflp_solver  
     
     @cflp_solver.setter 
@@ -222,7 +220,7 @@ class TLCFLP( DFLProblem ):
         Parameters
         ----------
         cfl : class CFLP
-            Instance of the CFLP to solve
+            Instance of the CFLP to solve.
         """
         cfl.solver = self.__cflp_solver 
         cfl.nodeLim = self.nodeLim 
@@ -285,7 +283,7 @@ class TLCFLP( DFLProblem ):
       
     def __tscflp(self):
         """
-        Model the TSCFLP 
+        Model the TSCFLP.
         """
         d, s, f, t, c = self.d, self.s, self.f, self.c[0], self.c[1]
         p, _ = t.shape 
@@ -412,7 +410,7 @@ class TLCFLP( DFLProblem ):
     def __tlflp_mc_form(self):
         """
         Model the TLCFLP using the multi-commodity formulation
-        (3-index flow variables)
+        (3-index flow variables).
         """
         d, s, f, c = self.d, self.s, self.f, self.c
         p, n, m = c.shape 
@@ -473,7 +471,7 @@ class TLCFLP( DFLProblem ):
     
     def __MIP_options ( self ):
         """
-        Pass options to the MIP solver
+        Pass options to the MIP solver.
         """ 
         M = self.model
         M.timelimit = self.timeLim  # Time limit 
@@ -490,7 +488,7 @@ class TLCFLP( DFLProblem ):
     #---------------------------------------------
     
     def __get_mip_solution( self ):
-        """Extract solution from the MIP solver"""
+        """Extract solution from the MIP solver."""
         M = self.model
         if self.two_level:
             self.facilities = (list(M.get_solution(self.z,keep_zeros=False,precision=0.1).keys()),\
@@ -518,13 +516,13 @@ class TLCFLP( DFLProblem ):
     
     def solve( self, keep_model=False ):
         """
-        Solve the instance of a two-stage or two-level capacitated 
-        facility location problem.
+        Apply the MIP solver for solving the instance of the two-stage 
+        or two-level capacitated facility location problem.
         
         Parameters
         ----------
         keep_model: bool, optional 
-            If True, the created instance of docplex.mp.model.Model is not
+            If True, the created instance of the MIP solver model is not
             destroyed but kept. 
         """ 
         # If uncapacitated first stage and not a two-level problem, solve it as CFLP
@@ -636,7 +634,7 @@ class TLCFLP( DFLProblem ):
 
     def get_full_solution( self, facilities ):
         """
-        Computing the min-cost network flow and compute all
+        Computes the min-cost network flow and all
         cost components to complete the partial solution given
         by the set of open facilities.
 
@@ -1038,7 +1036,7 @@ class TLCFLP( DFLProblem ):
         Note that solving a CFLPs can be time consuming.
         When solving the CFLPs, the number of nodes to
         be enumerated is thus limited to the number set
-        in the attribute nodeLim (self.nodeLim) of this
+        in the attribute *nodeLim* (self.nodeLim) of this
         instance of the class TLCFLP. By default, this
         limit is basically unlimited. But, as the whole
         method is just a heuristic, it can be recommended
@@ -1046,7 +1044,7 @@ class TLCFLP( DFLProblem ):
         e.g., nodeLim=100. Moreover, as solver for the
         CFLPs, a MIPsolver (Cplex or GuRoBi) or a 
         Lagrangian-based branch-and-bound can be used. 
-        Which "CFLP solver" should be used is determined 
+        Which CFLP solver should be used is determined 
         by the class property cflp_solver. 
         """
         if self.two_level:

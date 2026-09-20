@@ -16,4 +16,5 @@ pyloa/discrete/fcflp.py
 test_*.py
 TODO.TXT
 gurobi.env
+changelog.txt
 *.html

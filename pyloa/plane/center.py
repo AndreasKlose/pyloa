@@ -1,8 +1,6 @@
 """
-    Module plane.center of package pyloa:
-    Methods for the 1-center problem in Euclidian plane.
+    Methods for the 1-center problem in Euclidean plane.
 """
-
 import numpy as np
 from pyloa.util import euclid
 
@@ -13,7 +11,7 @@ _ZERO = 1.0E-6
 
 def _sqeuc( A, B ):
     """
-    Returns squared Euclidian distance between points A and B
+    Returns squared Euclidean distance between points A and B.
     """
     diff = A-B
     dst2 = np.dot(diff,diff)
@@ -202,19 +200,19 @@ def _w_3circle( Y, w ):
 def _PD_alg( Y, w, screen='off', Xlst=None, normalize=False ):
     """
     Primal-dual iterative method for solving the 1-center problem
-    in Euclidian plane with Euclidian distances. The method
+    in Euclidean plane with Euclidean distances. The method
     shows severe numerical problems as the Lagrangian multipliers 
     corresponding to points not relevant for computing the center 
     quickly approach very small values. The method should thus 
     only be used if the number of points is very small 
-    (4 at most 5)
+    (4 at most 5).
 
     Parameters
     ----------
     Y : numpy mx2 array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : numpy array of m int or float 
-        positive customer weights
+        Positive customer weights.
     screen : str, optional 
         If 'on', then progress of the algorithm is displayed on screen.
     Xlst : None or a list of pairs of float, optional
@@ -224,14 +222,14 @@ def _PD_alg( Y, w, screen='off', Xlst=None, normalize=False ):
         If true, the weights are normalized by dividing by there
         mean. This is recommended if the weights are not yet
         normalized and are relatively large (in particular when
-        squared)
+        squared).
 
     Returns
     -------
     UB : float
-        "radius" of the computed center location
+        "Radius" of the computed center location.
     X  : numpy array of two float
-        coordinates of the center found
+        Coordinates of the center found
     """
     m = Y.shape[0]
     X = np.zeros(2)
@@ -280,25 +278,25 @@ def _getRadius( Y, w, X, b=None ):
     Parameters
     ----------
     Y : numpy mx2 array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane
     w : numpy array of m int or float
-        positive customer weights
+        Positive customer weights.
     X : numpy array of two float 
-        coordinates of center point
+        Coordinates of the center point.
     b : list of points, optional
-        if b is present, it need be a list of points. 
+        If b is present, it need be a list of points. 
         The largest weighted distance to points in b 
         serves as lower bound.
 
     Returns
     -------
     wdist : float
-        radius of the solution
+        Radius of the solution.
     outer : int
-        index i of a point Y[i] showing largest weighted 
-        distance to X 
+        Index i of a point Y[i] showing largest weighted 
+        distance to X.
     bdist : float (only returned if b is not None)
-        if b is not None, the largest weighted distance 
+        If b is not None, the largest weighted distance 
         to points Y in b.
     """
     m = Y.shape[0]
@@ -324,21 +322,21 @@ def growRadius ( Y, w, screen='off', Xlst = None ):
     Parameters
     -----------
     Y : numpy mx2 array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : numpy array of m int or float
-        positive customer weights
+        Positive customer weights.
     screen: str
-        if 'on', information on solution process is printed
+        If 'on', information on solution process is printed.
     Xlst : list of tuple of float or None
-       if not none, the points found in each "iteration"
+       If not none, the points found in each "iteration"
        are stored in this list.
 
     Returns
     -------
     UB : float
-        "radius" of the computed center location
+        "Radius" of the computed center location.
     X  : numpy array of two float 
-        coordinates of the center as a 
+        Coordinates of the center point.
     """
     screenOn = screen.lower() == 'on'
     if screenOn:
@@ -404,18 +402,18 @@ def growRadius ( Y, w, screen='off', Xlst = None ):
 def elzinga_hearn( Y, screen='off', Xlst=None ):
     """
     Elzinga and Hearn's method to determine the minimal covering
-    circle of m points in Euclidian plane.
+    circle of m points in Euclidean plane.
     
-    Reference: Elzinga, J. and Hearn, D. W. (1972).  Geometrical 
+    **Reference**: Elzinga, J. and Hearn, D. W. (1972).  Geometrical 
     Solutions of Some Minimax Location Problems.Transportation 
     Science 6:370–394.
   
     Parameters
     ----------
     Y : numpy mx2 array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     screen : str, optional 
-        If 'on', then progress of the algorithm is displayed on screen.
+        If 'on', the progress of the algorithm is displayed on screen.
     Xlst : None or a list of pairs of float, optional
         If not None, the intermediate center solutions are appended
         to the list Xlst.
@@ -423,9 +421,9 @@ def elzinga_hearn( Y, screen='off', Xlst=None ):
     Returns
     -------
     R : float
-        "radius" of the computed center location
+        "Radius" of the computed center location.
     X  : numpy array of two float
-        coordinates of the center found
+        Coordinates of the center found.
     """
     m = Y.shape[0]
     if m <= 1: return 0.0, Y[0]
@@ -500,17 +498,17 @@ def charalambous(Y, w, screen='off', Xlst=None):
     Charalambous' (1982) method for solving the weighted 1-centre
     problem in the plane.
     
-    Reference: Charalambous, C. (1982). Extension of the Elzinga-Hearn
+    **Reference**: Charalambous, C. (1982). Extension of the Elzinga-Hearn
     Algorithm to the Weighted Case. Operations Research 30:591–594.
     
     Parameters
     ----------
     Y : numpy mx2 array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : numpy array of m int or float
-        positive customer weights
+        Positive customer weights.
     screen: str
-        if 'on', information on solution process is printed
+        If 'on', information on solution process is printed.
     Xlst : None or a list of pairs of float, optional
         If not None, the intermediate center solutions are appended
         to the list Xlst.
@@ -518,9 +516,9 @@ def charalambous(Y, w, screen='off', Xlst=None):
     Returns
     -------
     UB : float
-        "radius" of the computed center location
+        "Radius" of the computed center location.
     X  : numpy array of two float
-        coordinates of the center as a 
+        Coordinates of the center found.
     """
     
     def initialCenter( w ):
@@ -637,7 +635,7 @@ def welzl( Y, w, screen='off' ):
     smallest enclosing circle of point set P-{p} with points B+{p} on 
     the boundary. 
     
-    Reference: Emo Welzl (1991). Smallest enclosing disks (balls and 
+    **Reference**: Emo Welzl (1991). Smallest enclosing disks (balls and 
     ellipsoids). In Maurer, H., ed., New Results and New Trends in 
     Computer Science. Lecture Notes in Computer Science, Vol. 555, 
     Springer-Verlag, pp. 359–370, doi:10.1007/BFb0038202.
@@ -645,18 +643,18 @@ def welzl( Y, w, screen='off' ):
     Parameters
     ----------
     Y : numpy mx2 array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : numpy array of m int or float
-        positive customer weights
+        Positive customer weights.
     screen: str
-        if 'on', information on solution process is printed
+        If 'on', information on solution process is printed.
         
     Returns
     -------
     UB : float
-        "radius" of the computed center location
+        "Radius" of the computed center location.
     X  : numpy array of two float
-        coordinates of the center as a 
+        Coordinates of the center found.
     """
     itr = 0
     talk = screen.lower()=='on'

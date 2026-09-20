@@ -1,5 +1,4 @@
 """
-    Module net.net_prob of package pyloa:
     Base class for a network location problem.
 """
 import numpy as np
@@ -22,133 +21,133 @@ class NetProblem:
         
         Parameters
         ----------   
-        * fname : str, optional  
+        fname : str, optional  
             None or name of the input file or problem instance to be solved.
             If None, it is assumed that the data are provided via arguments
             d, w, and p. Otherwise, fname is either the name (including the
             path) of a text file keeping the data or the problem instance
             to be taken from Beasley's OR Library. Default: None  
-        * dstmat : str  
+        dstmat : str  
             This argument is only relevant if fname is not None. It specifies
             how the distances should be stored. Possible values are 'matrix',
             'dict' or 'vector'. See the parameter 'd' for further explanations.  
-        * orlib : bool, optional  
+        orlib : bool, optional  
             True if the data file originates from Beasley's OR Library.
             Default: False  
-        * d : None or numpy array of int/float or dictionary of int/float or a 
-            function  
+        d : None or numpy array of int/float or dictionary of int/float or a function. 
             If fname is None, then d need to keep the distances between
-            the m nodes of the graph and the n <= m nodes where facilities
+            the m nodes of the graph and the :math:`n \\le m` nodes where facilities
             can be established.  
+
             1. If the set of facility nodes and customer nodes is identical
                and thus the matrix of distances symmetric, d can be one
                of the following:  
-                1. d is a numpy (mxn), n=m, array of int or float and
-                    d[i,j]=d[j,i] the distance between nodes i and j,
-                    d[i,i]=0.  
-                2. d is a dictionary of length m*(m-1)//2 and d[(i,j)] gives 
-                    the distance between nodes i and j for i=1,...,m-1 and 
-                    j = 0,..., i-1.  
-                3. d is a numpy array of size m*(m-1)//2. The distance
-                    between nodes i (i=1,...,m-1) and j (j=0,...,i-1) must
-                    then be stored in d[ i*(i-1)//2 + j ].  
-                4. d is a function, so that d(i,j) returns the distance
-                    beween nodes i (i=1,...,m-1) and j (j=0,...,i-1).  
+
+                a. d is a numpy (mxn), n=m, array of int or float and
+                   d[i,j]=d[j,i] the distance between nodes i and j, d[i,i]=0.  
+                b. d is a dictionary of length m*(m-1)//2 and d[(i,j)] gives 
+                   the distance between nodes i and j for i=1,...,m-1 and 
+                   j = 0,..., i-1.  
+                c. d is a numpy array of size m*(m-1)//2. The distance
+                   between nodes i (i=1,...,m-1) and j (j=0,...,i-1) must
+                   then be stored in d[ i*(i-1)//2 + j ].  
+                d. d is a function, so that d(i,j) returns the distance
+                   beween nodes i (i=1,...,m-1) and j (j=0,...,i-1).  
             2. Set of customer and facility nodes are not identical.  
                In this case d need to be a numpy mxn matrix just as
-               under (1.1).  
-        * dmax : None or numpy array of int or float  
+               under (1.a).  
+        dmax : None or numpy array of int or float  
             dmax[i] specifies the maximal distance for customer node i
             in maximal covering location           
-        * m : int  
+        m : int  
             Number of customers nodes. Need only to be specified if d
-            is a function!!!  
-        * n : int  
+            is a function!
+        n : int  
             Number of facility nodes (n <= m). Need only to be specified if
-            d is a function!!!  
-        * w : None or a numpy array of positive int  
+            d is a function!
+        w : None or a numpy array of positive int  
             If None, all weights are set to one. Otherwise, w must be a numpy 
             array of int and w[i] is the weight of node i=0,...,m-1.  
-        * p : None or int  
-            The number of facilities to locate 
+        p : None or int  
+            The number of facilities to locate. 
         """
         self.prob_name = None if fname is None else basename(fname).split('.')[0]
-        """Name of data file or None"""
+        """Name of data file or None."""
         
         self._p = 0 if p is None else p 
-        """Number of facilities to locate on the graph"""
+        """Number of facilities to locate on the graph."""
         
         self._m = 0 
-        """Number of (customer) vertices of the graph"""
+        """Number of (customer) vertices of the graph."""
         
         self._n = 0
-        """Number of possible facility vertices of the graph"""
+        """Number of possible facility vertices of the graph."""
         
         self._w = None 
-        """Weights of the m customer nodes"""
+        """Weights of the m customer nodes."""
         
         self._dmat = None  
-        """Determines the distance between customer and facility nodes"""
+        """Determines the distance between customer and facility nodes."""
 
         self._dmax = dmax
-        """Maximal distances to be observed in maximal covering location"""
+        """Maximal distances to be observed in maximal covering location."""
                
         self._max_wdist = None 
-        """Will equal the largest weighted distance for each vertice i"""
+        """Will equal the largest weighted distance for each vertice i."""
         
         self.min_wdist = None 
         """Function returning a numpy array that gives for each customer
            node its weighted distance to the nearest facility from 
-           a given list S of established facilities"""
+           a given list S of established facilities."""
  
         self.get_coverage = None 
-        """Function return amount of demand covered by a list S of open facilities"""
+        """Function return amount of demand covered by a list S of open facilities."""
         
         self._dst_type = None 
-        """Data type of the single distances, i.e. float or int"""
+        """Data type of the single distances, i.e. float or int."""
                
         self.__model = None
-        """Model of an underlying integer programming problem"""
+        """Model of an underlying integer programming problem."""
         
         self.__y = None 
-        """Binary location variables in MIP model"""
+        """Binary location variables in MIP model."""
         
         self.__x = None 
-        """Allocation variables in MIP model"""
+        """Allocation variables in MIP model."""
         
         self.__z = None 
-        """Covering or Elloumi z-variables in MIP model"""
+        """Covering or Elloumi z-variables in MIP model."""
         
         self.__silent = False 
-        """If False, solvers will send log-output to stdout"""
+        """If False, solvers will send log-output to stdout."""
         
         self.facilities = None 
-        """List of facility node indices in a solution"""
+        """List of facility node indices in a solution."""
         
         self.assigned = None 
-        """assigned[i] gives the nearest facility node to node i in a solution"""
+        """assigned[i] gives the nearest facility node to node i in a solution."""
         
         self.get_assigned = None 
-        """Function returning as a list that for each customer node gives
-           the nearest facility from a given set S of facilities"""
+        """Function returning a list that for each customer node gives
+           the nearest facility from a given set S of facilities."""
             
         self.wdist = None 
-        """Total weighted distance in a solution"""
+        """Total weighted distance in a solution."""
         
         self.bound = 0
-        """Lower (or upper) bound on optimal objective value"""
+        """Lower (or upper) bound on optimal objective value."""
         
         self.itr = 0
-        """Any iteration counter"""
+        """Any iteration counter."""
 
         self.__stime = (0.0,0.0)
-        """Start time of a solution procedure"""
+        """Start time of a solution procedure."""
         
         self.ctime = (0.0,0.0)
-        """Computation time (CPU and Walltime) required to solve a problem instance""" 
+        """Computation time (CPU and Walltime) required to solve a problem instance.""" 
         
         self.mip_time = 0.0
-        """Computation time (walltime seconds) spent in the MIP solver"""
+        """Computation time (walltime seconds) spent in the MIP solver."""
         
         self.mip_work = 0
         """Deterministic computation time. For Cplex this is the total amout
@@ -156,7 +155,7 @@ class NetProblem:
         thread."""
         
         self.nodeCount = 0
-        """Number of nodes processed in total when solving with a MIP solver""" 
+        """Number of nodes processed in total when solving with a MIP solver.""" 
         
         self._is_matrix = False 
         
@@ -209,42 +208,38 @@ class NetProblem:
         
         Parameters  
         ----------   
-        * d : Numpy array of int/float or dictionary of int/float or a function  
+        d : Numpy array of int/float or dictionary of int/float or a function  
             d keeps the distances between the m nodes of the graph and the 
-            n <= m nodes where facilities can be established. 
+            :math:`n \\le m` nodes where facilities can be established. 
              
             1. If the set of facility nodes and customer nodes is identical
                and thus the matrix of distances symmetric, d can be one
                of the following:
                
-               1. d is a numpy (mxn), n=m, array of int or float and
+               a. d is a numpy (mxn), n=m, array of int or float and
                   d[i,j]=d[j,i] the distance between nodes i and j,
                   d[i,i]=0.
-               2. d is a dictionary of length m*(m-1)//2 and d[(i,j)] gives 
+               b. d is a dictionary of length m*(m-1)//2 and d[(i,j)] gives 
                   the distance between nodes i and j for i=1,...,m-1 and 
                   j = 0,..., i-1. 
-               3. d is a numpy array of size m*(m-1)//2. The distance
+               c. d is a numpy array of size m*(m-1)//2. The distance
                   between nodes i (i=1,...,m-1) and j (j=0,...,i-1) must
                   then be stored in d[ i*(i-1)//2 + j ]. 
-               4. d is a function, so that d(i,j) returns the distance
+               d. d is a function, so that d(i,j) returns the distance
                   beween nodes i (i=1,...,m-1) and j (j=0,...,i-1).  
             
             2. Set of customer and facility nodes are not identical.
                In this case d need to be a numpy mxn matrix just as
-               under (1.1).
-                     
-        * p : int  
-            The number of facilities to locate  
-            
-        * w : None or a numpy array of positive int  
+               under (1.a).                 
+        p : int  
+            The number of facilities to locate.         
+        w : None or a numpy array of positive int  
             If None, all weights are set to one. Otherwise, w must be a numpy 
-            array of int and w[i] is the weight of node i=0,...,m-1.  
-            
-        * dmax : None or numpy array of int or float  
+            array of int and w[i] is the weight of node i=0,...,m-1.           
+        dmax : None or numpy array of int or float  
             dmax[i] specifies the maximal distance for customer node i
-            in maximal covering location  
-            
-        * m, n : int  
+            in maximal covering location          
+        m, n : int  
             In case that d is a function, m and n need to be specified.
             m gives the number of customer nodes and n the number of
             facility nodes. The function d should then return the 
@@ -293,7 +288,7 @@ class NetProblem:
     #---------------------------------------------
     
     def __dict_dist(self, i, j ):
-        """ Return distance between i and j"""
+        """ Return distance between i and j."""
         if i==j: return 0 
         return self._dmat[(i,j)] if i > j else self._dmat[(j,i)]
     
@@ -332,7 +327,7 @@ class NetProblem:
     @property 
     def mipSolver(self):
         """
-        Return the MIP solver's name used for solving MIPs.
+        The MIP solver's name used for solving MIPs.
         """
         return set_mipSolver( )
     
@@ -431,7 +426,7 @@ class NetProblem:
     @property
     def silent( self ):
         """
-        If silent is True, solution methods do not give log-output
+        If silent is True, solution methods do not give log-output.
         """
         return self.__silent 
     

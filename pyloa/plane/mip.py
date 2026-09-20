@@ -1,5 +1,4 @@
 """
-    Module plane.mip of package pyloa:
     2nd order cone (MIP) models of planar location problems solved
     by means of Cplex's or GuRoBi's solver.
 """
@@ -13,14 +12,14 @@ from pyloa.util import euclid
 def SOCPweber( Y, w=None, screen='off' ):
     """
     Solves the Fermat-Weber problem as a 2nd order cone problem
-    using Cplex's solver.
+    using Cplex or GuRoBi.
     
     Parameters
     ---------- 
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : None or numpy array of m float or int
-        positive customer weights (if None all weights are set to 1)
+        Positive customer weights (if None, all weights are set to 1).
     screen : str 
         If 'on', intermediate output on the state of
         the computations are printed to the screen.
@@ -28,9 +27,9 @@ def SOCPweber( Y, w=None, screen='off' ):
     Returns
     -------
     objv : float
-        Sum of weighted distances to the optimal facility location 
+        Sum of weighted distances to the optimal facility location.
     X   : px2 numpy array of float
-        Coordinates of the optimal facility location
+        Coordinates of the optimal facility location.
     """
     n = Y.shape[0]
         
@@ -72,7 +71,7 @@ def SOCPweber( Y, w=None, screen='off' ):
 
 def SOCPcenter( Y, w, screen='off'):
     """
-    Solve the weighted 1-center problem as a quadratically 
+    Solves the weighted 1-center problem as a quadratically 
     constrained continuous convex optimization problem using 
     a MIP solver. For reasons of numerical stability, we normalize 
     the weights w by dividing it by the average weight.
@@ -80,18 +79,18 @@ def SOCPcenter( Y, w, screen='off'):
     Parameters
     ----------
     Y : numpy mx2 array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : numpy array of m int or float
-        positive customer weights
+        Positive customer weights.
     screen: str
-        if 'on', information on solution process is printed
+        If 'on', information on solution process is printed.
         
     Returns
     -------
     r : float
-        "radius" of the computed center location
+        "Radius" of the computed center location.
     X : numpy array of two float
-        coordinates of the center as a 
+        Coordinates of the center found.
     """
     n = Y.shape[0]
     PCP = Model('Planar 1-center problem')
@@ -136,44 +135,42 @@ def SOCPcenter( Y, w, screen='off'):
 def weber_mipq( p, Y, w=None, screen='off', strategy=0, timLim=None ):
     """
     Formulates the multi-source Weber problem as a quadratically
-    constrained MIP and solves it using a MIP solver.
+    constrained MIP and solves it using the MIP solver.
     
     Parameters
     ----------
     p : int
-        number of facilities to locate (1 < p < #customers) 
+        Number of facilities to locate (1 < p < #customers).
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : None or numpy array of m float or int
-        positive customer weights (if None all weights are set to 1)
+        Positive customer weights (if None, all weights are set to 1).
     screen: 
         If 'on', intermediate output on the state of
         the computations are printed to the screen.
     strategy : int 
-        strategy Cplex or GuRoBi applies to solve the the problem:
+        Strategy Cplex or GuRoBi applies to solve the the problem:
            
-        * 1 -> solve the quadratic continuous relaxation
-        * 2 -> use conical cuts (or outer approximation) 
-        * 0 -> decide automatically  
+        * 1 -> Solve the quadratic continuous relaxation.
+        * 2 -> Use conical cuts (or outer approximation). 
+        * 0 -> Decide automatically .
     timeLim : float 
-        Time limit (seconds) to be used for the MIQCP solver
+        Time limit (seconds) to be used for the MIQCP solver.
 
     Returns
     -------
     objv : float  
-    
+        The solution's objective value.
     Xsol : px2 numpy array of float  
-    
+        The coordinates of the p facilities.
     a : list of int
-        the assignment of customer points to the facilities,
+        The assignment of customer points to the facilities,
         i.e., a[i]=j if point Y[i] is assigned to facility at 
-        location X[j]
-    
+        location X[j].
     tim : float
-        Computation time in seconds
-    
+        Computation time in seconds.
     nnodes : int
-        number of B&B tree nodes
+        Number of B&B tree nodes.
     """
     # Function returning a customer's distance to most distant customer
     dmax = lambda i : max( euclid(Y[i],y) for y in Y )
@@ -205,7 +202,7 @@ def weber_mipq( p, Y, w=None, screen='off', strategy=0, timLim=None ):
     # Constraints: Constraints V[i,j] = X[j]-Y[i]
     MWP.addConstraints( X[j,dim]-Y[i,dim] == V[i,j,dim] for i,j,dim in product(range(m),range(p),range(2)) )
 
-    # Constraints: Quadratic constraints to model the Euclidian distances
+    # Constraints: Quadratic constraints to model the Euclidean distances
     MWP.addQuadConstrs( V[i,j,0]**2 + V[i,j,1]**2 <= dmat[i,j]**2 for i,j in product(range(m),range(p)) ) 
 
     # Constraints: For purposes of symmetry breaking order X from west to east
@@ -256,38 +253,38 @@ def pcenter_mipq( p, Y, w, screen='off', strategy=0, timeLim=None ):
     Parameters
     ----------
     p : int
-        number of facilities to locate (1 < p < #customers) 
+        Number of facilities to locate (1 < p < #customers).
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : numpy array of m float or int
-        positive customer weights
+        Positive customer weights.
     screen: str
         If 'on', the MIP solver shows intermediate output on the state of
         the computations are printed to the screen.
     strategy : int 
         Strategy the MIP solver should apply to solve the problem:
         
-        * 0 -> decide automatically 
-        * 1 -> solve the quadratic continuous relaxtion for obtaining lower bounds
-        * 2 -> use conical cuts
+        * 0 -> Decide automatically 
+        * 1 -> Solve the quadratic continuous relaxtion for obtaining lower bounds
+        * 2 -> Use conical cuts (or outer approximation)
     timeLim : float 
-        Time limit (seconds) to be used for the MIQCP solver
+        Time limit (seconds) to be used for the MIQCP solver.
 
     Returns
     -------
     objv : float
-        objective value of the optimal solution (smallest
-        weighted distance to the nearest center point)
+        Objective value of the optimal solution (smallest
+        weighted distance to the nearest center point).
     Xsol : px2 numpy array of float
-        Xsol[j] gives the two coordinates of the j-th center point
+        Xsol[j] gives the two coordinates of the j-th center point.
     a : list of int
-        the assignment of customer points to the centers,
+        The assignment of customer points to the centers,
         i.e., a[i]=j if point Y[i] is assigned to the center at 
-        location X[j]
+        location X[j].
     tim : float
-        Computation time in seconds
+        Computation time in seconds.
     nnodes : int
-        number of B&B tree nodes
+        Number of B&B tree nodes.
     """
     # Function returning a customer's distance to most distant customer
     dmax = lambda i : max( euclid(Y[i],y) for y in Y )
@@ -324,7 +321,7 @@ def pcenter_mipq( p, Y, w, screen='off', strategy=0, timeLim=None ):
     PPCP.addConstraints( ( X[j,dim]-Y[i,dim] == V[i,j,dim] for dim in range(2) for j in range(p) \
                        for i in range(m) ) )
     
-    # Constraints: Quadratic constraints to model the Euclidian distances
+    # Constraints: Quadratic constraints to model the Euclidean distances
     PPCP.addQuadConstrs( ( V[i,j,0]**2 + V[i,j,1]**2 <= d[i,j]**2 \
                            for i in range(m) for j in range(p) ) )
 

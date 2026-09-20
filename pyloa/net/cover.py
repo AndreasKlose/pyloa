@@ -1,5 +1,4 @@
 """
-    Module net.cover of package pyloa:
     Methods for solving covering location problems.
 """
 import numpy as np
@@ -21,15 +20,15 @@ class MaxCover( NetProblem ):
         See base class NetProblem in module pyloa.net_prob for a description
         of the parameters.
         
-        Remark: If the greedy add rocedure is used, it is recommended to let d be 
-            a numpy (mxn)-array. The procedure then relies on numpy operations and 
-            runs many times faster. In case that the fname is not None, the same 
-            is achieved by choosing dstmat='matrix'.    
+        Remark: If the greedy add procedure is used, it is recommended to let d be 
+        a numpy (mxn)-array. The procedure then relies on numpy operations and 
+        runs many times faster. In case that *fname* is not None, the same 
+        is achieved by choosing dstmat='matrix'.    
         """
         super().__init__(fname=fname, dstmat=dstmat, orlib=orlib, d=d, m=m, n=n, w=w, p=p)
                        
         self.coverage = 0 
-        """Objective function value of any solution to the maximal covering location problem"""
+        """Objective function value of any solution to the maximal covering location problem."""
         
         self.__z_continuous = True  
         """If True, variables z_i in the mathematical programming formulation 

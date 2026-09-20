@@ -1,5 +1,4 @@
 """
-    Module plane.weber_cg of package pyloa:
     Column generation for solving the multi-source Weber problem.
 """
 import numpy as np
@@ -208,7 +207,7 @@ class Pricing:
 
 class Master:
     """
-    Class for handling the master problem
+    Class for handling the master problem.
     """
     def __init__(self, p, Y, w, screen='on' ):
         """
@@ -218,9 +217,9 @@ class Master:
         Parameters
         ----------
         p : int  
-            Number of facilities to locate
+            Number of facilities to locate.
         Y : mx2 numpy array of float
-            Coordinates of the customer points
+            Coordinates of the customer points.
         w : numpy array of float or int 
             The customer weights.
         screen : str 
@@ -228,16 +227,16 @@ class Master:
             is send to stdout. Otherwise, let screen='off'.
         """
         self.__Y = Y 
-        """Coordinates of the customer points"""
+        """Coordinates of the customer points."""
         
         self.__w = w 
-        """Weights of the customer points"""
+        """Weights of the customer points."""
                   
         self.__y = None  
-        """The master problem's decision variables"""
+        """The master problem's decision variables."""
         
         self.__p = p 
-        """Number of facilities to locate"""
+        """Number of facilities to locate."""
         
         self.__constr= None 
         """numpy array of the master problem's constraints. 
@@ -245,19 +244,19 @@ class Master:
         the last constraint is the cardinality contraint."""
         
         self.__intTol = 1.0E-04
-        """Tolerance for variables to be integer"""
+        """Tolerance for variables to be integer."""
         
         self.__itr = 0 
-        """Number of times a restricted linear master is solved"""
+        """Number of times a restricted linear master is solved."""
         
         self.__talk = screen == 'on'
-        """Display some logout to stdout if screen is on"""
+        """Display some logout to stdout if screen is on."""
         
         self.__columns = None 
-        """Set of columns (customer subsets) generated"""
+        """Set of columns (customer subsets) generated."""
         
         self.__model = None 
-        """The MIP/LP model of the master problem"""
+        """The MIP/LP model of the master problem."""
         
         # Obtain set of initial columns from heuristic solutions
         self.__get_initial_columns( )
@@ -351,7 +350,7 @@ class Master:
 
     def add_column ( self, column  ):
         """
-        Add a generated column (i.e. customer subset) 
+        Adds a generated column (i.e. customer subset) 
         as a column to the master problem.
         """
         rows = list(column['subset']) # covering constraints for the set
@@ -382,7 +381,7 @@ class Master:
 
     def __master_integer( self ):
         """
-        Checks if last solution to the linear master problem is integer
+        Checks if last solution to the linear master problem is integer.
         """
         one = 1.0 - self.__intTol
         fract = np.any( (np.fromiter( self.__model.get_solution(self.__y, keep_zeros=False,\
@@ -433,7 +432,7 @@ class Master:
     @property 
     def ncols(self):
         """
-        Number of columns currently in the master
+        Number of columns currently in the master.
         """
         return len(self.__y)
     
@@ -459,19 +458,19 @@ def set_optTol( value = None ):
 
 def colgen( p, Y, w, mip_pricing=True, max_iter=float('inf'), screen='off' ):
     """
-    Solve multi-source Weber problem by means of column generation.
+    Solves multi-source Weber problem by means of column generation.
         
     Parameters
     ----------
-    p : intLB, objv, Xsol, a, itr
-        number of facilities to locate (1 < p < #customers) 
+    p : int
+        Number of facilities to locate (1 < p < #customers).
     Y : mx2 numpy array of float
-        m customer points in Euclidian plane
+        m customer points in Euclidean plane.
     w : None or numpy array of m float or int
-        positive customer weights (if None, all weights are set to 1)
+        Positive customer weights (if None, all weights are set to 1).
     mip_pricing : bool
-        If True, the pricing problem is solved using as a MIQCP using
-        the MIP solver. Otherwise, it is solved as a Weber problem with 
+        If True, the pricing problem is solved using as a MIQCP by means
+        of the MIP solver. Otherwise, it is solved as a Weber problem with 
         limited distances by means of Drezner's algorithm.
     max_iter : int or float
         Maximal number of column generation iterations (solving a
@@ -483,17 +482,17 @@ def colgen( p, Y, w, mip_pricing=True, max_iter=float('inf'), screen='off' ):
     Returns
     -------
     objv : float
-        objective value of the best solution found
+        Objective value of the best solution found.
     lbnd : float
-        lower bound from the LP relaxation of the set-covering problem
+        Lower bound from the LP relaxation of the set-covering problem.
     Xsol : px2 numpy array of float
-        the p facility's coordinates
+        The p facility's coordinates.
     a : list of int
-        the assignment of customer points to the facilities,
+        The assignment of customer points to the facilities,
         i.e., a[i]=j if point Y[i] is assigned to facility at 
-        location X[j]
+        location X[j].
     itr : int
-        number of iterations performed
+        Number of iterations performed.
     """
     talk = screen=='on'
 

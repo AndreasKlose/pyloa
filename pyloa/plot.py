@@ -27,20 +27,20 @@ def plot_points( Y=None, X=None, lola=None, cust_id=None ):
     Parameters
     ----------
     Y : None or numpy mx2 array of float
-         Euclidian coordinates of the customer points
+        Euclidean coordinates of the customer points.
     X : None or numpy array of 2 float or px2 numpy array of float
-         Euclidian coordinates of located facility/facilities
+        Euclidean coordinates of located facility/facilities.
     lola : None or tuple of two lists of numpy arrays of float
-         If not None, then lola[0] is the longitude data and lola[1] 
-         the latitude data of the customer points
+        If not None, then lola[0] is the longitude data and lola[1] 
+        the latitude data of the customer points.
     cust_id : list or numpy array of str
-        Names/id's of customer points
+        Names/id's of customer points.
         
     Remark
     ------
     If longitude-latitude data are provided, then Y
     is assumed to be obtained from mapping these data
-    to Euclidian coordinates using the most south-west
+    to Euclidean coordinates using the most south-west
     point as origin.
     """
     lo, la, names = return_lola(with_names=True)

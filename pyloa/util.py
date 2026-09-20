@@ -1,5 +1,5 @@
 """
-    Util - Some helper functions/routines used in package pyloa.
+    Some helper functions/routines used in package pyloa.
 """
 import numpy as np
 import geopy
@@ -19,7 +19,7 @@ _ZERO = 1.0E-06
 
 def int_array( arr, dim=0, scale=1, down=True ):
     """
-    Return arr if arr is a numpy array of an integer type. Otherwise, try
+    Returns arr if arr is a numpy array of an integer type. Otherwise, try
     to make an integer array out of it.
     
     Parameters
@@ -46,10 +46,10 @@ def int_array( arr, dim=0, scale=1, down=True ):
     * An int array of same size of arr and rounded values arr*scale if arr
       is an numpy array of non-integral numbers.
     * An int array of the values given by arr if arr is an iterable of 
-      non-negative integral non-negative numbers
+      non-negative integral non-negative numbers.
     * An int array of the rounded and up-scaled values given by arr if arr
       is an iterable of non-integral numbers.
-    * None if arr is None or arr is or shows a negative number or is not numeric
+    * None if arr is None or arr is or shows a negative number or is not numeric.
     """
     if arr is None: return None
     __round = np.floor if down else np.round 
@@ -80,19 +80,19 @@ def int_array( arr, dim=0, scale=1, down=True ):
 
 def real_array( arr, dim=0 ):
     """
-    Return a numpy array of non-negative floating points from
+    Returns a numpy array of non-negative floating points
     derived from the value(s) given by arr.
     
     Parameters
     ----------
-    arr : a number, an iterable, or a numpy array
+    arr : A number, an iterable, or a numpy array
         The array/value to be set to an array.
     dim : int
         The dimension the array should have if arr is a single value.
     
     Returns
     -------
-    * A numpy array of an non-negative floats if arr is so
+    * A numpy array of an non-negative floats if arr is so.
     * A numpy array of dimension dim and value arr if arr is a 
       non-negative number.
     * A numpy array of non-negative floats if arr is an iterable of 
@@ -118,11 +118,11 @@ def real_array( arr, dim=0 ):
 
 def euclid( X, Y ):
     """
-    Returns Eucldean distance between two points X and Y.
+    Returns the Eucldean distance between two points X and Y.
 
     Parameters
     ----------
-    X, Y : two numpy arrays of float of dimension 2
+    X, Y : two numpy arrays of float of dimension 2.
     
     Returns
     -------
@@ -161,9 +161,9 @@ def lla2xy ( lo, la, origin ):
     Parameters
     ----------
     lo, la: two floats
-        longitude and latitude of point to convert
+        Longitude and latitude of the point to convert.
     origin: numpy array of two float
-        longitude and latitude of the origin point
+        Longitude and latitude of the origin point.
     
     Returns
     -------
@@ -183,22 +183,22 @@ def lla2xy ( lo, la, origin ):
 
 def xy2lla( x, y, origin ):
     """
-    Inverse function of lla2xy. Given the Euclidian point (x,y),
+    Inverse function of lla2xy. Given the Euclidean point (x,y),
     return longitude and latitude by reversing above transformation.
     
     Parameters
     ----------
     x : float  
-        x-coordinate of the point
+        x-coordinate of the point.
     y : float  
-        y-coordinate of the point
-    origin : numy array or list of two floats  
-        longitude and latitude of the origin point
+        y-coordinate of the point.
+    origin : numpy array or list of two floats  
+        longitude and latitude of the origin point.
            
     Returns
     -------
     lo, la : two floats
-        longitude and latitude corresponding to (x,y)
+        Longitude and latitude corresponding to (x,y).
     """
     la = origin[1] + y*180/__R/math.pi
     lo = origin[0] + x*180/__R/math.pi/math.cos(math.pi*origin[1]/180)
@@ -215,7 +215,7 @@ def all_two_parts( Y ):
     Parameters
     ----------
     Y : mx2 numpy array of float
-        Y[i] specifies the customer i's coordinates, i=0,...,m-1
+        Y[i] specifies the customer i's coordinates, i=0,...,m-1.
     
     Returns
     -------
@@ -226,7 +226,7 @@ def all_two_parts( Y ):
         and m/2 if m is even. If all_parts[num] = P, then the 
         division of the customer set in the two subsets is P[0] and
         P[1]. The smaller of the two sets is thereby always listed
-        first, i.e. len(P[0]) < len(P[1]). In both parts are of
+        first, i.e. len(P[0]) < len(P[1]). If both parts are of
         same length, the part containing the smallest customer index
         is listed first, i.e. min(P[0]) < min(P[1]) if len(P[0])==
         len(P[1]).
@@ -236,7 +236,7 @@ def all_two_parts( Y ):
     def create_partition( y1,y2, noise ):
         """
         Create the two possible partitions using separating line through
-        points y1--y2 (rotated slightly around the lines middle point)
+        points y1--y2 (rotated slightly around the lines middle point).
         """
         # Determine line a*y[1] + b*y[0] = c through points y1 and y2
         a = y2[0] - y1[0]
@@ -287,7 +287,7 @@ def all_circle_intersections( Y, max_dists ):
     Parameters
     ----------
     Y : mx2 numpy array of float
-        Y[i] gives the two coordinates of customer point i
+        Y[i] gives the two coordinates of customer point i.
     max_dists : list or numpy array of float or int 
         max_dists[i] is the radius of the circle C(i) around point 
         Y[i]. Usually this radius refers to a maximal distance for 

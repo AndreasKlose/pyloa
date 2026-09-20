@@ -1,6 +1,5 @@
 """
     Read data of a discrete facility location problem.
-    
     Repositories with problem instances are in particular:
       
     - For the CFLP: http://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/  
@@ -22,7 +21,7 @@ def __readAvellaOld( dataFile ):
     Parameters
     ----------
     dataFile : str
-        Name of the data file
+        Name of the data file.
 
     Returns
     -------                         
@@ -239,14 +238,15 @@ def read_cflp( dataFile, formt='GK', scale=1):
     Parameters
     ----------
     dataFile : str
-        Name of the data file
+        Name of the data file.
     formt : str
-        format of the data file, that is,
-            "AO" for the old Avella-Boccia CFLP instances
-            "AN" for the new Avella-Boccia CFLP instances
-            "G"  for the Guastaroba CFLP instances
-            "GK" for the Goertz-Klose CFLP instances (Default)
-            "OR" for an ORLIB CFLP instance
+        Format of the data file, that is, 
+
+        * "AO" for the old Avella-Boccia CFLP instances
+        * "AN" for the new Avella-Boccia CFLP instances
+        * "G"  for the Guastaroba CFLP instances
+        * "GK" for the Goertz-Klose CFLP instances (Default)
+        * "OR" for an ORLIB CFLP instance
     scale : int, optional
         Only used for Guastaroba instances. 
         If scale=1, demands and capacities will be returned as floats;
@@ -256,11 +256,11 @@ def read_cflp( dataFile, formt='GK', scale=1):
     Returns
     -------
     d : numpy array of int or float 
-        customer demands
+        Customer demands.
     s : numpy array of int or float
-        facility capacities 
+        Facility capacities. 
     f : numpy array of float
-        fixed facility costs
+        Fixed facility costs.
     c : numpy 2d-array of float 
         c[j,i] is either the unit cost or the total cost of
         supplying customer i from a facility at site j.
@@ -303,14 +303,15 @@ def read_uflp( dataFile, formt='OR' ):
     dataFile : str
         Name of the data file
     formt : str
-        format of the data file, that is,
-            "OR"     for data files just the same as the CFLP ORLib files
-            "SIMPLE" for data files in UflLib simple format                      
+        format of the data file, that is, 
+
+        * "OR"     for data files just the same as the CFLP ORLib files
+        * "SIMPLE" for data files in UflLib simple format                      
 
     Returns
     -------
     f : numpy array of float
-        fixed facility costs
+        Fixed facility costs.
     c : numpy 2d-array of float 
         c[j,i] is either the unit cost or the total cost of
         supplying customer i from a facility at site j.
@@ -331,7 +332,7 @@ def read_tscflp( dataFile, two_level = False, mcf=False ):
     Read an instance of a 2-stage capacitated facility location problem
     (two_level=False) or of a 2-level CFLP (two_level=True) from a file 
     that uses the format of the test instances used in Klose (1999, 2000).
-    If mcf is True, the cost for supplying customers is returned
+    If *mcf* is True, the cost for supplying customers is returned
     as a 3-dimensional numpy array in case of a two-level problem.
     
     Parameters
@@ -344,12 +345,12 @@ def read_tscflp( dataFile, two_level = False, mcf=False ):
         stage 1 (plants) and on stage 2 (depots). Otherwise,
         fixed cost are only read for stage 2 facilities.
     mcf : bool, optional 
-        If True, the as single cost matrix as a numpy 3d-array
-        is returned so that c[i,j,k] is the cost to supply all
+        If True, a single cost matrix as a numpy 3d-array
+        is returned, so that c[i,j,k] is the cost to supply all
         of customer k's demand from facility j on stage 2 and
         facility i on stage 1. Note that this only makes sense
         if the problem is a two-level one with location decisions
-        to be made on both stages. If mcf is False (the default)
+        to be made on both stages. If *mcf* is False (the default),
         a tuple of two numpy 2d-arrays is returned. The first
         one gives the unit cost to supply facilities on stage 2
         from facilities on stage 1. The second one shows the
@@ -361,12 +362,12 @@ def read_tscflp( dataFile, two_level = False, mcf=False ):
     Returns
     -------
     d : numpy array of int 
-        Array of customer demands
+        Array of customer demands.
     s : tuple of numpy arrays of int 
-        Array of capacities of stage 1 and stage 2 facilities
+        Array of capacities of stage 1 and stage 2 facilities.
     f : numpy array of float or tuple of such arrays
         Fixed cost of stage 2 facilities if two_level=False.
-        Otherwise the tuple of fixed costs of facilities
+        Otherwise, the tuple of fixed costs of facilities
         on stage 1 and stage 2.
     c : tuple of two numpy 2d-arrays or a numpy 3d-array of float
         If mcf=False, c[0][i,j] is the cost to supply 1 unit
@@ -420,14 +421,14 @@ def read_tlcflp( dataFile, mcf=False ):
     5. n lines with depot capacity and fixed cost
     6. matrix of supply cost cost per unit from depots (rows) to customers (columns)
     
-    If mcf is True, the cost matrix (unit cost!) will be returned as a 3d-matrix
+    If *mcf* is True, the cost matrix (unit cost!) will be returned as a 3d-matrix
     indicating that the multi-commodity formulation of the problem is to
     be used.
     
     Parameters
     ----------
     dataFile : str 
-        Name (and path) of the data file 
+        Name (and path) of the data file. 
     mcf : bool, optional 
         If True, a numpy 3d-array of float is returned as cost matrix.
         Otherwise a tuple of two numpy 2d-arrays is returned.
@@ -435,9 +436,9 @@ def read_tlcflp( dataFile, mcf=False ):
     Returns
     -------
     d : numpy array of int 
-        Array of customer demands
+        Array of customer demands.
     s : tuple of numpy arrays of int 
-        Array of capacities of stage 1 and stage 2 facilities
+        Array of capacities of stage 1 and stage 2 facilities.
     f : tuple of two numpy array of float
         The tuple of fixed costs of facilities on stage 1 and 2.
     c : tuple of two numpy 2d-arrays or a numpy 3d-array of float
@@ -504,20 +505,20 @@ def store_cflp_GK( fname, d, s, f, c, unitCost=True ):
     ----------
     fname : str
         Name of file where to write the data. 
-        Warning: Any existing file of the name and path will be overwritten!
+        *Warning*: Any existing file of the name and path will be overwritten!
     d : numpy array of float or int
-        customer demands
+        Customer demands.
     s : numpy array of float or int
-        facility capacities
+        Facility capacities.
     f : numpy array of float 
-        fixed facility costs
+        Fixed facility costs.
     c : numpy 2d-array of float
         c[j,i] is either the cost per unit of supplying
         customer i from facility j (if unitCost=True)
         or the total cost of supplying customer i
-        from facility j (if unitCost=False)
+        from facility j (if unitCost=False).
     unitCost : bool
-        see argument c 
+        See argument c.
     """
     n, m = c.shape
     F = open(fname,'w')

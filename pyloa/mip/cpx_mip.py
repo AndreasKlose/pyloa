@@ -1,6 +1,5 @@
 """
-    Module mip.cpx_mip of package pyloa:
-    Defines wrapper class for the docplex.mp.model Model class.
+    Defines a wrapper class for the docplex.mp.model Model class.
 """
 import numpy as np
 import cplex
@@ -19,29 +18,29 @@ class CPXmodel:
         Parameters
         ----------
         name : str, optional
-            Name of the model, default is None
+            Name of the model, default is None.
         """            
         self.__model = Model() if name is None else Model(name)
-        """Instance of the docplex.mp.model class"""
+        """Instance of the docplex.mp.model class."""
         
         self.__s = None 
-        """Docplex.mp.solution object"""
+        """Docplex.mp.solution object."""
         
         self.__log_output = False 
-        """If True, Cplex's optimizer will send log output to stdout"""
+        """If True, Cplex's optimizer will send log output to stdout."""
         
         self.__callbck = None 
-        """Instance of a callback class"""
+        """Instance of a callback class."""
         
         self.__cuts = -1 
         """Global cuts parameter as for GuRoBi. Value of -1 means
-        automatic cut generation"""
+        automatic cut generation."""
         
         self.__contxtmsk = None 
-        """Context mask used by a callback function"""
+        """Context mask used by a callback function."""
         
         self.__context = None 
-        """Instance of class cplex.callbacks.Context"""
+        """Instance of class cplex.callbacks.Context."""
                       
     #---------------------------------------------
     
@@ -53,13 +52,13 @@ class CPXmodel:
         Parameters
         ----------
         callbck : class 
-            The class to be called for the callback
+            The class to be called for the callback.
         contxtmask : int 
             Cplex's indicator for the context in which the
             callback might be called.
         wheres : list of int
             GuRoBi's list of 'where' codes to be enabled in
-            the callback.
+            the callback (not used here).
         """
         self.__callbck = callbck 
         self.__contxtmsk = contxtmsk
@@ -70,7 +69,7 @@ class CPXmodel:
     
     def in_relaxation(self, context ):
         """
-        Return True if Cplex solver calls callback
+        Return True if Cplex's solver calls the callback
         after solving the relaxation.
         """
         return context.in_relaxation()
@@ -84,11 +83,11 @@ class CPXmodel:
         
         Parameters
         ----------
-        dvars : sequence of decision variables
+        dvars : sequence of decision variables.
         
         Returns
         -------
-        solution values to the specified variables as a numpy array of float
+        Solution values to the specified variables as a numpy array of float.
         """
         return np.fromiter(map(lambda v : self.__context.get_relaxation_point(v.index),dvars),dtype=float)
     
@@ -102,13 +101,13 @@ class CPXmodel:
         
         Parameters 
         ----------
-        dvars : dict of decision variables
-        keys  : sequence of dictionary keys 
+        dvars : dict of decision variables.
+        keys  : sequence of dictionary keys. 
         
         Returns
         -------
         Solution values for the decision variables with the
-        given keys as a numpy array of float 
+        given keys as a numpy array of float. 
         """
         return np.fromiter(map(lambda k : self.__context.get_relaxation_point(dvars[k].index),keys),dtype=float)
     
@@ -139,7 +138,7 @@ class CPXmodel:
         Parameters
         ----------
         constr : docplex.mp.constr.LinearConstraint  
-            The constraint to be included 
+            The constraint to be included.
         return_constr : bool 
             If True, the constraint object instance
             is returned.
@@ -156,7 +155,7 @@ class CPXmodel:
         Parameters
         ----------
         constrs : iterable of docplex.mp.constr.LinearConstraint    
-            The list of constraints to be included        
+            The list of constraints to be included.        
         return_constr : Bool
             If True, the list of added constraints is returned.
             
@@ -171,7 +170,7 @@ class CPXmodel:
     
     def addQuadConstrs(self, constrs, return_constr=False):
         """
-        Add a bunch of quadratic constraints to the model
+        Add a bunch of quadratic constraints to the model.
         
         Parameters
         ----------
@@ -195,7 +194,7 @@ class CPXmodel:
         constr : docplex.mp.constr.LinearConstraint
             The constraint where to adjust the rhs.
         rhs : int or float
-            The (new) right-hand side value
+            The (new) right-hand side value.
         """
         constr.rhs.constant = float(rhs)
         
@@ -235,7 +234,7 @@ class CPXmodel:
         Parameters
         ----------
         expr : docplex.mp.linear.LinearExpr
-            single objective function to be minimized.
+            Single objective function to be minimized.
         """
         self.__model.maximize(expr)
         
@@ -260,11 +259,11 @@ class CPXmodel:
         Parameters
         ----------
         lb : float
-            Lower bound for the variable. Default: 0.0
+            Lower bound for the variable. Default: 0.0.
         ub : float or None
             Uppper bound on the variable.
         obj : float
-            The variables objective coefficient
+            The variables objective coefficient.
         vtype : None or str
             If None, a continuous variable is created. 
             Otherwise, if vtype='B' a binary and if
@@ -285,7 +284,7 @@ class CPXmodel:
         
         Returns
         -------
-        A docplex.mp.dvar
+        A docplex.mp.dvar.
         """ 
         if vtype is None:
             dvar = self.__model.continuous_var(lb=lb, ub=ub, name=name )
@@ -311,7 +310,7 @@ class CPXmodel:
     
     def addVars(self, indices, lb=0.0, ub=None, vtype=None, name=None):
         """
-        Adds a dictionary of variables with keys indices to 
+        Adds a dictionary of variables with keys *indices* to 
         the MIP model.
         
         Parameters
@@ -380,13 +379,13 @@ class CPXmodel:
     
     def addVarCube(self, indx, lb=0.0, ub=None, vtype=None, name=None):
         """
-        Creates and return a dictionary of variables indexed by the
+        Creates and returns a dictionary of variables indexed by the
         the three indices.
     
         Parameters
         ----------
         indx : tuple of three int 
-            tuple of the three indices 
+            Tuple of the three indices.
         lb : int or float or iterable of int or float
             Lower bounds to be applied for the variables.
             If None, lower bounds are zero.
@@ -398,7 +397,7 @@ class CPXmodel:
             continuous variables, if 'B' binary
             variables, if 'I' integer variables.
         name : None or str 
-            If not None, variables named as name[index] 
+            If not None, variables are named as name[index].
             
         Returns
         -------
@@ -440,8 +439,8 @@ class CPXmodel:
     
     def change_var_types(self, dvars, vtype ):
         """
-        Changes the type of a collection of variables.
-        (cf. docplex.mp.model.change_var_types)
+        Changes the type of a collection of variables
+        (cf. docplex.mp.model.change_var_types).
         
         Parameters
         ----------
@@ -449,7 +448,7 @@ class CPXmodel:
             The variables for which the type should
             be changed.
         vtype : an iterable of variable types or 
-            the single type to which the variables
+            The single type to which the variables
             should be changed.
         """
         self.__model.change_var_types( dvars, vtype )
@@ -458,8 +457,8 @@ class CPXmodel:
     
     def change_upper_bounds( self, dvars, ub ):
         """
-        Changes the upper bounds of a collection of variables.
-        (cf. docplex.mp.model.change_var_upper_bounds)
+        Changes the upper bounds of a collection of variables
+        (cf. docplex.mp.model.change_var_upper_bounds).
         
         Parameters
         ----------
@@ -467,7 +466,7 @@ class CPXmodel:
             The variables for which the type should
             be changed.
         ub : an iterable or a single number specifying
-            the new upper bound(s).
+            The new upper bound(s).
         """
         self.__model.change_var_upper_bounds( dvars, ub )
 
@@ -475,8 +474,8 @@ class CPXmodel:
     
     def change_lower_bounds( self, dvars, lb ):
         """
-        Changes the lower bounds of a collection of variables.
-        (cf. docplex.mp.model.change_var_lower_bounds)
+        Changes the lower bounds of a collection of variables
+        (cf. docplex.mp.model.change_var_lower_bounds).
         
         Parameters
         ----------
@@ -484,7 +483,7 @@ class CPXmodel:
             The variables for which the type should
             be changed.
         lb : an iterable or a single number specifying
-            the new lower bound(s).
+            The new lower bound(s).
         """
         self.__model.change_var_lower_bounds( dvars, lb )
 
@@ -493,7 +492,7 @@ class CPXmodel:
     def sum(self, exprs ):
         """
         Returns the sum of a list or iterable of 
-        expressions using docplex.mp.model.sum
+        expressions using docplex.mp.model.sum.
         """
         return self.__model.sum(exprs)
     
@@ -548,7 +547,7 @@ class CPXmodel:
         Parameters
         ----------
         X : dict
-            Dictionary of docplex.mp.dvar
+            Dictionary of docplex.mp.dvar.
         keep_zeros : bool
             If True, the default, all solution 
             values to variables X are returned.
@@ -557,6 +556,10 @@ class CPXmodel:
         precision : float (positive)
             Figures smaller in magnitude than precision are seen as
             zeros.
+
+        Returns
+        -------
+        Dictionary of solution values to the variables in the dictionary X.
         """
         if not self.__s is None:
             return self.__s.get_value_dict( X, keep_zeros=keep_zeros, precision=precision)
@@ -568,7 +571,7 @@ class CPXmodel:
         Returns the list/sequence of dual variables to
         the linear constraints in the list/sequence
         of linear constraints constr. This is an alias
-        for docplex.mp.model.dual_values()
+        for docplex.mp.model.dual_values().
         """
         return self.__model.dual_values( constr )
     
@@ -607,12 +610,12 @@ class CPXmodel:
         Parameters
         ----------
         dvars: iterable/sequence of variables
-            sequence of decision variables
-        
+            Sequence of decision variables.
+
         Returns
         -------
         rc : list of float
-            The list of the variables' reduced cost
+            The list of the variables' reduced cost.
     
         """
         return self.__model.reduced_costs( dvars )
@@ -627,7 +630,7 @@ class CPXmodel:
         Parameters
         ----------
         constr : docplex.mp.constr.LinearConstraint
-            The constraint to be adjusted
+            The constraint to be adjusted.
         dvar : docplex.mp.dvar
             The decision variable where to change
             the coefficient.
@@ -646,9 +649,9 @@ class CPXmodel:
         Parameters
         ----------
         coeffs : iterable/sequence of pairs
-             iterable/sequence of variable-coefficient pairs
+             Iterable/sequence of variable-coefficient pairs.
         constr : docplex.mp.constr.LinearConstraint
-            The constraint to be adjusted
+            The constraint to be adjusted.
         """
         for d,c in coeffs: constr.lhs.set_coefficient(d,c)
     
@@ -696,124 +699,125 @@ class CPXmodel:
     @property 
     def mipModel(self):
         """
-        Return the instance of the docplex.mp.model Model class.
+        The instance of the docplex.mp.model Model class.
         """
         return self.__model 
     
     @property
     def ObjVal(self):
-        """Objective value of a solution to the model"""
+        """Objective value of a solution to the model."""
         return self.__getObjVal()
     
     @property
     def ObjBound(self):
         """
         Best bound on (lower for minimization, upper for
-        maximization) on the optimal objective value
+        maximization) on the optimal objective value.
         """
         return self.__model.solve_details.best_bound
     
     @property
     def runtime(self):
-        """Return computation time used to solve the model"""
+        """Computation time used to solve the model."""
         return self.__model.solve_details.time
     
     @property 
     def dettime(self):
-        """Return the deterministic time. For Cplex, this
-        is the total amout of CPU ticks"""
+        """Deterministic computation time. For Cplex, this
+        is the total amout of CPU ticks."""
         return self.__model.get_cplex().get_dettime( )
     
     @property 
     def status(self):
-        """Return model's solution status"""
+        """The moodel's solution status."""
         return self.__model.solve_details.status
     
     @property 
     def nodeCount(self):
-        """Return the NodeCount, i.e. the number of branch-and-cut 
-        nodes explored in Cplex's most recent optimization"""
+        """NodeCount, i.e. the number of branch-and-cut 
+        nodes explored in Cplex's most recent optimization."""
         return self.__model.solve_details.nb_nodes_processed
     
     @property 
     def infinity(self):
-        """docplex.mp.model.infinity"""
+        """docplex.mp.model.infinity."""
         return self.__model.infinity
     
     @property 
     def MIPGapAbs(self):
-        """Return parameter mip.tolerances.absmipgap"""
+        """Parameter mip.tolerances.absmipgap."""
         return self.__model.parameters.mip.tolerances.absmipgap()
     
     @MIPGapAbs.setter 
     def MIPGapAbs(self, value ):
-        """Set parameter mip.tolerances.absmipgap to value"""
+        """Set parameter mip.tolerances.absmipgap to value."""
         if value >= 0.0:
             self.__model.parameters.mip.tolerances.absmipgap(value)
     
     @property 
     def MIPGap(self):
-        """Return parameter mip.tolerances.mipgap"""
+        """Parameter mip.tolerances.mipgap."""
         return self.__model.parameters.mip.tolerances.mipgap()
     
     @MIPGap.setter 
     def MIPGap(self,value):
-        """Set parameter mip.tolerances.mipgap to value"""
+        """Set parameter mip.tolerances.mipgap to value."""
         if value >= 0.0:
             self.__model.parameters.mip.tolerances.mipgap(value)
     
     @property 
     def IntFeasTol(self):
-        """Return parameter mip.tolerance.integrality"""
+        """Parameter mip.tolerance.integrality."""
         return self.__model.parameters.mip.tolerances.integrality()
     
     @IntFeasTol.setter 
     def IntFeasTol(self, value):
-        """Set parameter mip.tolerance.integrality to value"""
+        """Set parameter mip.tolerance.integrality to value."""
         if 0 <= value < 1: 
             self.__model.parameters.mip.tolerances.integrality(value)
     
     @property
     def FeasibilityTol(self):
-        """Return parameter simplex.tolerances.feasibility"""
+        """Return parameter simplex.tolerances.feasibility."""
         return self.__model.parameters.simplex.tolerances.feasibility()
     
     @FeasibilityTol.setter 
     def FeasibilityTol(self,value):
-        """Set parameter simplex.tolerances.feasibility"""
+        """Set parameter simplex.tolerances.feasibility."""
         if 0 <= value < 1:
             self.__model.parameters.simplex.tolerances.feasibility(value)
     
     @property 
     def MIQCPMethod(self):
-        """Returns value of parameter mip.strategy.miqcpstrat"""
+        """Parameter mip.strategy.miqcpstrat."""
         return self.__model.parameters.mip.strategy.miqcpstrat()
     
     @MIQCPMethod.setter
     def MIQCPMethod(self, strategy ):
-        """Sets parameter mip.strategy.miqcpstrat"""
+        """Sets parameter mip.strategy.miqcpstrat."""
         self.__model.parameters.mip.strategy.miqcpstrat(strategy)
         
     @property 
     def timelimit(self):
-        """Time limit for the MIP solver"""
+        """Time limit for the MIP solver."""
         return self.__model.parameters.timelimit  
     
     @timelimit.setter 
     def timelimit(self, value):
-        """Set the time limit for the MIP solver"""
+        """Set the time limit for the MIP solver."""
         if value > 0.0: 
             self.__model.parameters.timelimit(value)   
         else: 
             self.__model.parameters.timelimit(1.0E75)
+
     @property 
     def nodelimit(self):
-        """Node limit for the MIP solver"""
+        """Node limit for the MIP solver."""
         return self.__model.parameters.mip.limits.nodes()  
     
     @nodelimit.setter 
     def nodelimit(self, value):
-        """Set the time limit for the MIP solver"""
+        """Set the time limit for the MIP solver."""
         if value > 0: 
             self.__model.parameters.mip.limits.nodes(value)
         else:
@@ -821,7 +825,7 @@ class CPXmodel:
     
     @property 
     def upper_cutoff( self ):
-        """Return upper cutoff value."""
+        """Upper cutoff value."""
         return self.__model.parameters.mip.tolerances.uppercutoff
     
     @upper_cutoff.setter 
@@ -831,7 +835,7 @@ class CPXmodel:
     
     @property 
     def lower_cutoff( self ):
-        """Return lower cutoff value."""
+        """Lower cutoff value."""
         return self.__model.parameters.mip.tolerances.lowercutoff
     
     @lower_cutoff.setter 
@@ -842,7 +846,7 @@ class CPXmodel:
     @property 
     def lowerObjStop(self):
         """
-        Returns docplex.mp.model.parameters.mip.limits.lowerobjstop 
+        docplex.mp.model.parameters.mip.limits.lowerobjstop.
         """
         return self.__model.parameters.mip.limits.lowerobjstop()
     
@@ -855,18 +859,17 @@ class CPXmodel:
     
     @property
     def log_output(self):
-        """Return value of parameter log_output"""
+        """Parameter log_output"""
         return self.__log_output 
     
     @log_output.setter 
     def log_output(self, on_off ):
-        """Set log_output on (True) or off (False)"""
+        """Set log_output on (True) or off (False)."""
         self.__log_output = bool(on_off)
         
     @property 
     def mipStrategy(self):
-        """Return value of Cplex parameter mip.strategy.search
-        (dynamic search switch)"""
+        """Cplex parameter mip.strategy.search (dynamic search switch)."""
         return self.__model.parameters.mip.strategy.search()
     
     @mipStrategy.setter 
@@ -878,7 +881,7 @@ class CPXmodel:
         
     @property 
     def mipEmphasis(self):
-        """Return value of Cplex parameter parameters.emphasis.mip."""
+        """Cplex parameter parameters.emphasis.mip."""
         return self.__model.parameters.emphasis.mip()
     
     @mipEmphasis.setter 
@@ -889,8 +892,8 @@ class CPXmodel:
     
     @property 
     def lbHeur(self):
-        """Return Cplex parameter parameters.mip.strategy.lbheur (local
-        branching switch"""
+        """Cplex parameter parameters.mip.strategy.lbheur (local
+        branching switch)."""
         return self.__model.parameters.mip.strategy.lbheur()
     
     @lbHeur.setter 
@@ -900,7 +903,10 @@ class CPXmodel:
         
     @property 
     def cuts(self):
-        """Return value of parameter cuts"""
+        """Return value of parameter cuts. A value of -1 means automatic
+        (Cplex decides), 0 means cuts are switched off, 1 for
+        moderate generation of certain cuts, 2 for agressive
+        cut generation and 3 even activates disjunctive cuts."""
         return self.__cuts 
                
     @cuts.setter 
@@ -962,7 +968,7 @@ class CPXmodel:
     
     @property
     def doBenders( self ):
-        """Return Cplex parameter parameter.benders.strategy"""
+        """Cplex parameter parameter.benders.strategy"""
         return self.__model.parameters.benders.strategy()
     
     @doBenders.setter 
@@ -990,18 +996,16 @@ class CPXmodel:
     @property 
     def id_relaxation(self):
         """
-        Return cplex.callbacks.Context.id.relaxation
+        Return cplex.callbacks.Context.id.relaxation.
         """
         return cplex.callbacks.Context.id.relaxation
     
     @property
     def candidate_objective(self):
-        """Return objective value of a candidate solution"""
+        """Return objective value of a candidate solution."""
         return self.__context.get_candidate_objective()
     
     @property
     def incument_objective(self):   
-        """Return incumbent objective value"""
+        """Return incumbent objective value."""
         return self.__context.get_incumbent_objective() 
-
-    

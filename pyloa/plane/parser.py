@@ -1,6 +1,5 @@
 """
-    Module plane.parser of package pyloa:
-    Read data of a planar location problem.
+    Reads data of a planar location problem.
 """
 import numpy as np
 import pandas as pd
@@ -19,8 +18,8 @@ _lo = None     # list of longitude data
 _la = None     # list of latitude data
 _names = None  # list of customer/city names
 
-# The applicable geo-servers
-_geo_server = 'Nominatim' # Alternative is OpenCage (https://opencagedata.com/)
+# The applicable geoservers
+__geoserver = 'Nominatim' # Alternative is OpenCage (https://opencagedata.com/)
 
 # Parameters for Nominatim
 _min_delay = 1   # minimal delay in seconds between success requests 
@@ -31,14 +30,14 @@ _domain = None   # If None, default domain nominatim.openstreetmap.org is used
 if not find_spec('opencage') is None:
     from opencage.geocoder import OpenCageGeocode
 
-_api_key = None   # API key for the geo-server   
-_geo_coder = None # The geocoding function applied
+__apikey = None   # API key for the geoserver   
+__geocoder = None # The geocoding function applied
     
 #----------------------------------------------------------------------
 
-def set_geoServer( server = 'Nominatim', api_key=None ):
+def set_geoServer( server = 'Nominatim', apikey=None ):
     """
-    Choose the geo-server to be used for geo-coding addresses. Possible 
+    Choose the geoserver to be used for geo-coding addresses. Possible 
     choices or Nominatim (nominatim.openstreetmap.org) or OpenCage
     (opencage.com). Note that the latter is commercial. For accessing
     the server you need to have an account at OpenCage and an API-key.
@@ -54,22 +53,29 @@ def set_geoServer( server = 'Nominatim', api_key=None ):
     ----------
     server : str 
         Name of the server to be used (eiter Nominatim or OpenCage)
-    api_key : str, optional
-        Your api_key for OpenCage if not stored using environment variable.
+    apikey : str, optional
+        Your apikey for OpenCage if not stored using environment variable.
     """
-    global _geo_server, _api_key 
+    global __geoserver
+    global __apikey
     
-    _geo_server = server 
+    __geoserver = server 
     if server.lower() == 'opencage':
-        _api_key = os.environ.get('OPENCAGE_API_KEY') if api_key is None else api_key
-        if _api_key is None: _geo_server = None
+        __apikey = os.environ.get('OPENCAGE_API_KEY') if apikey is None else apikey
+        __geoserver = None if __apikey is None else 'opencage'
+
+#----------------------------------------------------------------------
+
+def get_geoServer():
+    """Return the name of the geocoding server used."""
+    return __geoserver
 
 #----------------------------------------------------------------------
 
 def set_Nominatim_params( min_delay=1, max_retries=5, domain=None ):
     """
     Change the default values used for the min_delay and the number of
-    retries when sending requests to the Nominatim geo-server. For
+    retries when sending requests to the Nominatim geoserver. For
     going back to default values, simply use set_Nominatim_params().
     
     Parameters
@@ -91,7 +97,7 @@ def __open_cage_geocode( address ):
     """
     Geocode address using OpenCage's geocoder.
     """
-    results = _geo_coder.geocode(address, no_annotations='1')
+    results = __geocoder.geocode(address, no_annotations='1')
     lng, lat = results[0]['geometry']['lng'], results[0]['geometry']['lat']
     return Point(latitude=lat, longitude=lng ) 
     
@@ -101,16 +107,16 @@ def __get_geocoder():
     """
     Return the function for geo-coding addresses.
     """
-    global _geo_coder
+    global __geocoder
     
-    my_server = _geo_server.lower()
+    my_server = __geoserver.lower()
     if my_server == 'nominatim':
-        _geo_coder = Nominatim(user_agent='get_long_lat') if _domain is None else \
-                     Nominatim(user_agent='get_long_lat', domain=_domain)
-        return RateLimiter( _geo_coder.geocode, min_delay_seconds=_min_delay,\
+        __geocoder = Nominatim(user_agent='get_long_lat') if _domain is None else \
+                      Nominatim(user_agent='get_long_lat', domain=_domain)
+        return RateLimiter( __geocoder.geocode, min_delay_seconds=_min_delay,\
                            max_retries=_max_retries)
-    if my_server == 'opencage' and not _api_key is None:
-        _geo_coder = OpenCageGeocode( _api_key )
+    if my_server == 'opencage' and not __apikey is None:
+        __geocoder = OpenCageGeocode( __apikey )
         return __open_cage_geocode
     
     return None
@@ -119,8 +125,8 @@ def __get_geocoder():
 
 def read_points( data_file ):
     """
-    Read data for a planar location problem either from a csv file
-    or from a TSP data file from TSPlib (library of TSP test instances).
+    Reads a planar location problem's data either from a csv file
+    or from a TSPlib data file (TSPlib is a library of TSP test instances).
     
     If the data file is a csv file, columns have to be separated by ';'. 
     The file's columns have to be named as::
@@ -131,42 +137,37 @@ def read_points( data_file ):
     
        * X,Y       : are floats that give the Euclidean coordinates
        * long, lat : are floats giving longitude and latitude
-       * weight    : are floats giving the positive weight of the points
-       * address   : are strings in quotes that give the address names
+       * weight    : are floats or ints giving the positive weight of the points
+       * address   : are strings that give the address names
     
     Not all of the above data need to be given in the file:
     
-    1. It is possible to just give address names. Then geopy is
+    1. It is possible to just give address names. In this case, a geocoder is
        used to find longitudes and latitudes, which are then
        converted to Euclidean coordinates.
-    2. If the address names are not given, then at least the
+    2. If the address names are not given, at least the
        Euclidean coordinates (X,Y) or the geographic coordinates
        (long, lat) need to be present. 
-    3. If no weight data are given, all weights are assumed to equal 1
+    3. If no weight data are given, all weights are assumed to equal 1.
 
     If the file's extension is ".tsp", the data file is expected to be
-    a tsp file. In that case, it need to be a file from the TSP library
+    a tsp file. In this case, it need to be a file from the TSP library
     that also shows coordinate information. 
 
     Parameters
     ----------
     data_file : string
-        path and file name of the data file
+        Path and file name of the data file.
     
     Returns
     -------
     Y : mx2 numpy array of float
         Y[i] contains Euclidean coordinates of the i-th customer point,
-        i=0,...,m-1
+        i=0,...,m-1.
     w : numpy array of int or float
-        weights of the m customer points
+        Weights of the m customer points.
     names : list of string
-        name/address of each customer point
-            
-    Remark
-    ------
-    If available or generated from address data, the longitude/latitude data and
-    address names are stored in the global variables __lo, __la, __names
+        Name/address of each customer point.
     """
 
     lo = None
@@ -217,11 +218,11 @@ def read_points( data_file ):
     if has_lola: lo, la = list(df.get('long')), list(df.get('lat')) 
     if Y is None and not has_lola:    
         geocode = __get_geocoder()
-        if _geo_server is None:
-            print('No geo-server available.')
+        if __geoserver is None:
+            print('No geoserver available.')
             return Y, w, names 
-        # Try to get geo-coordinates from the geo-server
-        print('Trying to get geo-coordinates from the geo-server. This can take a while.')
+        # Try to get geo-coordinates from the geoserver
+        print(f'Trying to get geo-coordinates from the geoserver {__geoserver}. This can take a while.')
         try:
             locations = [ geocode( city ) for city in names ]
         except:

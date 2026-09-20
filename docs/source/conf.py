@@ -46,3 +46,16 @@ html_theme_options = {'nosidebar':False,'body_max_width':None}
 html_static_path = ['_static']
 html_css_files = ['css/custom.css']
 
+# Source - https://stackoverflow.com/a/5599712
+# Posted by mzjn, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-09-19, License - CC BY-SA 4.0
+
+def skip(app, what, name, obj, would_skip, options):
+    if name == "__init__":
+        return False
+    return would_skip
+
+def setup(app):
+    app.connect("autodoc-skip-member", skip)
+
+
