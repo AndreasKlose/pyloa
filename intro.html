@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=99626c5e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyloa.plane package" href="pyloa.plane.html" />
+    <link rel="prev" title="PyLoa documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#planar-location">Planar location</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#data-input">Data input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#remark">Remark</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#network-location">Network location</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Data input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#discrete-location">Discrete location</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Data input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.mip.html">pyloa.mip package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Introduction</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/intro.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h1>
+<p><strong>pyloa</strong> (<span class="underline">py</span>thon <span class="underline">l</span>ocation <span class="underline">o</span>ptimization <span class="underline">a</span>lgorithms) provides a number of methods for solving location problems in the plane and on a network as well as discrete facility location problems.</p>
+<p>Some of the implemented solution methods require the availability of a mixed integer programming solver. The time being,
+either GuRoBi (via gurobipy) or Cplex (via docplex) can be used to this end.</p>
+</section>
+<section id="planar-location">
+<h1>Planar location<a class="headerlink" href="#planar-location" title="Link to this heading"></a></h1>
+<p>The sub-package <em>pyloa.plane</em> provides methods for solving the following location problems in the Euclidian plane:</p>
+<ul class="simple">
+<li><p>The <em>Fermat-Weber problem</em> using Weiszfeld’s, Ostresh’s and Drezner’s algorithms,</p></li>
+<li><p>The <em>planar 1-center problem</em> using Elzinga and Hearn’s, Welzl’s, and Charalambous’ algorithms as well as a primal-dual method and a second order cone formulation.</p></li>
+<li><p>The <em>multi-source Weber problem</em> using Cooper’s location-allocation method, the p-median heuristic, a second order cone mixed integer programming formulation, a simple variable neighbourhood search, and column generation. Implemented is also Ostresh’s method for solving 2-Weber problems exactly.</p></li>
+</ul>
+<section id="data-input">
+<h2>Data input<a class="headerlink" href="#data-input" title="Link to this heading"></a></h2>
+<p>Data input can be provided via a text/csv file. The file should at least provide columns for the two coordinates of each customer point. If available, longitude and latitude data can be provided instead. Optional further data include the customers’ positive weights, and an id/name/address of a customer point. A very simple example of a data file is the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">X</span><span class="p">;</span><span class="n">Y</span><span class="p">;</span><span class="n">weight</span>
+<span class="mi">0</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span>
+<span class="mi">5</span><span class="p">;</span><span class="mi">0</span><span class="p">;</span><span class="mi">1</span>
+<span class="mi">12</span><span class="p">;</span><span class="mi">6</span><span class="p">;</span><span class="mi">1</span>
+<span class="mi">0</span><span class="p">;</span><span class="mi">10</span><span class="p">;</span><span class="mi">1</span>
+</pre></div>
+</div>
+<p>Another one providing longitude and latitude data is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">address</span><span class="p">;</span><span class="n">lat</span><span class="p">;</span><span class="n">long</span>
+<span class="n">Aarhus</span><span class="p">;</span><span class="mf">56.1496278</span><span class="p">;</span><span class="mf">10.2134046</span>
+<span class="n">Herning</span><span class="p">;</span><span class="mf">56.1379757</span><span class="p">;</span><span class="mf">8.9746623</span>
+<span class="n">Horsens</span><span class="p">;</span><span class="mf">55.8611696</span><span class="p">;</span><span class="mf">9.8444774</span>
+<span class="n">Aalborg</span><span class="p">;</span><span class="mf">57.0462626</span><span class="p">;</span><span class="mf">9.9215263</span>
+<span class="n">Esbjerg</span><span class="p">;</span><span class="mf">55.4664892</span><span class="p">;</span><span class="mf">8.4520751</span>
+<span class="n">Aabenraa</span><span class="p">;</span><span class="mf">55.0446228</span><span class="p">;</span><span class="mf">9.4209667</span>
+<span class="n">Sønderborg</span><span class="p">;</span><span class="mf">54.9089186</span><span class="p">;</span><span class="mf">9.7897999</span>
+</pre></div>
+</div>
+<p>It is also possible to just provide address data without any coordinates. It is then tried to find the longitude and latitude of each address by means of the Python package <a class="reference external" href="https://geopy.readthedocs.io/en/stable/">geopy</a>. The addresses should be precise enough in order to avoid ambiguities. A few parameters that geopy uses when sending requests to the geocoder
+<em>Nominatim</em> can be controlled by means of the function <em>set_Nominatim_params</em> implemented in the module <em>pyloa.plane.parser</em>. Instead of <em>Nominatim</em>, it is also possible to use
+<a class="reference external" href="https://opencagedata.com">OpenCage’s geocoder</a>. An api-key is required for using this service. Up to 2500 geocoding requests per day are free. Switching to OpenCage’s geocoder
+can be done via the function <em>set_geoServer</em> implemented in module <em>pyloa.plane.parser</em>. Moreover, <a class="reference external" href="https://tsplib95.readthedocs.io/en/stable/">tsplib95</a> data files can be used for data input (just coordinates, weights are then assumed to equal 1).</p>
+<p>Instead of providing the required data via a file, they can also directly be passed to an instance of the class as arguments
+when creating the class instance.</p>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<p>The following Python snippet illustrates how to solve a planar location problem:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.planesolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">PlaneSolver</span>
+
+<span class="c1"># DataFile path and name of input data file</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">PlaneSolver</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)</span>
+
+<span class="c1"># Solve a Fermat-Weber problem</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Solve a multi-source Weber problem with 7 facility locations</span>
+<span class="c1"># by the default method (Location-allocation)</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">7</span> <span class="p">)</span>
+
+<span class="c1"># Solve a multi-source Weber problem as a quadratically constrained MIP</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;MIPQ&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Solve a multi-source Weber problem by means of column generation</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;colgen&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Solve a 1-center problem in plane</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+
+<span class="c1"># Solve a p-center problem in plane as a quadratically constrained MIP</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;MIPQ&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Solve a p-center problem in plane using location-allocation and VNS</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">minisum</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;VNS&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Retrieve solution information</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">facilities</span>            <span class="c1"># Array of the facilities&#39; coordinates</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">assigned</span>              <span class="c1"># Nearest facility (index) for each customer point</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">max_distance</span>          <span class="c1"># Largest unweighted distance to nearest facility</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">max_weighted_distance</span> <span class="c1"># Largest weighted distance to nearest facility</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">distance</span>              <span class="c1"># Sum of distances to nearest facility</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">weighted_distance</span>     <span class="c1"># Sum of weighted distance to nearest facility</span>
+
+<span class="c1"># Remark: Let m be the number of customer points, Y the numpy array of the</span>
+<span class="c1"># m customer coordinates and w the numpy array of customer weights.</span>
+<span class="c1"># Passing data directly to the class works as follows.</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">PlaneSolver</span><span class="p">(</span> <span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span> <span class="p">)</span>
+
+<span class="c1"># For plotting a solution use:</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="remark">
+<h2>Remark<a class="headerlink" href="#remark" title="Link to this heading"></a></h2>
+<p>When geospatial coordinates are available the plotting function above tries to plot the solution using a <em>folium</em> map and
+calls the default web browser for displaying the html file created by <a class="reference external" href="https://realpython.com/python-folium-web-maps-from-data/">folium</a>.
+Depending on the employed browser, it can happen that the browser refuses to display the html file. In this case, either
+just another browser to pen the created html file or, for instance, use Python’s http server to display this html file on local host’s address.</p>
+</section>
+</section>
+<section id="network-location">
+<h1>Network location<a class="headerlink" href="#network-location" title="Link to this heading"></a></h1>
+<p>The sub-package <em>pyloa.net</em> provides methods for solving location problems on a network. Currently, methods for
+solving the following network problems are implemented.</p>
+<ul class="simple">
+<li><p>The <em>maximal covering location problem</em> by means of</p>
+<ul>
+<li><p>a simple greedy heuristic,</p></li>
+<li><p>an integer or mixed integer programming solver, and</p></li>
+<li><p>a Lagrangian heuristic based on subgradient optimization.</p></li>
+</ul>
+</li>
+<li><p>The <em>p-median problem</em> using</p>
+<ul>
+<li><p>a MIP solver,</p></li>
+<li><p>a greedy method, or</p></li>
+<li><p>a Lagrangian heuristic based on subgradient optimization.</p></li>
+</ul>
+</li>
+<li><p>The <em>vertex p-center problem</em> using</p>
+<ul>
+<li><p>a MIP solver, or</p></li>
+<li><p>the method by Elloumi, Labbe and Pochet (2004).</p></li>
+</ul>
+</li>
+</ul>
+<section id="id1">
+<h2>Data input<a class="headerlink" href="#id1" title="Link to this heading"></a></h2>
+<p>Data can be provided via a text file structured as those from <a class="reference external" href="https://people.brunel.ac.uk/~mastjjb/jeb/info.html">Beasley’s OR library</a>. It is also possible to directly load problem instances from the OR library’s web side. Data may also be provided
+as arguments when creating the class instance.</p>
+<p>A small example is the following data of a maximal covering location problem:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">6</span> <span class="mi">11</span> <span class="mi">2</span>
+<span class="mi">1</span> <span class="mi">2</span> <span class="mi">8</span>
+<span class="mi">1</span> <span class="mi">3</span> <span class="mi">15</span>
+<span class="mi">1</span> <span class="mi">4</span> <span class="mi">10</span>
+<span class="mi">2</span> <span class="mi">3</span> <span class="mi">12</span>
+<span class="mi">2</span> <span class="mi">4</span> <span class="mi">7</span>
+<span class="mi">2</span> <span class="mi">5</span> <span class="mi">16</span>
+<span class="mi">3</span> <span class="mi">5</span> <span class="mi">9</span>
+<span class="mi">3</span> <span class="mi">6</span> <span class="mi">11</span>
+<span class="mi">4</span> <span class="mi">5</span> <span class="mi">11</span>
+<span class="mi">4</span> <span class="mi">6</span> <span class="mi">17</span>
+<span class="mi">5</span> <span class="mi">6</span> <span class="mi">13</span>
+<span class="mi">10</span> <span class="mi">10</span>
+<span class="mi">8</span> <span class="mi">10</span>
+<span class="mi">22</span> <span class="mi">10</span>
+<span class="mi">18</span> <span class="mi">10</span>
+<span class="mi">7</span> <span class="mi">10</span>
+<span class="mi">55</span> <span class="mi">10</span>
+</pre></div>
+</div>
+<p>The first line above gives the number of nodes, the number of edges and the number of facilities to locate. Thereafter, the
+end nodes and length of each edge follow. Finally, the weight and maximal radius of each customer node is given.</p>
+</section>
+<section id="id2">
+<h2>Usage<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<p>The following Python snippet illustrates how to use the package pyloa.net:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.net.netsolver</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetSolver</span>
+
+<span class="n">problem</span> <span class="o">=</span> <span class="n">NetSolver</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)</span>
+
+<span class="c1"># Solve a maximal covering location problem</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">mcl_solve</span><span class="p">()</span>
+
+<span class="c1"># Solve a p-median problem by means of the MIP solver</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">pmp_solve</span><span class="p">()</span>
+
+<span class="c1"># Solve a p-median problem by means of a Lagrangian heuristic</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">pmp_solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;subgradient&#39;</span><span class="p">)</span>
+
+<span class="c1"># Solve a vertex p-center problem</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">pcp_solve</span><span class="p">()</span>
+
+<span class="c1"># Solve a vertex p-center problem using Elloumi et al.&#39;s algorithm</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">pcp_solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Elloumi&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Solution information to any of the above can be retrieved using the following</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">facilities</span>   <span class="c1"># List of open facility nodes</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">assigned</span>     <span class="c1"># List of facilities to which each customer node is assigned</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">wdist</span>        <span class="c1"># Total weighted distance of customers to facilities</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">get_coverage</span> <span class="c1"># Returns total demand covered within maximal distances</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">radius</span>       <span class="c1"># Largest weighted distance of a customer to nearest facility</span>
+
+<span class="c1"># Passing data to the class instance when creating it, works as follows.</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">NetSolver</span><span class="p">(</span> <span class="n">dmat</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">dmax</span><span class="o">=</span><span class="n">dmax</span> <span class="p">)</span>
+<span class="c1"># Above, dmat is the numpy matrix of distances, p=7 facilities are to open,</span>
+<span class="c1"># w is the numpy array of customer/node weights and dmax the maximal distances to</span>
+<span class="c1"># observe in case of a maximal covering location problem. The following is</span>
+<span class="c1"># equivalent to the above.</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">NetSolver</span><span class="p">()</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span> <span class="n">dmat</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">,</span> <span class="n">dmax</span><span class="o">=</span><span class="n">dmax</span> <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="discrete-location">
+<h1>Discrete location<a class="headerlink" href="#discrete-location" title="Link to this heading"></a></h1>
+<p>This sub-package provides methods for solving discrete facility location problems. The module <em>pyloa.discrete.cflp</em> provides
+methods for solving the <em>capacitated facility location problem</em>, module <em>pyloa.discrete.uflp</em> contains some additional methods
+for the <em>uncapacitated facility location problem</em>, and module <em>pyloa.discrete.tlcflp</em> provides some methods for <em>two-stage</em>
+and <em>two-level (un-)capacitated facility location problems</em>.</p>
+<section id="id3">
+<h2>Data input<a class="headerlink" href="#id3" title="Link to this heading"></a></h2>
+<p><strong>Capacitated facility location</strong></p>
+<p>The following file formats can be employed for providing the required data to a CFLP:</p>
+<ol class="arabic simple">
+<li><p>The format of Beasley’s OR-library files (<em>formt=’CFL-OR’</em>)</p></li>
+<li><p>The format used by Guastaroba and Speranza (2009), (<em>formt=’CFL-G’</em>)</p></li>
+<li><p>The format used by Avella and Boccia (2009), (<em>formt*=’CFL-AO’</em>)</p></li>
+<li><p>The format used by Avella et al. (2021), (<em>formt*=’CFL-AN’</em>)</p></li>
+<li><p>The format used for the Goertz-Klose instances (<em>formt=’CFL-GK’</em>)</p></li>
+</ol>
+<p>The cost <span class="math notranslate nohighlight">\(c_{ji}\)</span> is the cost to supply all of customer <span class="math notranslate nohighlight">\(i\)</span>’s demand from a facility at site <span class="math notranslate nohighlight">\(j\)</span> in
+case of the file formats ‘CFL-OR’ and ‘CFL-GK’; otherwise, <span class="math notranslate nohighlight">\(c_{ji}\)</span> describes the cost per unit of demand.</p>
+<p>A simple example of the last file format is the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">CFLP</span><span class="o">-</span><span class="n">PROBLEMFILE</span><span class="p">]</span>
+<span class="n">Small</span> <span class="n">example</span> <span class="n">of</span> <span class="n">file</span> <span class="nb">format</span> <span class="s1">&#39;CFL-GK&#39;</span>
+
+<span class="p">[</span><span class="n">CUSTOMERS</span><span class="p">]</span>
+<span class="n">demand</span> <span class="n">name</span>
+<span class="mi">2</span> <span class="n">cust1</span>
+<span class="mi">4</span> <span class="n">cust2</span>
+<span class="mi">2</span> <span class="n">cust3</span>
+<span class="mi">5</span> <span class="n">cust4</span>
+<span class="mi">4</span> <span class="n">cust5</span>
+
+<span class="p">[</span><span class="n">DEPOTS</span><span class="p">]</span>
+<span class="n">capacity</span> <span class="n">fixcost</span>
+<span class="mi">4</span> <span class="mi">15</span>
+<span class="mi">10</span> <span class="mi">15</span>
+<span class="mi">8</span> <span class="mi">15</span>
+<span class="mi">6</span> <span class="mi">15</span>
+<span class="mi">5</span> <span class="mi">15</span>
+<span class="mi">5</span> <span class="mi">15</span>
+
+<span class="p">[</span><span class="n">COSTMATRIX</span><span class="p">]</span>
+<span class="n">Matrix</span> <span class="n">c</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span><span class="o">.</span> <span class="n">Rows</span><span class="o">=</span><span class="n">Depots</span>
+<span class="p">[</span><span class="n">MATRIX</span><span class="p">]</span>
+<span class="n">Dim</span> <span class="mi">6</span> <span class="mi">5</span>
+<span class="mi">12</span> <span class="mi">3</span> <span class="mi">54</span> <span class="mi">96</span> <span class="mi">68</span>
+<span class="mi">14</span> <span class="mi">83</span> <span class="mi">59</span> <span class="mi">94</span> <span class="mi">60</span>
+<span class="mi">18</span> <span class="mi">89</span> <span class="mi">15</span> <span class="mi">69</span> <span class="mi">64</span>
+<span class="mi">32</span> <span class="mi">5</span> <span class="mi">24</span> <span class="mi">23</span> <span class="mi">26</span>
+<span class="mi">15</span> <span class="mi">32</span> <span class="mi">67</span> <span class="mi">16</span> <span class="mi">16</span>
+<span class="mi">30</span> <span class="mi">29</span> <span class="mi">23</span> <span class="mi">38</span> <span class="mi">15</span>
+</pre></div>
+</div>
+<p><strong>Uncapacitated facility location</strong></p>
+<p>Data can be provided in just the same way as for the CFLP. Additionally, the <em>simple UflLib file format</em> can be used (formt=’UFL-SIMPLE’). A number of test problem instances from <a class="reference external" href="https://resources.mpi-inf.mpg.de/departments/d1/projects/benchmarks/UflLib">UflLib</a> show this format. See the link for examples.</p>
+<p><strong>Two-stage capacitated facility location</strong></p>
+<p>With that we mean the problem of finding optimal capacitated depot locations that serve a given customer set and are supplied by capacitated warehouses (or plants) at <strong>given</strong> locations. For providing the data, the file format used in Klose (1999, 2000) can be used. The example below explains how these files are structured:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">TSCFLP</span><span class="o">-</span><span class="n">PROBLEMFILE</span><span class="p">]</span>
+<span class="n">Example</span> <span class="n">of</span> <span class="n">TSCFLP</span> <span class="n">data</span> <span class="n">file</span>
+
+<span class="p">[</span><span class="n">PLANTS</span><span class="p">]</span>
+<span class="n">capacity</span> <span class="n">name</span>
+<span class="mi">154</span> <span class="n">Plant1</span>
+<span class="mi">10</span> <span class="n">Plant2</span>
+<span class="mi">227</span> <span class="n">Plant3</span>
+<span class="mi">128</span> <span class="n">Plant4</span>
+<span class="mi">152</span> <span class="n">Plant5</span>
+
+<span class="p">[</span><span class="n">DEPOTS</span><span class="p">]</span>
+<span class="n">capacity</span> <span class="n">fixcost</span> <span class="n">name</span>
+<span class="mi">135</span> <span class="mi">1319</span> <span class="n">Depot1</span>
+<span class="mi">110</span> <span class="mi">1132</span> <span class="n">Depot2</span>
+<span class="mi">117</span> <span class="mi">1218</span> <span class="n">Depot3</span>
+<span class="mi">10</span> <span class="mi">352</span> <span class="n">Depot4</span>
+<span class="mi">65</span> <span class="mi">952</span> <span class="n">Depot5</span>
+<span class="mi">23</span> <span class="mi">527</span> <span class="n">Depot6</span>
+
+<span class="p">[</span><span class="n">CUSTOMERS</span><span class="p">]</span>
+<span class="n">demand</span> <span class="n">name</span>
+<span class="mi">14</span> <span class="n">Customer1</span>
+<span class="mi">32</span> <span class="n">Customer2</span>
+<span class="mi">27</span> <span class="n">Customer3</span>
+<span class="mi">35</span> <span class="n">Customer4</span>
+<span class="mi">28</span> <span class="n">Customer5</span>
+<span class="mi">21</span> <span class="n">Customer6</span>
+<span class="mi">14</span> <span class="n">Customer7</span>
+<span class="mi">22</span> <span class="n">Customer8</span>
+<span class="mi">30</span> <span class="n">Customer9</span>
+<span class="mi">10</span> <span class="n">Customer10</span>
+
+<span class="p">[</span><span class="n">FSCOSTMAT</span><span class="p">]</span>
+<span class="n">c</span><span class="o">=</span> <span class="n">d_eucli</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.0075</span><span class="o">.</span> <span class="n">Unit</span> <span class="n">cost</span> <span class="n">to</span> <span class="n">supply</span> <span class="n">depots</span> <span class="p">(</span><span class="n">rows</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">plants</span> <span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+<span class="p">[</span><span class="n">MATRIX</span><span class="p">]</span>
+<span class="n">Dim</span> <span class="mi">6</span> <span class="mi">5</span>
+<span class="mf">4.6466</span> <span class="mf">3.4422</span> <span class="mf">7.0616</span> <span class="mf">4.0093</span> <span class="mf">2.6025</span>
+<span class="mf">3.8255</span> <span class="mf">5.1573</span> <span class="mf">6.8134</span> <span class="mf">5.3638</span> <span class="mf">2.6025</span>
+<span class="mf">5.6040</span> <span class="mf">0.6983</span> <span class="mf">6.7790</span> <span class="mf">1.6575</span> <span class="mf">2.6025</span>
+<span class="mf">1.1908</span> <span class="mf">7.2327</span> <span class="mf">3.9678</span> <span class="mf">6.4532</span> <span class="mf">2.6025</span>
+<span class="mf">4.4700</span> <span class="mf">5.6693</span> <span class="mf">2.3761</span> <span class="mf">4.0627</span> <span class="mf">2.6025</span>
+<span class="mf">2.5371</span> <span class="mf">7.3197</span> <span class="mf">0.9753</span> <span class="mf">5.9886</span> <span class="mf">2.6025</span>
+
+<span class="p">[</span><span class="n">SSCOSTMAT</span><span class="p">]</span>
+<span class="n">c</span><span class="o">=</span> <span class="n">d_eucli</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span><span class="o">.</span> <span class="n">Cost</span> <span class="n">to</span> <span class="n">supply</span> <span class="nb">all</span> <span class="n">of</span> <span class="n">a</span> <span class="n">customer</span><span class="s1">&#39;s demand (rows) from depots (columns)</span>
+<span class="p">[</span><span class="n">MATRIX</span><span class="p">]</span>
+<span class="n">Dim</span> <span class="mi">6</span> <span class="mi">10</span>
+<span class="mf">23.2084</span> <span class="mf">28.6521</span> <span class="mf">215.9494</span> <span class="mf">162.3789</span> <span class="mf">118.5469</span> <span class="mf">70.0834</span> <span class="mf">45.2495</span> <span class="mf">175.7449</span> <span class="mf">115.849</span> <span class="mf">11.7346</span>
+<span class="mf">26.5336</span> <span class="mf">52.0922</span> <span class="mf">180.0924</span> <span class="mf">77.9966</span> <span class="mf">50.5158</span> <span class="mf">70.9492</span> <span class="mf">20.3583</span> <span class="mf">169.4459</span> <span class="mf">166.6081</span> <span class="mf">13.5336</span>
+<span class="mf">59.6949</span> <span class="mf">146.3104</span> <span class="mf">250.0528</span> <span class="mf">273.341</span> <span class="mf">209.1637</span> <span class="mf">93.6621</span> <span class="mf">97.0409</span> <span class="mf">170.9021</span> <span class="mf">52.8417</span> <span class="mf">24.769</span>
+<span class="mf">75.242</span> <span class="mf">209.3067</span> <span class="mf">40.6921</span> <span class="mf">137.0687</span> <span class="mf">117.4352</span> <span class="mf">91.5451</span> <span class="mf">90.1284</span> <span class="mf">96.9329</span> <span class="mf">221.0452</span> <span class="mf">31.1538</span>
+<span class="mf">110.1936</span> <span class="mf">297.3463</span> <span class="mf">175.697</span> <span class="mf">340.7924</span> <span class="mf">271.8142</span> <span class="mf">128.3595</span> <span class="mf">153.1188</span> <span class="mf">68.1279</span> <span class="mf">172.8638</span> <span class="mf">44.6386</span>
+<span class="mf">104.5793</span> <span class="mf">286.3249</span> <span class="mf">74.4544</span> <span class="mf">267.5287</span> <span class="mf">218.3659</span> <span class="mf">119.7792</span> <span class="mf">136.1598</span> <span class="mf">33.353</span> <span class="mf">222.9709</span> <span class="mf">42.6095</span>
+</pre></div>
+</div>
+<p><strong>Two-level capacitated facility location</strong></p>
+<p>In this case, the locations of the warehouses (or plants) on the lower echelon have to be determined as well. In addition to the capacities, warehouse fixed cost are thus to be supplied as well. Data can be provided using the same format as above, just that the <em>plant</em> data need to have an additional column named <em>fixcost</em>. Moreover, the file format of the test instances from Fernandes et al. (2014) can be used as well. The first line of such a file provides the number of plant sites, the number of depot sites and the number of customers. The following lines give each single customer’s demand. The next lines provide for each plant site its capacity and fixed cost. Subsequently, comes the matrix of unit cost to forward one unit of demand from the plants (rows) to the depots (columns). The following lines specify capacity and fixed cost of each potential depot site. Finally, the last lines contain, for each depot site (rows), the cost per unit to meet the customers’ (columns) demand from the depot in the respective row.</p>
+</section>
+<section id="id4">
+<h2>Usage<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<p><strong>Capacitated facility location</strong></p>
+<p>For solving the CFLP either a MIP solver (Cplex or GuRoBi) or a branch-and-bound method based on Lagrangian relaxation and subgradient optimization can be employed. The MILP model can be based on the problem’s strong or weak LP formulation. It is also possible to generate <em>variable upper bound constraints</em> as user cuts. The Lagrangian-based branch-and-bound method employs the network simplex method from the <a class="reference external" href="https://lemon.cs.elte.hu/trac/lemon">Lemon Graph Library</a> (Deszö et al., 2011) for solving the transportation problems that arise when the set of open facilities is given. Moreover, it uses <a class="reference external" href="https://hjemmesider.diku.dk/~pisinger/codes.html">David Pisinger’s C-code</a> of the Combo algorithm (Martello et al., 1999) for solving the binary knapsack problem arising within the Lagrangian subproblem.</p>
+<p>The following code snippet illustrates how to use the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.discrete.cflp</span><span class="w"> </span><span class="kn">import</span> <span class="n">CFLP</span>
+
+<span class="n">cflp</span> <span class="o">=</span> <span class="n">CFLP</span><span class="p">(</span><span class="n">DataFile</span><span class="p">)</span>
+
+<span class="c1"># Solve using Cplex or GuRoBi. Default is Cplex if both are installed.</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="s1">&#39;mip&#39;</span>  <span class="c1"># Use the MIP solver.</span>
+
+<span class="n">cflp</span><span class="o">.</span><span class="n">mipSolver</span> <span class="o">=</span> <span class="s1">&#39;gurobi&#39;</span> <span class="c1"># If GuRoBi is installed</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">mipSolver</span> <span class="o">=</span> <span class="s1">&#39;cplex&#39;</span>  <span class="c1"># If Cplex is installed</span>
+
+<span class="n">cflp</span><span class="o">.</span><span class="n">adVubs</span>  <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Use weak problem formulation</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">addVubs</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># Generate variable upper bounds as user cuts</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">addVubs</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># Include variable upper bounds in the initial model (recommended)</span>
+
+<span class="n">cflp</span><span class="o">.</span><span class="n">nodeLim</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># Limit the number of branch-and-cut nodes if desired</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">timeLim</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># Limit the computation time in seconds if desired</span>
+
+<span class="n">cflp</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># No solver log-output to stdout</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Is the default</span>
+
+<span class="n">cflp</span><span class="o">.</span><span class="n">default_options</span><span class="p">()</span> <span class="c1"># Back to default options</span>
+
+<span class="n">cflp</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="p">)</span> <span class="c1"># Solve the problem instance</span>
+
+<span class="c1"># Output</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">facilities</span> <span class="c1"># List of open facilities (indices)</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">assigned</span>   <span class="c1"># Assignment of customers to open facilities (list) if uncapacitated</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">supply</span>     <span class="c1"># Product flows supply[(j,i)] from facility j to customer i (if capacitated)</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">fcost</span>      <span class="c1"># Total fixed facility cost</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">tcost</span>      <span class="c1"># Total supply/transportation cost</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">cost</span>       <span class="c1"># self.fcost + self.tcost</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">mip_time</span>   <span class="c1"># Solver&#39;s computation time in seconds</span>
+
+<span class="c1"># Solve using Lagrangian relaxation based branch-and-bound</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="s1">&#39;SG&#39;</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="c1"># Output is the same as above, except of mip_time</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">ctime</span> <span class="c1"># Computation time in CPU seconds and as wall time</span>
+
+<span class="c1"># If Cplex is available, its built-in Benders decomposition can be used as well.</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">solver</span> <span class="o">=</span> <span class="s1">&#39;mip&#39;</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">mipSolver</span> <span class="o">=</span> <span class="s1">&#39;cplex&#39;</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">addVubs</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">useBenders</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">cflp</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Passing the data directly to a class instance can be done as follows.</span>
+<span class="n">cflp</span> <span class="o">=</span> <span class="n">CFLP</span><span class="p">(</span><span class="n">unitCost</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span> <span class="p">)</span>
+<span class="c1"># Above, d is the numpy array of customer demands, s the array of depot capacities,</span>
+<span class="c1"># f the fixed cost array and c[j,i] is the cost of supplying all of customer i&#39;s</span>
+<span class="c1"># demand from a facility at site j. If unitCost=True, it is however assumed that</span>
+<span class="c1"># c[j,i] is the cost per unit of demand. The above is equivalent to</span>
+<span class="n">cflp</span> <span class="o">=</span> <span class="n">CFLP</span><span class="p">()</span>
+<span class="n">cfl</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">unitCost</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Uncapacitated facility location</strong></p>
+<p>Uncapacitated facility location problems can be solved just as a CFLP using the module <em>pyloa.discrete.cflp</em>. The module <em>pyloa.discrete.uflp</em> just adds a few additional procedures:</p>
+<ol class="arabic simple">
+<li><p>A Lagrangian relaxation based heuristic employing subgradient optimization.</p></li>
+<li><p>The classical Add and Drop procedures.</p></li>
+<li><p>The classical Interchange (or Swap) procedure.</p></li>
+</ol>
+<p>The following code snippet illustrates how to use the module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.discrete.uflp</span><span class="w"> </span><span class="kn">import</span> <span class="n">UFLP</span>
+
+<span class="c1"># Read data from a CFLP ORlib file</span>
+<span class="n">ufl</span> <span class="o">=</span> <span class="n">UFLP</span><span class="p">(</span> <span class="n">DataFile</span> <span class="p">)</span>
+
+<span class="c1"># Read data from using the simple UflLib formate</span>
+<span class="n">ufl</span> <span class="o">=</span> <span class="n">UFLP</span><span class="p">(</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">formt</span><span class="o">=</span><span class="s1">&#39;UFL-SIMPLE&#39;</span><span class="p">)</span>
+
+<span class="c1"># Read data from the other CFLP file formats mentioned above</span>
+<span class="n">formt</span> <span class="o">=</span> <span class="s1">&#39;CFL-GK&#39;</span> <span class="c1"># or, alternatively &#39;CFL-G&#39;, &#39;CFL-AO&#39;, &#39;CFL-AN&#39;</span>
+<span class="n">ufl</span> <span class="o">=</span> <span class="n">UFLP</span><span class="p">(</span> <span class="n">DataFile</span><span class="p">,</span> <span class="n">formt</span><span class="o">=</span><span class="n">formt</span> <span class="p">)</span>
+
+<span class="c1"># Solve the problem</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;LR&#39;</span>  <span class="p">)</span> <span class="c1"># Lagrangian heuristic</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ADD&#39;</span> <span class="p">)</span> <span class="c1"># Add heuristic</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;DROP&#39;</span><span class="p">)</span> <span class="c1"># Drop heuristic</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;DI&#39;</span>  <span class="p">)</span> <span class="c1"># Drop followed by Interchange</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;AI&#39;</span>  <span class="p">)</span> <span class="c1"># Add followed by Interchange</span>
+
+<span class="c1"># Output</span>
+<span class="n">uflp</span><span class="o">.</span><span class="n">facilities</span> <span class="c1"># List of open facilities (indices)</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">assigned</span>   <span class="c1"># Assignment of customers to open facilities (list)</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">fcost</span>      <span class="c1"># Total fixed facility cost</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">tcost</span>      <span class="c1"># Total supply/transportation cost</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">cost</span>       <span class="c1"># self.fcost + self.tcost</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">itr</span>        <span class="c1"># iterations</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">ctime</span>      <span class="c1"># Computation time in CPU seconds and as wall time</span>
+
+<span class="c1"># As in case of the CFLP, data can also be passed as arguments when</span>
+<span class="c1"># creating the class. Below, f is the numpy array of fixed facility cost</span>
+<span class="c1"># and c the numpy matrix such that c[j,i] is the cost to serve customer</span>
+<span class="c1"># i from facility j.</span>
+<span class="n">ufl</span> <span class="o">=</span> <span class="n">UFLP</span><span class="p">(</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span> <span class="p">)</span>
+<span class="c1"># In case that c is a matrix of unit cost (per unit of demand) use</span>
+<span class="n">ufl</span> <span class="o">=</span> <span class="n">UFLP</span><span class="p">(</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span> <span class="p">)</span> <span class="c1"># where d is the array of customer demands.</span>
+<span class="c1"># Equivalent to the above is the following.</span>
+<span class="n">ufl</span> <span class="o">=</span> <span class="n">UFLP</span><span class="p">()</span>
+<span class="n">ufl</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span> <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">d</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Two-stage and two-level facility location</strong></p>
+<p>The module <em>pyloa.discrete.tlcflp</em> provides routines to solve two-stage and two-level facility location problems heuristically as well as by a MIP solver (Cplex or GuRoBi). In case of a two-level problem, either the problem’s multi-commodity formulation or a flow formulation can be employed. The first one uses three-indexed variables <span class="math notranslate nohighlight">\(x_{ijk}\)</span> for the share of customer’s <span class="math notranslate nohighlight">\(k\)</span> demand met from plant <span class="math notranslate nohighlight">\(i\)</span> and depot <span class="math notranslate nohighlight">\(j\)</span>, whereas the second formulation uses variables <span class="math notranslate nohighlight">\(v_{ij}\)</span> for the amount of product shipped from plant <span class="math notranslate nohighlight">\(i\)</span> to depot <span class="math notranslate nohighlight">\(j\)</span> and variables <span class="math notranslate nohighlight">\(x_{jk}\)</span> for the share of customer <span class="math notranslate nohighlight">\(k\)</span>’s demand met from depot <span class="math notranslate nohighlight">\(j\)</span>. As in case of the CFLP, for both formulations, variable upper bounds may either be ignored, included as user cuts, or included in the initial model formulation. Note that the multi-commodity formulation actually only makes sense if these constraints are not ignored.</p>
+<p>The following code snippet shows how to use the module for solving an instance of the TSCFLP (fixed plant sites with given capacities,
+depot sites need to be located):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.discrete.tlcflp</span><span class="w"> </span><span class="kn">import</span> <span class="n">TLCFLP</span>
+
+<span class="c1"># T111.TCF contains data of small instance with 5 plant sites, 10 depot sites, 25 customers</span>
+<span class="n">tscfl</span> <span class="o">=</span> <span class="n">TLCFLP</span><span class="p">(</span><span class="s1">&#39;T111.TCF&#39;</span><span class="p">,</span><span class="n">formt</span><span class="o">=</span><span class="s1">&#39;TSCFL&#39;</span><span class="p">)</span>
+
+<span class="c1"># Default options</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">default_options</span><span class="p">()</span>
+
+<span class="c1"># Solve using the MIP solver (Cplex is default if present)</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Treatment of variable upper bounds</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">addVubs</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># ignore them</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">addVubs</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># include as user cuts</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">addVubs</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># include all in the initial model (this is the default)</span>
+
+<span class="c1"># Solution attributes</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">cost</span>  <span class="c1"># Total cost of the solution</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">fcost</span> <span class="c1"># Total fixed (depot) cost</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">tcost</span> <span class="c1"># Tuple of cost to supply depots from plants and customers from depts</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">facilities</span> <span class="c1"># List of open depot sites</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">supply</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Dictionary of supplies from plants to depots</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">supply</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Dictionary of supplies from depots to customers</span>
+                 <span class="c1"># (as share of a customer&#39;s demand)</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">mip_time</span>   <span class="c1"># Computation time used by the MIP solver</span>
+
+<span class="c1"># Benders&#39; decomposition may work better than the ordinary MIP solver</span>
+<span class="c1"># but requires the time being Cplex&#39;s built-in Benders&#39; method.</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">useBenders</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Remark: For suppressing the solver sending log-output to stdout use</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">silent</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># The module also includes a Lagrangian heuristic. The heuristic relaxes the plant</span>
+<span class="c1"># capacities in a Lagrangian manner. The resulting Lagrangian subproblem can be</span>
+<span class="c1"># reduced to a CFLP. Solving this gives a set of open depots. The min-cost network</span>
+<span class="c1"># flow problem is then solved and the plant vertices&#39; node potentials (dual variables)</span>
+<span class="c1"># used as Lagrangian multipliers for the next iteration. The procedure continues</span>
+<span class="c1"># until a maximal number of iterations is reached, a set of open depots is generated</span>
+<span class="c1"># a second time, or optimality should be established. Note that this procedure</span>
+<span class="c1"># resembles the subproblem phase of the Van Roy&#39;s Cross Decomposition method.</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">heuristic</span><span class="p">(</span> <span class="n">min_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span> <span class="p">)</span> <span class="c1"># Do at least 3 and at most 5 iterations</span>
+
+<span class="c1"># All output is the same as usual. Except the following:</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">ctime</span> <span class="c1"># CPU time and walltime in seconds used by the heuristic</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">bound</span> <span class="c1"># The obtained lower bound on the optimal objective value</span>
+
+<span class="c1"># Above, the Lagrangian subproblem is solved by the MIP solver. Instead, a Lagrangian</span>
+<span class="c1"># relaxation based branch-and-bound for the CFLP can be used.</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">cflp_solver</span> <span class="o">=</span> <span class="s1">&#39;sg&#39;</span>
+<span class="n">tscfl</span><span class="o">.</span><span class="n">heuristic</span><span class="p">(</span> <span class="n">min_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>In the similar way, two-level capacitated facility location problems can be addressed. In this case, however, we have the
+additional option to employ the multi-commodity formulation, which shows a stronger LP relaxation but a larger number
+of variables. Variable upper bound constraints should be included, but perhaps just as user cuts. Also applying
+Benders’ decomposition might give better results. Consider the data file T111.TCF used above for the TSCFLP and assume that
+we include fixed cost data to the plant data (cf. the section on data input). Let then TL111.TCF be the adjusted data
+file describing an instance of the TLCFLP. We may then use pyloa’s module <em>tlcflp</em> as illustrated below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.discrete.tlcflp</span><span class="w"> </span><span class="kn">import</span> <span class="n">TLCFLP</span>
+
+<span class="c1"># Create the class instance from the data. Use the problem&#39;s flow formulation.</span>
+<span class="n">tlcfl</span> <span class="o">=</span> <span class="n">TLCFLP</span><span class="p">(</span><span class="s1">&#39;TL111.TCF&#39;</span><span class="p">,</span> <span class="n">formt</span><span class="o">=</span><span class="s1">&#39;TLCFL-AK&#39;</span> <span class="p">)</span>
+
+<span class="c1"># Solve the problem instance using default options.</span>
+<span class="c1"># In particular, variable upper bounds are included.</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># Solution attributes:</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">cost</span>       <span class="c1"># Total cost of the solution</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">fcost</span>      <span class="c1"># Fixed cost of the open plant and open depot sites</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">tcost</span>      <span class="c1"># Cost of supplying open depots from open plants</span>
+                 <span class="c1"># and customers from the open depots</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">facilities</span> <span class="c1"># List of open plant and open depot sites</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">supply</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Dictionary of the amount of product shipped from plant to depot sites</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">supply</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Dictionary of shipments from depots to customers expressed</span>
+                 <span class="c1"># as shares of customer demands.</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">mip_time</span>   <span class="c1"># Computation time in seconds used by the solver</span>
+
+<span class="c1"># The multi-commodity formulation might at times perform better, in particular,</span>
+<span class="c1"># if variable upper bound constraints are generated as user cuts.</span>
+<span class="n">tlcfl</span> <span class="o">=</span> <span class="n">TLCFLP</span><span class="p">(</span><span class="s1">&#39;TL111.TCF&#39;</span><span class="p">,</span> <span class="n">formt</span><span class="o">=</span><span class="s1">&#39;TLCFL-AK&#39;</span><span class="p">,</span> <span class="n">mcf</span><span class="o">=</span><span class="kc">True</span> <span class="p">)</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">addVubs</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">tlcf</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="c1"># All outputs are the same as above, just that the supply dictionary is now a dictionary of</span>
+<span class="c1"># flows from plants via depots to customers. Flows are expressed as shares of the</span>
+<span class="c1"># customers&#39; demand.</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">supply</span>
+
+<span class="c1"># If Cplex is the MIP solver, we may also use its built-in Benders decomposition</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">useBenders</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">addVubs</span><span class="o">=</span><span class="mi">2</span>
+
+<span class="c1"># The similar can of course be done when using the flow formulation</span>
+<span class="n">tlcfl</span> <span class="o">=</span> <span class="n">TLCFLP</span><span class="p">(</span><span class="s1">&#39;TL111.TCF&#39;</span><span class="p">,</span> <span class="n">formt</span><span class="o">=</span><span class="s1">&#39;TLCFL-AK&#39;</span> <span class="p">)</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">useBenders</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+<span class="c1"># A Lagrangian heuristic is also available for approximately solving the TLCFLP. The heuristic</span>
+<span class="c1"># requires the flow formulation and is based on relaxing the flow conversation constraints in</span>
+<span class="c1"># a Lagrangian manner. The Lagrangian subproblem decomposes into a CFLP for determining the</span>
+<span class="c1"># set of open depots and a series of continuous knapsack and a single binary knapsack problem</span>
+<span class="c1"># for determining the open plant sites. Lagrangian multipliers are then, similar as done for</span>
+<span class="c1"># the TSCFLP, obtained from the node potentials after solving the min-cost network flow</span>
+<span class="c1"># problem for given sets of open plant and depot sites.</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">heuristic</span><span class="p">(</span> <span class="n">min_iter</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">5</span> <span class="p">)</span> <span class="c1"># at least 3 and at most 5 iterations</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">bound</span> <span class="c1"># Obtained lower bound on the optimal objective function value</span>
+<span class="n">tlcfl</span><span class="o">.</span><span class="n">ctime</span> <span class="c1"># CPU and walltime in seconds</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="references">
+<h1>References<a class="headerlink" href="#references" title="Link to this heading"></a></h1>
+<p>Avella P, Boccia M (2009) A cutting plane algorithm for the capacitated facility location problem. Computational Optimization and Applications 43:39–65.</p>
+<p>Avella P, Boccia M, Mattia S, Rossi F (2021) Weak flow cover inequalities for the capacitated facility location problem. European Journal of Operational Research 289:485–494.</p>
+<p>Charalambous C (1982) Extension of the Elzinga-Hearn algorithm to the weighted case. Operations Research 30:591–594.</p>
+<p>Cooper, L (1963) Location-allocation problems. Operations Research 11:331-343.</p>
+<p>Drezner Z (1992) A note on the Weber location problem. Annals of Operations Research 40:153–161.</p>
+<p>Dezsö B, Jüttner A, Kovács P (2011) LEMON – an Open Source C++ Graph Template Library. Electronic Notes in Theoretical Computer Science 264:23-45.</p>
+<p>Elloumi S, Labbé M, Pochet Y (2004) A new formulation and resolution method for the p-center problem. INFORMS Journal on Computing 16:84–94</p>
+<p>Fernandes DRM, Rocha C, Aloise D, Ribeiro GM, Santos EM, Silva A (2014) A simple and effective genetic algorithm for the two-stage capacitated facility location problem. Computers &amp; Industrial Engineering 75:200–208.</p>
+<p>Görtz S, Klose A (2012) A simple but usually fast branch-and-bound algorithm for the capacitated facility location problem. INFORMS Journal on Computing 24:597–610.</p>
+<p>Guastaroba G, Speranza MG (2009) Kernel search for the capacitated facility location problem. Journal of Heuristics 18:877–917.</p>
+<p>Klose A (1999) An LP-based heuristic for two-stage capacitated facility location problems. The Journal of the Operational Research Society 50:157–166.</p>
+<p>Klose A (2000) A Lagrangean relax-and-cut approach for the two-stage capacitated facility location problem. European Journal of Operational Research 126:185–198.</p>
+<p>Klose A (2026) Optimisation Models and Methods for Location Planning – with Implementations in Python. Springer Nature, Graduate Texts in Operations Research.</p>
+<p>Martello S, Pisinger D, Toth P (1999) Dynamic programming and strong bounds for the 0-1 knapsack problem. Management Science 45:414–424.</p>
+<p>Ostresh LM (1978) On the convergence of a class of iterative methods for solving the Weber location problem. Operations Research 26:597–609.</p>
+<p>Ostresh LM (1975) An efficient algorithm for solving the two center location-allocation problem. Journal of Regional Science 15:209–216.</p>
+<p>Van Roy TJ (1986) A cross decomposition algorithm for capacitated facility location. Operations Research 34:145–163.</p>
+<p>Welzl E (1991) Smallest enclosing disks (balls and ellipsoids). In: Maurer H (ed) New Results and New Trends in Computer Science, Lecture Notes in Computer Science, vol 555, pp 359–370.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="PyLoa documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyloa.plane.html" class="btn btn-neutral float-right" title="pyloa.plane package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

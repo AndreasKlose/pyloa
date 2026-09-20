@@ -1,0 +1,669 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.discrete.parser &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=99626c5e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.discrete.html">pyloa.discrete package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyloa.mip.html">pyloa.mip package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pyloa.discrete.parser</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyloa.discrete.parser</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read data of a discrete facility location problem.</span>
+<span class="sd">    Repositories with problem instances are in particular:</span>
+<span class="sd">      </span>
+<span class="sd">    - For the CFLP: http://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/  </span>
+<span class="sd">    - For the UFLP: https://resources.mpi-inf.mpg.de/departments/d1/projects/benchmarks/UflLib/data-format.html</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib.request</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlretrieve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+
+<span class="n">ORLib</span> <span class="o">=</span> <span class="s1">&#39;http://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/&#39;</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__readAvellaOld</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read old Avella-Boccia CFLP instance from file &quot;dataFile&quot;.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataFile : str</span>
+<span class="sd">        Name of the data file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------                         </span>
+<span class="sd">    d : numpy array of int</span>
+<span class="sd">        customer demands</span>
+<span class="sd">    s : numpy array of int</span>
+<span class="sd">        facility capacities </span>
+<span class="sd">    f : numpy array of float</span>
+<span class="sd">        fixed facility cost</span>
+<span class="sd">    c : numpy 2d-array of float</span>
+<span class="sd">        c[j][i] is the UNIT cost of supplying customer i from facility j. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span> <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">nCust</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">nFac</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">data</span><span class="p">[</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="n">nCust</span><span class="o">+</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">data</span><span class="p">[</span><span class="n">nCust</span><span class="o">+</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">:],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nFac</span><span class="p">,</span><span class="n">nCust</span><span class="p">)</span>
+   
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__readAvellaNew</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">unitCost</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read new Avella-Boccia CFLP instance from file dataFile. </span>
+<span class="sd">    Returns exactly the same as __readAvellaOld.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span> <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;DEMAND:[&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;CAP:[&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;SETUPCOST:[&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;TRANSPCOST:[&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+    <span class="c1"># Demand, capacities, fixed costs, unit supply cost matrix</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+        
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__readGuastaroba</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">unitCost</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads a Guastaroba CFLP instance from file dataFile. Returns</span>
+<span class="sd">    are the same as above. In case of these instances demand</span>
+<span class="sd">    and capacity data are not necessarily integers. Non-integral</span>
+<span class="sd">    demand values are thus multiplied by the provided scaling factor</span>
+<span class="sd">    and rounded down, and supply values are multiplied by scale</span>
+<span class="sd">    and rounded to the nearest integer. As for these instance</span>
+<span class="sd">    supply (transportation costs) are costs per unit, also these</span>
+<span class="sd">    cost data are multiplied by the scaling factor.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span> <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">nFac</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">nCust</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># Gustaroba stores demands and capacities as floats.</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">sf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">data</span><span class="p">[</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="n">nCust</span><span class="o">+</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="n">data</span><span class="p">[</span><span class="n">nCust</span><span class="o">+</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">nCust</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">nFac</span><span class="o">+</span><span class="mi">2</span><span class="p">:],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sf</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">))</span>
+    
+    <span class="n">non_integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span> <span class="n">df</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span> <span class="n">sf</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">non_integral</span> <span class="ow">and</span> <span class="n">scale</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">*=</span> <span class="n">scale</span> 
+        <span class="n">sf</span> <span class="o">*=</span> <span class="n">scale</span> 
+        <span class="n">c</span>  <span class="o">*=</span> <span class="n">scale</span>
+    
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span> <span class="n">df</span> <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span> <span class="n">sf</span> <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span>
+   
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__getCustomerData</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read customer data from a file following the structure </span>
+<span class="sd">    of the Goertz-Klose instances for the CFLP and TSCFLP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;[CUSTOMERS]&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span> <span class="k">break</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="k">break</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>    
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__getFacilityData</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">two_level</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read data of stage &#39;stage&#39; facilities from a file following</span>
+<span class="sd">    the structure of the Goertz-Klose instances for the CFLP and TSCFLP.</span>
+<span class="sd">    Facilities are depots if stage=2 and plants if stage=1. If</span>
+<span class="sd">    two-level is False, there are no plant fixed cost (as their location</span>
+<span class="sd">    is given), otherwise there are plant fixed cost as well.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span> <span class="p">)</span>
+    <span class="n">sect</span> <span class="o">=</span> <span class="s1">&#39;[DEPOTS]&#39;</span> <span class="k">if</span> <span class="n">stage</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">&#39;[PLANTS]&#39;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sect</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span> <span class="k">break</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">stage</span><span class="o">==</span><span class="mi">2</span> <span class="ow">or</span> <span class="n">two_level</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="k">break</span>
+        <span class="n">dataRow</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">dataRow</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span> 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">dataRow</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">)</span> 
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__getCostMatrix</span><span class="p">(</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">&#39;[COSTMATRIX]&#39;</span><span class="p">,</span>\
+                     <span class="n">alt_header</span><span class="o">=</span><span class="s1">&#39;[COSTMAT]&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a cost matrix from a file from  a file structured as the </span>
+<span class="sd">    CFLP and TSCFLP Goertz-Klose instances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sub_header</span> <span class="o">=</span> <span class="s1">&#39;[MATRIX]&#39;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">l</span> <span class="ow">or</span> <span class="n">alt_header</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span> <span class="k">break</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">F</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sub_header</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">upper</span><span class="p">():</span> <span class="k">break</span> 
+    <span class="n">F</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">F</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="k">break</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span><span class="p">(</span> <span class="n">c</span> <span class="p">)</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__readGortzKlose</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads a Goertz-Klose instance from file dataFile. Returns are the same </span>
+<span class="sd">    as for __readAvellaOld and __readAvellaNew with the exception of the </span>
+<span class="sd">    supply cost matrix c, which is returned with c[j][i] being the cost of </span>
+<span class="sd">    supplying all of customer&#39;s i demand from facility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>            
+    <span class="n">d</span> <span class="o">=</span> <span class="n">__getCustomerData</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="n">s</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">__getFacilityData</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">__getCostMatrix</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">dataFile</span> <span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span>
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__readORLib</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read an ORLIB CFLP data instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span><span class="o">%</span><span class="mi">2</span><span class="o">==</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">)</span> <span class="k">if</span> <span class="n">j</span><span class="o">%</span><span class="mi">2</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">:])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">D</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span> <span class="p">)</span>
+    <span class="n">c</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span>
+    
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">__read_ufl_simple</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read UFLP instance in the simple UflLib format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span> <span class="k">break</span> 
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">l</span><span class="p">])</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">l</span><span class="o">+</span><span class="mi">3</span><span class="p">:])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">D</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">J</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">D</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">D</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:],</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="n">J</span><span class="p">]</span>         
+                 
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="read_cflp">
+<a class="viewcode-back" href="../../../pyloa.discrete.html#pyloa.discrete.parser.read_cflp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_cflp</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">formt</span><span class="o">=</span><span class="s1">&#39;GK&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads data of a CFLP instance from a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataFile : str</span>
+<span class="sd">        Name of the data file.</span>
+<span class="sd">    formt : str</span>
+<span class="sd">        Format of the data file, that is, </span>
+
+<span class="sd">        * &quot;AO&quot; for the old Avella-Boccia CFLP instances</span>
+<span class="sd">        * &quot;AN&quot; for the new Avella-Boccia CFLP instances</span>
+<span class="sd">        * &quot;G&quot;  for the Guastaroba CFLP instances</span>
+<span class="sd">        * &quot;GK&quot; for the Goertz-Klose CFLP instances (Default)</span>
+<span class="sd">        * &quot;OR&quot; for an ORLIB CFLP instance</span>
+<span class="sd">    scale : int, optional</span>
+<span class="sd">        Only used for Guastaroba instances. </span>
+<span class="sd">        If scale=1, demands and capacities will be returned as floats;</span>
+<span class="sd">        otherwise they are multiplied by &#39;scale&#39; and the non-integral </span>
+<span class="sd">        capacities rounded to the nearest integer.                      </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : numpy array of int or float </span>
+<span class="sd">        Customer demands.</span>
+<span class="sd">    s : numpy array of int or float</span>
+<span class="sd">        Facility capacities. </span>
+<span class="sd">    f : numpy array of float</span>
+<span class="sd">        Fixed facility costs.</span>
+<span class="sd">    c : numpy 2d-array of float </span>
+<span class="sd">        c[j,i] is either the unit cost or the total cost of</span>
+<span class="sd">        supplying customer i from a facility at site j.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">formt</span> <span class="o">=</span> <span class="n">formt</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>      
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span> 
+        <span class="k">if</span> <span class="n">formt</span> <span class="o">==</span> <span class="s1">&#39;OR&#39;</span><span class="p">:</span>
+            <span class="c1">#Try to download the instance from the OR library</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">url</span> <span class="o">=</span> <span class="n">ORLib</span><span class="o">+</span><span class="n">dataFile</span>
+                <span class="n">urlretrieve</span><span class="p">(</span> <span class="n">url</span><span class="p">,</span> <span class="n">dataFile</span> <span class="p">)</span>  
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot download file &quot;</span><span class="o">+</span><span class="n">dataFile</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot read file &quot;</span><span class="o">+</span><span class="n">dataFile</span> <span class="p">)</span>  
+                     
+    <span class="k">if</span> <span class="n">formt</span> <span class="o">==</span> <span class="s1">&#39;AO&#39;</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">__readAvellaOld</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">formt</span> <span class="o">==</span> <span class="s1">&#39;AN&#39;</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">__readAvellaNew</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">formt</span> <span class="o">==</span> <span class="s1">&#39;G&#39;</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">__readGuastaroba</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">formt</span> <span class="o">==</span> <span class="s1">&#39;GK&#39;</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">__readGortzKlose</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">formt</span> <span class="o">==</span> <span class="s1">&#39;OR&#39;</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">__readORLib</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span> 
+    
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span></div>
+
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="read_uflp">
+<a class="viewcode-back" href="../../../pyloa.discrete.html#pyloa.discrete.parser.read_uflp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_uflp</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">formt</span><span class="o">=</span><span class="s1">&#39;OR&#39;</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads data of a UFLP instance from a file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataFile : str</span>
+<span class="sd">        Name of the data file</span>
+<span class="sd">    formt : str</span>
+<span class="sd">        format of the data file, that is, </span>
+
+<span class="sd">        * &quot;OR&quot;     for data files just the same as the CFLP ORLib files</span>
+<span class="sd">        * &quot;SIMPLE&quot; for data files in UflLib simple format                      </span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    f : numpy array of float</span>
+<span class="sd">        Fixed facility costs.</span>
+<span class="sd">    c : numpy 2d-array of float </span>
+<span class="sd">        c[j,i] is either the unit cost or the total cost of</span>
+<span class="sd">        supplying customer i from a facility at site j.</span>
+<span class="sd">    &quot;&quot;&quot;</span>      
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span> 
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot read file &quot;</span><span class="o">+</span><span class="n">dataFile</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">formt</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;OR&#39;</span><span class="p">:</span>                     
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">__readORLib</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="c1"># Simple format is assumed</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">__read_ufl_simple</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span></div>
+
+
+<span class="c1">#-------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="read_tscflp">
+<a class="viewcode-back" href="../../../pyloa.discrete.html#pyloa.discrete.parser.read_tscflp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_tscflp</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">two_level</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">mcf</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read an instance of a 2-stage capacitated facility location problem</span>
+<span class="sd">    (two_level=False) or of a 2-level CFLP (two_level=True) from a file </span>
+<span class="sd">    that uses the format of the test instances used in Klose (1999, 2000).</span>
+<span class="sd">    If *mcf* is True, the cost for supplying customers is returned</span>
+<span class="sd">    as a 3-dimensional numpy array in case of a two-level problem.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataFile : str</span>
+<span class="sd">        Name (and path) of the data file</span>
+<span class="sd">    two-level : bool, optional </span>
+<span class="sd">        True, if the file contains data for a two-level problem</span>
+<span class="sd">        so that there are fixed cost for both facilities on</span>
+<span class="sd">        stage 1 (plants) and on stage 2 (depots). Otherwise,</span>
+<span class="sd">        fixed cost are only read for stage 2 facilities.</span>
+<span class="sd">    mcf : bool, optional </span>
+<span class="sd">        If True, a single cost matrix as a numpy 3d-array</span>
+<span class="sd">        is returned, so that c[i,j,k] is the cost to supply all</span>
+<span class="sd">        of customer k&#39;s demand from facility j on stage 2 and</span>
+<span class="sd">        facility i on stage 1. Note that this only makes sense</span>
+<span class="sd">        if the problem is a two-level one with location decisions</span>
+<span class="sd">        to be made on both stages. If *mcf* is False (the default),</span>
+<span class="sd">        a tuple of two numpy 2d-arrays is returned. The first</span>
+<span class="sd">        one gives the unit cost to supply facilities on stage 2</span>
+<span class="sd">        from facilities on stage 1. The second one shows the</span>
+<span class="sd">        cost to supply all of a customer&#39;s demand from a</span>
+<span class="sd">        facility on stage 2. Rows of the first matrix correspond</span>
+<span class="sd">        to stage 1 facilities. Rows of the second matrix to</span>
+<span class="sd">        stage 2 facilities.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : numpy array of int </span>
+<span class="sd">        Array of customer demands.</span>
+<span class="sd">    s : tuple of numpy arrays of int </span>
+<span class="sd">        Array of capacities of stage 1 and stage 2 facilities.</span>
+<span class="sd">    f : numpy array of float or tuple of such arrays</span>
+<span class="sd">        Fixed cost of stage 2 facilities if two_level=False.</span>
+<span class="sd">        Otherwise, the tuple of fixed costs of facilities</span>
+<span class="sd">        on stage 1 and stage 2.</span>
+<span class="sd">    c : tuple of two numpy 2d-arrays or a numpy 3d-array of float</span>
+<span class="sd">        If mcf=False, c[0][i,j] is the cost to supply 1 unit</span>
+<span class="sd">        of product from facility i at stage 1 to facility j</span>
+<span class="sd">        at stage 2, and c[1][j,k] is the cost of supplying</span>
+<span class="sd">        all of customer k&#39;s demand from stage 2 facility j.</span>
+<span class="sd">        If mcf=True, c[i,j,k] is the cost to supply all</span>
+<span class="sd">        of customer k&#39;s demand from facility j at stage 2</span>
+<span class="sd">        and facility i at stage 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot read file &quot;</span><span class="o">+</span><span class="n">dataFile</span><span class="p">)</span>
+    
+    <span class="c1"># Get demand data            </span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">__getCustomerData</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="c1"># Get depot data (2nd stage facilities) </span>
+    <span class="n">s</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="n">__getFacilityData</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">)</span>
+    <span class="c1"># Get plant data (1st stage facilities)</span>
+    <span class="k">if</span> <span class="n">two_level</span><span class="p">:</span>
+        <span class="n">S</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="n">__getFacilityData</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">two_level</span><span class="o">=</span><span class="n">two_level</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">__getFacilityData</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+    <span class="c1"># Get cost matrix (unit cost) on 1st stage </span>
+    <span class="c1"># In the file, rows below to depots not to plants. Hence transpose it</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">__getCostMatrix</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">&#39;[FSCOSTMAT]&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># Get cost matrix on second stage</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">__getCostMatrix</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="s1">&#39;[SSCOSTMAT]&#39;</span><span class="p">)</span> 
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">two_level</span><span class="p">:</span> <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">s</span><span class="p">),</span> <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="n">c</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">mcf</span><span class="p">:</span> <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">s</span><span class="p">),</span> <span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="n">f</span><span class="p">),</span> <span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+    
+    <span class="c1"># Create 3d cost matrix for multi-commodity formulation</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span> <span class="n">cc</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span> <span class="n">cc</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">+=</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">s</span><span class="p">),</span> <span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="n">f</span><span class="p">),</span> <span class="n">cc</span></div>
+
+
+<span class="c1">#-------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="read_tlcflp">
+<a class="viewcode-back" href="../../../pyloa.discrete.html#pyloa.discrete.parser.read_tlcflp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_tlcflp</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="n">mcf</span><span class="o">=</span><span class="kc">False</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read an instance of a 2-level capacitated facility location problem</span>
+<span class="sd">    that uses the same format as the instances from Fernandes et al</span>
+<span class="sd">    (2014). That is, the file is structured as follows:</span>
+<span class="sd">    </span>
+<span class="sd">    1. 1st line is : number p of plants, n of depots and m of customers</span>
+<span class="sd">    2. m lines with customer demand</span>
+<span class="sd">    3. p lines with plant capacity and fixed cost</span>
+<span class="sd">    4. matrix with supply cost per unit from plants (rows) to depots (columns)</span>
+<span class="sd">    5. n lines with depot capacity and fixed cost</span>
+<span class="sd">    6. matrix of supply cost cost per unit from depots (rows) to customers (columns)</span>
+<span class="sd">    </span>
+<span class="sd">    If *mcf* is True, the cost matrix (unit cost!) will be returned as a 3d-matrix</span>
+<span class="sd">    indicating that the multi-commodity formulation of the problem is to</span>
+<span class="sd">    be used.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataFile : str </span>
+<span class="sd">        Name (and path) of the data file. </span>
+<span class="sd">    mcf : bool, optional </span>
+<span class="sd">        If True, a numpy 3d-array of float is returned as cost matrix.</span>
+<span class="sd">        Otherwise a tuple of two numpy 2d-arrays is returned.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : numpy array of int </span>
+<span class="sd">        Array of customer demands.</span>
+<span class="sd">    s : tuple of numpy arrays of int </span>
+<span class="sd">        Array of capacities of stage 1 and stage 2 facilities.</span>
+<span class="sd">    f : tuple of two numpy array of float</span>
+<span class="sd">        The tuple of fixed costs of facilities on stage 1 and 2.</span>
+<span class="sd">    c : tuple of two numpy 2d-arrays or a numpy 3d-array of float</span>
+<span class="sd">        If mcf=False, c[0][i,j] is the cost to supply 1 unit</span>
+<span class="sd">        of product from facility i at stage 1 to facility j</span>
+<span class="sd">        at stage 2, and c[1][j,k] is the cost of supplying</span>
+<span class="sd">        all of customer k&#39;s demand from stage 2 facility j.</span>
+<span class="sd">        If mcf=True, c[i,j,k] is the cost to supply 1 unit</span>
+<span class="sd">        of customer k&#39;s demand from facility j at stage 2</span>
+<span class="sd">        and facility i at stage 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span> <span class="n">dataFile</span> <span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot read file &quot;</span><span class="o">+</span><span class="n">dataFile</span><span class="p">)</span>
+    
+    <span class="n">ff</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span> <span class="n">dataFile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span> <span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">ff</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">ff</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="c1"># Number of plants, satellites, and customers</span>
+    <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+    
+    <span class="c1"># customer demands</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="c1"># plant capacities and fixed costs</span>
+    <span class="n">SF</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">p</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">S</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">SF</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">F</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">SF</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># unit transportation costs plants -&gt; depots</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="n">p</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span> <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="c1"># Depot capacities and fixed costs</span>
+    <span class="n">sf</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sf</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">sf</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="c1"># Unit transportation costs depots -&gt; customers</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="o">*</span><span class="n">p</span><span class="o">+</span><span class="n">m</span><span class="o">+</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">mcf</span><span class="p">:</span> <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">s</span><span class="p">),</span> <span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="n">f</span><span class="p">),</span> <span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="n">c</span><span class="p">)</span>
+    
+    <span class="c1"># Create 3d cost matrix for multi-commodity formulation</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span> <span class="n">cc</span><span class="p">[:,:,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">):</span> <span class="n">cc</span><span class="p">[</span><span class="n">i</span><span class="p">,:,:]</span><span class="o">+=</span> <span class="n">c</span>
+    
+    <span class="c1"># check cost matrix</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">cst</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">cst</span><span class="o">-</span><span class="n">cc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1.0E-07</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="p">(</span><span class="n">S</span><span class="p">,</span><span class="n">s</span><span class="p">),</span> <span class="p">(</span><span class="n">F</span><span class="p">,</span><span class="n">f</span><span class="p">),</span> <span class="n">cc</span></div>
+
+
+<span class="c1">#---------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="store_cflp_GK">
+<a class="viewcode-back" href="../../../pyloa.discrete.html#pyloa.discrete.parser.store_cflp_GK">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">store_cflp_GK</span><span class="p">(</span> <span class="n">fname</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">unitCost</span><span class="o">=</span><span class="kc">True</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write CFLP data to file fname using GK format.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fname : str</span>
+<span class="sd">        Name of file where to write the data. </span>
+<span class="sd">        *Warning*: Any existing file of the name and path will be overwritten!</span>
+<span class="sd">    d : numpy array of float or int</span>
+<span class="sd">        Customer demands.</span>
+<span class="sd">    s : numpy array of float or int</span>
+<span class="sd">        Facility capacities.</span>
+<span class="sd">    f : numpy array of float </span>
+<span class="sd">        Fixed facility costs.</span>
+<span class="sd">    c : numpy 2d-array of float</span>
+<span class="sd">        c[j,i] is either the cost per unit of supplying</span>
+<span class="sd">        customer i from facility j (if unitCost=True)</span>
+<span class="sd">        or the total cost of supplying customer i</span>
+<span class="sd">        from facility j (if unitCost=False).</span>
+<span class="sd">    unitCost : bool</span>
+<span class="sd">        See argument c.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;[CFLP-PROBLEMFILE]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;No comment</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;[CUSTOMERS]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;demand name</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span> <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39; Customer &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;[DEPOTS]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;capacity fixcost</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span> <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;[COSTMAT]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Matrix c(j,i). Rows=Depots</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;[MATRIX]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;Dim &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
+            <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">F</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">F</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

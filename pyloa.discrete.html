@@ -1,0 +1,1265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyloa.discrete package &mdash; PyLoa 1.00 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=99626c5e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=da1d7f10"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyloa.mip package" href="pyloa.mip.html" />
+    <link rel="prev" title="pyloa.net package" href="pyloa.net.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PyLoa
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#planar-location">Planar location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#network-location">Network location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#discrete-location">Discrete location</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html#references">References</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.plane.html">pyloa.plane package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.net.html">pyloa.net package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pyloa.discrete package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.discrete.dflprob">pyloa.discrete.dflprob module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem"><code class="docutils literal notranslate"><span class="pre">DFLProblem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.__init__"><code class="docutils literal notranslate"><span class="pre">DFLProblem.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.addVubs"><code class="docutils literal notranslate"><span class="pre">DFLProblem.addVubs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.assigned"><code class="docutils literal notranslate"><span class="pre">DFLProblem.assigned</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.bound"><code class="docutils literal notranslate"><span class="pre">DFLProblem.bound</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.c"><code class="docutils literal notranslate"><span class="pre">DFLProblem.c</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.ccnst"><code class="docutils literal notranslate"><span class="pre">DFLProblem.ccnst</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.cost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.cost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.ctime"><code class="docutils literal notranslate"><span class="pre">DFLProblem.ctime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.cuts"><code class="docutils literal notranslate"><span class="pre">DFLProblem.cuts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.d"><code class="docutils literal notranslate"><span class="pre">DFLProblem.d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.default_options"><code class="docutils literal notranslate"><span class="pre">DFLProblem.default_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.f"><code class="docutils literal notranslate"><span class="pre">DFLProblem.f</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.facilities"><code class="docutils literal notranslate"><span class="pre">DFLProblem.facilities</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.fcost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.fcost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.get_fcost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.get_fcost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.mipSolver"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mipSolver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.mipStrategy"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mipStrategy</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.mip_time"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mip_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.mip_work"><code class="docutils literal notranslate"><span class="pre">DFLProblem.mip_work</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.model"><code class="docutils literal notranslate"><span class="pre">DFLProblem.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.nodeCount"><code class="docutils literal notranslate"><span class="pre">DFLProblem.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.nodeLim"><code class="docutils literal notranslate"><span class="pre">DFLProblem.nodeLim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.optTol"><code class="docutils literal notranslate"><span class="pre">DFLProblem.optTol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.s"><code class="docutils literal notranslate"><span class="pre">DFLProblem.s</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.scale_costs"><code class="docutils literal notranslate"><span class="pre">DFLProblem.scale_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.set_data"><code class="docutils literal notranslate"><span class="pre">DFLProblem.set_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.silent"><code class="docutils literal notranslate"><span class="pre">DFLProblem.silent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.stages"><code class="docutils literal notranslate"><span class="pre">DFLProblem.stages</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.supply"><code class="docutils literal notranslate"><span class="pre">DFLProblem.supply</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.tcost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.tcost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.timeLim"><code class="docutils literal notranslate"><span class="pre">DFLProblem.timeLim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.totalDemand"><code class="docutils literal notranslate"><span class="pre">DFLProblem.totalDemand</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.two_level"><code class="docutils literal notranslate"><span class="pre">DFLProblem.two_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.uncap"><code class="docutils literal notranslate"><span class="pre">DFLProblem.uncap</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.unitCost"><code class="docutils literal notranslate"><span class="pre">DFLProblem.unitCost</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.unscale_costs"><code class="docutils literal notranslate"><span class="pre">DFLProblem.unscale_costs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.useBenders"><code class="docutils literal notranslate"><span class="pre">DFLProblem.useBenders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.useLB"><code class="docutils literal notranslate"><span class="pre">DFLProblem.useLB</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.v"><code class="docutils literal notranslate"><span class="pre">DFLProblem.v</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.x"><code class="docutils literal notranslate"><span class="pre">DFLProblem.x</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.y"><code class="docutils literal notranslate"><span class="pre">DFLProblem.y</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem.z"><code class="docutils literal notranslate"><span class="pre">DFLProblem.z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.discrete.parser">pyloa.discrete.parser module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.parser.read_cflp"><code class="docutils literal notranslate"><span class="pre">read_cflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.parser.read_tlcflp"><code class="docutils literal notranslate"><span class="pre">read_tlcflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.parser.read_tscflp"><code class="docutils literal notranslate"><span class="pre">read_tscflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.parser.read_uflp"><code class="docutils literal notranslate"><span class="pre">read_uflp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.parser.store_cflp_GK"><code class="docutils literal notranslate"><span class="pre">store_cflp_GK()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.discrete.cflp">pyloa.discrete.cflp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.cflp.CFLP"><code class="docutils literal notranslate"><span class="pre">CFLP</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.cflp.CFLP.__init__"><code class="docutils literal notranslate"><span class="pre">CFLP.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.cflp.CFLP.comp_flows"><code class="docutils literal notranslate"><span class="pre">CFLP.comp_flows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.cflp.CFLP.solve"><code class="docutils literal notranslate"><span class="pre">CFLP.solve()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.cflp.CFLP.solver"><code class="docutils literal notranslate"><span class="pre">CFLP.solver</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.cflp.VubGenerator"><code class="docutils literal notranslate"><span class="pre">VubGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.cflp.VubGenerator.__init__"><code class="docutils literal notranslate"><span class="pre">VubGenerator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.cflp.VubGenerator.invoke"><code class="docutils literal notranslate"><span class="pre">VubGenerator.invoke()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.discrete.CFLsg">pyloa.discrete.CFLsg module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.CFLsg.solveCFLP"><code class="docutils literal notranslate"><span class="pre">solveCFLP()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.discrete.uflp">pyloa.discrete.uflp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP"><code class="docutils literal notranslate"><span class="pre">UFLP</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP.__init__"><code class="docutils literal notranslate"><span class="pre">UFLP.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP.alpha"><code class="docutils literal notranslate"><span class="pre">UFLP.alpha</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP.default_subgr_params"><code class="docutils literal notranslate"><span class="pre">UFLP.default_subgr_params()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP.half"><code class="docutils literal notranslate"><span class="pre">UFLP.half</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP.itr"><code class="docutils literal notranslate"><span class="pre">UFLP.itr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP.sg_iter"><code class="docutils literal notranslate"><span class="pre">UFLP.sg_iter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.uflp.UFLP.solve"><code class="docutils literal notranslate"><span class="pre">UFLP.solve()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pyloa.discrete.tlcflp">pyloa.discrete.tlcflp module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.tlcflp.MCFVubGen"><code class="docutils literal notranslate"><span class="pre">MCFVubGen</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.MCFVubGen.__init__"><code class="docutils literal notranslate"><span class="pre">MCFVubGen.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.MCFVubGen.invoke"><code class="docutils literal notranslate"><span class="pre">MCFVubGen.invoke()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.tlcflp.TLCFLP"><code class="docutils literal notranslate"><span class="pre">TLCFLP</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.TLCFLP.__init__"><code class="docutils literal notranslate"><span class="pre">TLCFLP.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.TLCFLP.cflp_solver"><code class="docutils literal notranslate"><span class="pre">TLCFLP.cflp_solver</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.TLCFLP.get_full_solution"><code class="docutils literal notranslate"><span class="pre">TLCFLP.get_full_solution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.TLCFLP.heuristic"><code class="docutils literal notranslate"><span class="pre">TLCFLP.heuristic()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.TLCFLP.solve"><code class="docutils literal notranslate"><span class="pre">TLCFLP.solve()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.discrete.tlcflp.VubGenerator"><code class="docutils literal notranslate"><span class="pre">VubGenerator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.VubGenerator.__init__"><code class="docutils literal notranslate"><span class="pre">VubGenerator.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.discrete.tlcflp.VubGenerator.invoke"><code class="docutils literal notranslate"><span class="pre">VubGenerator.invoke()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyloa.mip.html">pyloa.mip package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyloa</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PyLoa</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pyloa.discrete package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pyloa.discrete.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pyloa-discrete-package">
+<h1>pyloa.discrete package<a class="headerlink" href="#pyloa-discrete-package" title="Link to this heading"></a></h1>
+<p>Methods for solving discrete facility location problems.</p>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-pyloa.discrete.dflprob">
+<span id="pyloa-discrete-dflprob-module"></span><h2>pyloa.discrete.dflprob module<a class="headerlink" href="#module-pyloa.discrete.dflprob" title="Link to this heading"></a></h2>
+<p>Base class for a discrete facility location problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.discrete.dflprob.</span></span><span class="sig-name descname"><span class="pre">DFLProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CFL-GK'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/dflprob.html#DFLProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for a discrete facility location problem (single and two stage).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CFL-GK'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/dflprob.html#DFLProblem.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.__init__" title="Link to this definition"></a></dt>
+<dd><p>Creates an instance of a discrete facility location problem.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fname<span class="classifier">str, optional  </span></dt><dd><p>None or name of the input file or problem instance to be solved.
+If None, it is assumed that the data are either provided via arguments
+c, f, d and s or later passed to the class instance using the 
+method “set_data”.</p>
+</dd>
+<dt>formt<span class="classifier">str, optional  </span></dt><dd><p>Format of the input file, that is,</p>
+<ul class="simple">
+<li><p>‘CFL-AO’     for the old Avella-Boccia CFLP instances</p></li>
+<li><p>‘CFL-AN’     for the new Avella-Boccia CFLP instances</p></li>
+<li><p>‘CFL-G’      for the Guastaroba CFLP instances</p></li>
+<li><p>‘CFL-GK’     for the Goertz-Klose CFLP instances (the default)</p></li>
+<li><p>‘CFL-OR’     for an CFLP instance in OR library format</p></li>
+<li><p>‘UFL-OR’     for an UFLP instance in CFLP OR library format similar to the M-instances from UflLib (Max Planck Informatik)</p></li>
+<li><p>‘UFL-SIMPLE’ for the UflLib instances in the “simple” format</p></li>
+<li><p>‘TSCFL’      for the 2-stage instances from Klose (1999,2000)</p></li>
+<li><p>‘TLCFL-AK’   for 2-level instances using the similar file format as the 2-stage instances from Klose (1999,2000)</p></li>
+<li><p>‘TLCFL-FRA’  for 2-level instances from Fernandes et al (2014).</p></li>
+</ul>
+</dd>
+<dt>unitCost<span class="classifier">bool, optional   </span></dt><dd><p>If True, the supply cost c[j][i] (resp. c[i,j,k]) are expected to 
+be the unit cost of supplying customer i from facility j (resp.
+to supply customer k via facilities i and j). Otherwise, it need to be 
+the cost of supplying all of customer i’s demand from the facility
+(or facilities in case of a two-level problem). If data are read 
+from file, unitCost is set to false if <em>formt</em> is from
+(‘GK’, ‘OR’, ‘SIMPLE’, ‘TSCFLP’, ‘TLCFLP’). Note that unitCost requires 
+that demand data are passed to this class instance. In case that d 
+remains None, unitCost will be set to false and the problem assumed
+to be uncapacitated. For a two-level problem (location decisions 
+on both levels), the cost matrix can also be a 3d-array. Then, unitcost=True 
+indicates if c[i,j,k] is the unit cost or the cost to meet all of customer 
+k’s demand from facility pair (i,j). (Default=True)</p>
+</dd>
+<dt>scale<span class="classifier">int or float, optional  </span></dt><dd><p>Is only used for Guastaroba instances. In case of these instances,
+demands and capacities might be non-integral. They are, therefore,
+multiplied by <em>scale</em> and then rounded to integers (demands rounded
+down, capacities to the nearest integer). Unit cost data are
+accordingly divided by <em>scale</em>.</p>
+</dd>
+<dt>mcf<span class="classifier">bool, optional  </span></dt><dd><p>Is only used in case of a two-level problem where fname is defined
+and the data thus read from file. If mcf is True, the 
+multi-commodity formulation of the problem will be used and the
+cost matrix be 3-dimensional so that c[i,j,k] is the (unit)
+cost to supply customer k from facilities i and j. Note that
+if argument c is defined (and fname not), then the multi-commodity
+formulation will be used if c is a 3d-numpy array.</p>
+</dd>
+<dt>d<span class="classifier">numpy array of int, optional   </span></dt><dd><p>Customer demands. d can be None (see argument c for exceptions). 
+Then either fname should be defined or the data passed later to an 
+instance of this class using the method set_data.</p>
+</dd>
+<dt>s<span class="classifier">Two or a single numpy array of int, optional  </span></dt><dd><p>If s is a single array, it defines the facility capacities of an
+ordinary CFLP. If s is None, the capacities are either provided by 
+an input file (cf. fname) or unlimited capacities are assumed. 
+Alternatively, the data can also later be passed to an instance of this 
+class using the method set_data. If s is two arrays, then it should be 
+a tuple of two arrays such that s[0] gives the array of plant capacities 
+and s[1] the array of depot capacities. Unlimited capacities on level i 
+are assumed if s[i] is None. If both are None or s itself is None, the 
+data either need to come from an input file (cf. fname) or unlimited 
+capacities are assumed.</p>
+</dd>
+<dt>f<span class="classifier">Two or a single numpy array of float, optional</span></dt><dd><p>If f is a single array, f is assumed to be the fixed facility cost
+in an ordinary CFLP or UFLP or the depot fixed costs in a two-stage
+problem where there are no location decisions on the plant level 
+(stage 1). Otherwise, for a two-level problem, f is a tuple two arrays 
+such that f[0] is the plant fixed cost array and f[1] the depot fixed 
+cost array. If f is None, the data may come from an input file (cf. argument 
+fname) or be passed later to the class instance using the method set_data.</p>
+</dd>
+<dt>c<span class="classifier">A single numpy 2-array or two numpy 2d-arrays or 3d-numpy array of float, optional  </span></dt><dd><p>In case of an ordinary CFLP or UFLP, c[j][i] is either the unit or the 
+total cost of supplying customer i from facility j. For a two-stage
+problem (no location decisions on the first stage), c must be a 
+tuple of two numpy 2d-arrays such that c[0][i,j] is the cost
+per unit (!) of product to supply facility j at stage 2 (depot) from
+a facility i at stage 1 (plant) and c[1][j,k] is the cost per unit
+(unitCost=True) or the cost to supply all of customer k’s demand
+(unitCost=False) from facility j (depot) at stage 2. In case of a 
+two-level problem (location decisions on both stages), c can either be 
+a tuple of two matrices just as in the two-stage case or be a numpy 3d-array.
+In the latter case, c[i,j,k] is either the cost per unit (unitCost=True)
+or the cost to supply all of customer k’s demand (unitCost=False) from 
+a facility pair i,j (where i is the facility, ‘plant’, on the first 
+level and j the facility, ‘depot’, on the second level). 
+Note that it will be assumed that the problem is a two-level problem 
+if c is a 3d-array (otherwise, it will be assumed to be of that type if 
+f is a tuple consisting of two arrays). If c is a 3d-array, the
+two-level problem will (and need to) be modelled using three-index
+variables for the flow variables (multi-commodity formulation). Note 
+that c can be None. In this case, the data might come from a file 
+(cf. argument fname) or are passed later to an instance of this class 
+using the class method set_data.
+Note also that if c is a tuple of two-matrices, the first one is unit cost
+of distribution from the first to the second stage (plants-&gt;depots).
+In that case, d need to be defined and cannot be None, as otherwise
+cost for forwarding the customers demand on the first stage of
+distribution cannot be determined!</p>
+</dd>
+</dl>
+</section>
+<section id="references">
+<h3>References<a class="headerlink" href="#references" title="Link to this heading"></a></h3>
+<p>Fernandes, D.R.M., Rocha, C., Aloise, D., Ribeiro, G.M., Santos, E.M, Silva, A.
+(2014). A simple and effective genetic algorithm for the two-stage capacitated
+facility location problem. Computers and Industrial Engineering 75:200-208.</p>
+<p>Klose, A. (1999). An LP-based heuristic for two-stage capacitated facility location 
+problems. Journal of the Operational Research Society 50:157-166.</p>
+<p>Klose, A. (2000). A Lagrangean relax-and-cut approach for the two-stage capacitated 
+facility location problem. Eur. J. Oper. Res. 126:185-198.</p>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.addVubs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">addVubs</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.addVubs" title="Link to this definition"></a></dt>
+<dd><p>Property: 
+0 if Vubs should not be included, 
+1 if Vubs should be included delayed (user cuts), 
+2 if Vubs should be included.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.assigned">
+<span class="sig-name descname"><span class="pre">assigned</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.assigned" title="Link to this definition"></a></dt>
+<dd><p>In case of an uncapacitated one-stage problem, the assignment of customers to 
+facilities.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.bound">
+<span class="sig-name descname"><span class="pre">bound</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.bound" title="Link to this definition"></a></dt>
+<dd><p>Best objective value lower bound obtained.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.c">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">c</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.c" title="Link to this definition"></a></dt>
+<dd><p>The supply cost matrix/matrices.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.ccnst">
+<span class="sig-name descname"><span class="pre">ccnst</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.ccnst" title="Link to this definition"></a></dt>
+<dd><p>Constant in the total cost to supply the customers.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.cost">
+<span class="sig-name descname"><span class="pre">cost</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.cost" title="Link to this definition"></a></dt>
+<dd><p>Total cost of a solution.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.ctime">
+<span class="sig-name descname"><span class="pre">ctime</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.ctime" title="Link to this definition"></a></dt>
+<dd><p>Computation time (CPU and Walltime) required to solve a problem instance.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.cuts">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cuts</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.cuts" title="Link to this definition"></a></dt>
+<dd><p>Property: cuts parameter if MIP solver is used:</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.d">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">d</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.d" title="Link to this definition"></a></dt>
+<dd><p>The array of customer demand.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.default_options">
+<span class="sig-name descname"><span class="pre">default_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/dflprob.html#DFLProblem.default_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.default_options" title="Link to this definition"></a></dt>
+<dd><p>Set solver options to default values.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.f">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">f</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.f" title="Link to this definition"></a></dt>
+<dd><p>The array(s) of facility fixed costs</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.facilities">
+<span class="sig-name descname"><span class="pre">facilities</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.facilities" title="Link to this definition"></a></dt>
+<dd><p>List of open facilities in a solution (one-stage problem or two-stage
+with fixed plant sites) or a tuple of lists of open plant and depot sites 
+for a two-level problem.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.fcost">
+<span class="sig-name descname"><span class="pre">fcost</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.fcost" title="Link to this definition"></a></dt>
+<dd><p>Total fixed cost (depots) of a solution for a one-level problem or a
+two-stage problem (fixed plant locations). For a two-level problem,
+fcost[0] and fcost[1] are the total plant and depot fixed cost, resp.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.get_fcost">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_fcost</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.get_fcost" title="Link to this definition"></a></dt>
+<dd><p>Return the fixed cost of the open depots. For a two-level problem,
+a 2-tuple of the fixed cost on both stages is returned.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.mipSolver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipSolver</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.mipSolver" title="Link to this definition"></a></dt>
+<dd><p>The MIP solver’s name used for solving MIPs.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.mipStrategy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mipStrategy</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.mipStrategy" title="Link to this definition"></a></dt>
+<dd><p>Cplex’s search strategy:
+0 : automatic,
+1 : traditional branch-and-cut,
+2 : dynamic search.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.mip_time">
+<span class="sig-name descname"><span class="pre">mip_time</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.mip_time" title="Link to this definition"></a></dt>
+<dd><p>Computation time (walltime seconds) spent by the MIP solver</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.mip_work">
+<span class="sig-name descname"><span class="pre">mip_work</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.mip_work" title="Link to this definition"></a></dt>
+<dd><p>Deterministic computation time. For Cplex this is the total amout
+of CPU ticks. For GuRoBi one work unit is about one second on single
+thread.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.model" title="Link to this definition"></a></dt>
+<dd><p>Handle to the MIP model</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.nodeCount">
+<span class="sig-name descname"><span class="pre">nodeCount</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.nodeCount" title="Link to this definition"></a></dt>
+<dd><p>Number of nodes processed in total by branch-and-bound / branch-and-cut.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.nodeLim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodeLim</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.nodeLim" title="Link to this definition"></a></dt>
+<dd><p>Property: Limit on the number of nodes the MIP solver may enumerate</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.optTol">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">optTol</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.optTol" title="Link to this definition"></a></dt>
+<dd><p>Property: Optimality tolerance used by the MIP solver,</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.s">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.s" title="Link to this definition"></a></dt>
+<dd><p>The array(s) of facility capacities</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.scale_costs">
+<span class="sig-name descname"><span class="pre">scale_costs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/dflprob.html#DFLProblem.scale_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.scale_costs" title="Link to this definition"></a></dt>
+<dd><p>Rescale the supply cost such that the smallest supply cost for 
+each customer equal zero. Note that this just adds a constant 
+to the objective value. The constant amounts to the sum of the 
+unscaled cheapest cost.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.set_data">
+<span class="sig-name descname"><span class="pre">set_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/dflprob.html#DFLProblem.set_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.set_data" title="Link to this definition"></a></dt>
+<dd><p>Pass data to this instance of a facility location problem.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>f<span class="classifier">One or two arrays of float</span></dt><dd><p>Fixed facility costs in an ordinary UFLP or CFLP as well as
+the depot fixed cost for a two-stage problem (no location decision
+on the first level). For a two-level problem, f[0] and f[1] are
+the fixed facility cost arrays on each stage/level.</p>
+</dd>
+<dt>c<span class="classifier">A single or two numpy 2d-array or a 3d-numpy array of float</span></dt><dd><p>In case of an ordinary CFLP or UFLP, c[j][i] is either the unit or the 
+total cost of supplying customer i from facility j. 
+For a two-stage problem, c must be a tuple of two 2d-numpy arrays 
+so that c[1][j,i] is the same cost matrix as in the one stage case 
+and c[0][i,j] is the cost of shipping one unit of product from plant i 
+(stage 0) to a depot (facility at stage 1) at site j. 
+If c is a 3d-array, the problem is assumed to be a two-level problem to
+and to be modelled using the multi-commodity flow formulation, that is 
+c[i,j,k] is the cost to meet either one unit or all of customer k’s demand 
+from the pair (i,j) of facilities in case of a two-level problem where i is the 
+facility at level 1 and j on level 2. For a two-level problem that
+should not be modelled using 3-index flow variables, c need to be
+a tuple of two 2d-matrices just as in the case of a two-stage problem.
+Note that if c is two-matrices, the first one is always unit cost. That
+also means that in this case d cannot be None, as demand data need to
+be known to compute costs on the first stage of distribution.</p>
+</dd>
+<dt>d<span class="classifier">numpy array of int, optional</span></dt><dd><p>Customer demands. d can be None in case of an uncapacitated
+problem.</p>
+</dd>
+<dt>s<span class="classifier">One or two numpy arrays of int, optional</span></dt><dd><p>Facility capacities in an ordinary UFLP or CFLP. For a two-stage
+or two-level problem, s[0] and s[1] are the arrays of facility
+capacities on each stage/level.</p>
+</dd>
+<dt>unitCost<span class="classifier">bool, optional </span></dt><dd><p>If true, c[j][i] (c[1][j,i] or also c[i,j,k] in case of two stages/levels) 
+is expected to be the unit cost of supplying customer i from facility j. 
+Otherwise, it need to be the cost of supplying all of customer i’s demand from 
+facility j. Note that unitCost requires that demand data are passed to this 
+class instance. In case that d remains None, unitCost will be set to false
+and unlimited capacities assumed. (Default=True)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.silent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">silent</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.silent" title="Link to this definition"></a></dt>
+<dd><p>If silent is True, solution methods do not give log-output.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.stages">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stages</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.stages" title="Link to this definition"></a></dt>
+<dd><p>Return the number of stages (levels) in the current problem instance</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.supply">
+<span class="sig-name descname"><span class="pre">supply</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.supply" title="Link to this definition"></a></dt>
+<dd><p>For an ordinary CFLP (limited capacities), it is a dictionary of the positive
+flows from open facilities (depots) to customers, that is, supply[(j,i)] is the 
+percentage of customer i’s demand supplied from a facility with index j. If
+the CFLP actually is instance of an UFLP, the allocation of demands to 
+facilities follows from the attribute self.assigned.
+For a two-stage problem or a two-level problem modelled with 2-index flow
+variables, supply is a tuple of two dictionaries, where the first one gives
+the amount of flow from plants to depots and the second the flow from
+depots to customers expressed as fractions of a customer’s demand.
+For a two-level problem modelled using the multi-commodity formulation,
+supply is again a single dictionary showing the positive flows as percentage
+of demands from plants via depots to customers.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.tcost">
+<span class="sig-name descname"><span class="pre">tcost</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.tcost" title="Link to this definition"></a></dt>
+<dd><p>Total supply/transportation cost (depots-&gt;customers) of a solution
+for a one-stage problem or for a two-level problem modelled using the
+multi-commodity flow formulation. Otherwise, that is for a two-stage
+or a two-level problem with 2-index flow variables, tcost[0] and tcost[1] 
+are the plant-depot and depot-customer transportation costs, resp.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.timeLim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeLim</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.timeLim" title="Link to this definition"></a></dt>
+<dd><p>Property: Limit on the computation time a solver may use.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.totalDemand">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">totalDemand</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.totalDemand" title="Link to this definition"></a></dt>
+<dd><p>Return the total customer demand</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.two_level">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">two_level</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.two_level" title="Link to this definition"></a></dt>
+<dd><p>Return True if the current problem instance is a two-level problem.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.uncap">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uncap</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.uncap" title="Link to this definition"></a></dt>
+<dd><p>Respectively returns True and (True,True) is the facilities
+are uncapacitated.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.unitCost">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unitCost</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.unitCost" title="Link to this definition"></a></dt>
+<dd><p>Return True if cost to supply customers are costs per unit.
+Otherwise, they are cost to supply all of a customer’s demand.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.unscale_costs">
+<span class="sig-name descname"><span class="pre">unscale_costs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/dflprob.html#DFLProblem.unscale_costs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.unscale_costs" title="Link to this definition"></a></dt>
+<dd><p>Undo the scaling of supply costs.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.useBenders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">useBenders</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.useBenders" title="Link to this definition"></a></dt>
+<dd><p>Use of Benders’ decomposition.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.useLB">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">useLB</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.useLB" title="Link to this definition"></a></dt>
+<dd><p>Property: useLB (should Cplex employ local branching).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.v">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">v</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.v" title="Link to this definition"></a></dt>
+<dd><p>Flow variables v[i,j] for i=0,…,p-1 
+and j=0,…,n-1 where p is the number of 
+plant sites and n the number of facility sites.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.x">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.x" title="Link to this definition"></a></dt>
+<dd><p>Demand allocation variables x[i,j], where i is a 
+customer and j a facility node.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.y">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.y" title="Link to this definition"></a></dt>
+<dd><p>Location binary variables y[j] for 
+j=0,…,n-1 and n number of facility nodes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.dflprob.DFLProblem.z">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#pyloa.discrete.dflprob.DFLProblem.z" title="Link to this definition"></a></dt>
+<dd><p>Location binary variables z[i] for 
+i=0,…,p-1 and p number of plant sites.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.discrete.parser">
+<span id="pyloa-discrete-parser-module"></span><h2>pyloa.discrete.parser module<a class="headerlink" href="#module-pyloa.discrete.parser" title="Link to this heading"></a></h2>
+<p>Read data of a discrete facility location problem.
+Repositories with problem instances are in particular:</p>
+<ul class="simple">
+<li><p>For the CFLP: <a class="reference external" href="http://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/">http://people.brunel.ac.uk/~mastjjb/jeb/orlib/files/</a></p></li>
+<li><p>For the UFLP: <a class="reference external" href="https://resources.mpi-inf.mpg.de/departments/d1/projects/benchmarks/UflLib/data-format.html">https://resources.mpi-inf.mpg.de/departments/d1/projects/benchmarks/UflLib/data-format.html</a></p></li>
+</ul>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.discrete.parser.read_cflp">
+<span class="sig-prename descclassname"><span class="pre">pyloa.discrete.parser.</span></span><span class="sig-name descname"><span class="pre">read_cflp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'GK'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/parser.html#read_cflp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.parser.read_cflp" title="Link to this definition"></a></dt>
+<dd><p>Reads data of a CFLP instance from a file.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataFile<span class="classifier">str</span></dt><dd><p>Name of the data file.</p>
+</dd>
+<dt>formt<span class="classifier">str</span></dt><dd><p>Format of the data file, that is,</p>
+<ul class="simple">
+<li><p>“AO” for the old Avella-Boccia CFLP instances</p></li>
+<li><p>“AN” for the new Avella-Boccia CFLP instances</p></li>
+<li><p>“G”  for the Guastaroba CFLP instances</p></li>
+<li><p>“GK” for the Goertz-Klose CFLP instances (Default)</p></li>
+<li><p>“OR” for an ORLIB CFLP instance</p></li>
+</ul>
+</dd>
+<dt>scale<span class="classifier">int, optional</span></dt><dd><p>Only used for Guastaroba instances. 
+If scale=1, demands and capacities will be returned as floats;
+otherwise they are multiplied by ‘scale’ and the non-integral 
+capacities rounded to the nearest integer.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>d<span class="classifier">numpy array of int or float </span></dt><dd><p>Customer demands.</p>
+</dd>
+<dt>s<span class="classifier">numpy array of int or float</span></dt><dd><p>Facility capacities.</p>
+</dd>
+<dt>f<span class="classifier">numpy array of float</span></dt><dd><p>Fixed facility costs.</p>
+</dd>
+<dt>c<span class="classifier">numpy 2d-array of float </span></dt><dd><p>c[j,i] is either the unit cost or the total cost of
+supplying customer i from a facility at site j.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.discrete.parser.read_tlcflp">
+<span class="sig-prename descclassname"><span class="pre">pyloa.discrete.parser.</span></span><span class="sig-name descname"><span class="pre">read_tlcflp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/parser.html#read_tlcflp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.parser.read_tlcflp" title="Link to this definition"></a></dt>
+<dd><p>Read an instance of a 2-level capacitated facility location problem
+that uses the same format as the instances from Fernandes et al
+(2014). That is, the file is structured as follows:</p>
+<ol class="arabic simple">
+<li><p>1st line is : number p of plants, n of depots and m of customers</p></li>
+<li><p>m lines with customer demand</p></li>
+<li><p>p lines with plant capacity and fixed cost</p></li>
+<li><p>matrix with supply cost per unit from plants (rows) to depots (columns)</p></li>
+<li><p>n lines with depot capacity and fixed cost</p></li>
+<li><p>matrix of supply cost cost per unit from depots (rows) to customers (columns)</p></li>
+</ol>
+<p>If <em>mcf</em> is True, the cost matrix (unit cost!) will be returned as a 3d-matrix
+indicating that the multi-commodity formulation of the problem is to
+be used.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataFile<span class="classifier">str </span></dt><dd><p>Name (and path) of the data file.</p>
+</dd>
+<dt>mcf<span class="classifier">bool, optional </span></dt><dd><p>If True, a numpy 3d-array of float is returned as cost matrix.
+Otherwise a tuple of two numpy 2d-arrays is returned.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>d<span class="classifier">numpy array of int </span></dt><dd><p>Array of customer demands.</p>
+</dd>
+<dt>s<span class="classifier">tuple of numpy arrays of int </span></dt><dd><p>Array of capacities of stage 1 and stage 2 facilities.</p>
+</dd>
+<dt>f<span class="classifier">tuple of two numpy array of float</span></dt><dd><p>The tuple of fixed costs of facilities on stage 1 and 2.</p>
+</dd>
+<dt>c<span class="classifier">tuple of two numpy 2d-arrays or a numpy 3d-array of float</span></dt><dd><p>If mcf=False, c[0][i,j] is the cost to supply 1 unit
+of product from facility i at stage 1 to facility j
+at stage 2, and c[1][j,k] is the cost of supplying
+all of customer k’s demand from stage 2 facility j.
+If mcf=True, c[i,j,k] is the cost to supply 1 unit
+of customer k’s demand from facility j at stage 2
+and facility i at stage 1.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.discrete.parser.read_tscflp">
+<span class="sig-prename descclassname"><span class="pre">pyloa.discrete.parser.</span></span><span class="sig-name descname"><span class="pre">read_tscflp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">two_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/parser.html#read_tscflp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.parser.read_tscflp" title="Link to this definition"></a></dt>
+<dd><p>Read an instance of a 2-stage capacitated facility location problem
+(two_level=False) or of a 2-level CFLP (two_level=True) from a file 
+that uses the format of the test instances used in Klose (1999, 2000).
+If <em>mcf</em> is True, the cost for supplying customers is returned
+as a 3-dimensional numpy array in case of a two-level problem.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataFile<span class="classifier">str</span></dt><dd><p>Name (and path) of the data file</p>
+</dd>
+<dt>two-level<span class="classifier">bool, optional </span></dt><dd><p>True, if the file contains data for a two-level problem
+so that there are fixed cost for both facilities on
+stage 1 (plants) and on stage 2 (depots). Otherwise,
+fixed cost are only read for stage 2 facilities.</p>
+</dd>
+<dt>mcf<span class="classifier">bool, optional </span></dt><dd><p>If True, a single cost matrix as a numpy 3d-array
+is returned, so that c[i,j,k] is the cost to supply all
+of customer k’s demand from facility j on stage 2 and
+facility i on stage 1. Note that this only makes sense
+if the problem is a two-level one with location decisions
+to be made on both stages. If <em>mcf</em> is False (the default),
+a tuple of two numpy 2d-arrays is returned. The first
+one gives the unit cost to supply facilities on stage 2
+from facilities on stage 1. The second one shows the
+cost to supply all of a customer’s demand from a
+facility on stage 2. Rows of the first matrix correspond
+to stage 1 facilities. Rows of the second matrix to
+stage 2 facilities.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>d<span class="classifier">numpy array of int </span></dt><dd><p>Array of customer demands.</p>
+</dd>
+<dt>s<span class="classifier">tuple of numpy arrays of int </span></dt><dd><p>Array of capacities of stage 1 and stage 2 facilities.</p>
+</dd>
+<dt>f<span class="classifier">numpy array of float or tuple of such arrays</span></dt><dd><p>Fixed cost of stage 2 facilities if two_level=False.
+Otherwise, the tuple of fixed costs of facilities
+on stage 1 and stage 2.</p>
+</dd>
+<dt>c<span class="classifier">tuple of two numpy 2d-arrays or a numpy 3d-array of float</span></dt><dd><p>If mcf=False, c[0][i,j] is the cost to supply 1 unit
+of product from facility i at stage 1 to facility j
+at stage 2, and c[1][j,k] is the cost of supplying
+all of customer k’s demand from stage 2 facility j.
+If mcf=True, c[i,j,k] is the cost to supply all
+of customer k’s demand from facility j at stage 2
+and facility i at stage 1.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.discrete.parser.read_uflp">
+<span class="sig-prename descclassname"><span class="pre">pyloa.discrete.parser.</span></span><span class="sig-name descname"><span class="pre">read_uflp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OR'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/parser.html#read_uflp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.parser.read_uflp" title="Link to this definition"></a></dt>
+<dd><p>Reads data of a UFLP instance from a file.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dataFile<span class="classifier">str</span></dt><dd><p>Name of the data file</p>
+</dd>
+<dt>formt<span class="classifier">str</span></dt><dd><p>format of the data file, that is,</p>
+<ul class="simple">
+<li><p>“OR”     for data files just the same as the CFLP ORLib files</p></li>
+<li><p>“SIMPLE” for data files in UflLib simple format</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h3>Returns<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>f<span class="classifier">numpy array of float</span></dt><dd><p>Fixed facility costs.</p>
+</dd>
+<dt>c<span class="classifier">numpy 2d-array of float </span></dt><dd><p>c[j,i] is either the unit cost or the total cost of
+supplying customer i from a facility at site j.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.discrete.parser.store_cflp_GK">
+<span class="sig-prename descclassname"><span class="pre">pyloa.discrete.parser.</span></span><span class="sig-name descname"><span class="pre">store_cflp_GK</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/parser.html#store_cflp_GK"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.parser.store_cflp_GK" title="Link to this definition"></a></dt>
+<dd><p>Write CFLP data to file fname using GK format.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fname<span class="classifier">str</span></dt><dd><p>Name of file where to write the data. 
+<em>Warning</em>: Any existing file of the name and path will be overwritten!</p>
+</dd>
+<dt>d<span class="classifier">numpy array of float or int</span></dt><dd><p>Customer demands.</p>
+</dd>
+<dt>s<span class="classifier">numpy array of float or int</span></dt><dd><p>Facility capacities.</p>
+</dd>
+<dt>f<span class="classifier">numpy array of float </span></dt><dd><p>Fixed facility costs.</p>
+</dd>
+<dt>c<span class="classifier">numpy 2d-array of float</span></dt><dd><p>c[j,i] is either the cost per unit of supplying
+customer i from facility j (if unitCost=True)
+or the total cost of supplying customer i
+from facility j (if unitCost=False).</p>
+</dd>
+<dt>unitCost<span class="classifier">bool</span></dt><dd><p>See argument c.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.discrete.cflp">
+<span id="pyloa-discrete-cflp-module"></span><h2>pyloa.discrete.cflp module<a class="headerlink" href="#module-pyloa.discrete.cflp" title="Link to this heading"></a></h2>
+<p>Methods for solving the capacitated facility location problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.CFLP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.discrete.cflp.</span></span><span class="sig-name descname"><span class="pre">CFLP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CFL-GK'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/cflp.html#CFLP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.cflp.CFLP" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem" title="pyloa.discrete.dflprob.DFLProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFLProblem</span></code></a></p>
+<p>Class implementing methods for solving the (un-)capacitated facility
+location problem.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.CFLP.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CFL-GK'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/cflp.html#CFLP.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.cflp.CFLP.__init__" title="Link to this definition"></a></dt>
+<dd><p>Creates an instance of a CFLP, cf. the base class ‘DFLProblem’ in 
+module dflprob.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.CFLP.comp_flows">
+<span class="sig-name descname"><span class="pre">comp_flows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/cflp.html#CFLP.comp_flows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.cflp.CFLP.comp_flows" title="Link to this definition"></a></dt>
+<dd><p>Obtain the values of the flow variables x(j,i) for
+a given set of open facilities. This requires 
+that the facilities’ total capacity covers the
+total demand. If that is not the case, False 
+is returned and self.supply set to None. Otherwise
+True is returned and the solution stored in the 
+dictionary self.supply. The flow problem is solved
+using networkx.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.CFLP.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_flows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/cflp.html#CFLP.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.cflp.CFLP.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the instance of the (un-)capacitated facility location problem.</p>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>keep_model: bool, optional </dt><dd><p>If True, the created instance of the MIP model is not destroyed but kept.</p>
+</dd>
+<dt>get_flows<span class="classifier">bool, optional</span></dt><dd><p>Only applies if self.solver = ‘sg’. If True, the flow variable values
+are determined and stored in the dictionary self.supply.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.CFLP.solver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">solver</span></span><a class="headerlink" href="#pyloa.discrete.cflp.CFLP.solver" title="Link to this definition"></a></dt>
+<dd><p>Defines the solver to use, which is either the MIP solver
+or SG.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.VubGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.discrete.cflp.</span></span><span class="sig-name descname"><span class="pre">VubGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/cflp.html#VubGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.cflp.VubGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Callback class that looks for violated variable upper bound constraints
+<span class="math notranslate nohighlight">\(x_{ij} \le y_j\)</span> and passes them to the solver. We add for each
+facility j the most violated of these inequalities.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.VubGenerator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/cflp.html#VubGenerator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.cflp.VubGenerator.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the class with the model, the number of customers and facilities,
+the allocation variables x and location variables y.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.cflp.VubGenerator.invoke">
+<span class="sig-name descname"><span class="pre">invoke</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/cflp.html#VubGenerator.invoke"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.cflp.VubGenerator.invoke" title="Link to this definition"></a></dt>
+<dd><p>Method called by Cplex’s solver using the single argument cplex.callbacks.Context.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.discrete.CFLsg">
+<span id="pyloa-discrete-cflsg-module"></span><h2>pyloa.discrete.CFLsg module<a class="headerlink" href="#module-pyloa.discrete.CFLsg" title="Link to this heading"></a></h2>
+<p>Python interface to CFLsg, a C-library of a branch-and-bound algorithm 
+based on Lagrangian relaxation and subgradient optimization for solving 
+the CFLP.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.discrete.CFLsg.solveCFLP">
+<span class="sig-prename descclassname"><span class="pre">pyloa.discrete.CFLsg.</span></span><span class="sig-name descname"><span class="pre">solveCFLP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodeLim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screenOn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/CFLsg.html#solveCFLP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.CFLsg.solveCFLP" title="Link to this definition"></a></dt>
+<dd><p>Invokes the CFLsg solver for the CFLP.</p>
+<section id="id11">
+<h3>Parameters<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>d<span class="classifier">numpy array of int </span></dt><dd><p>Customer demands.</p>
+</dd>
+<dt>s<span class="classifier">numpy array of int </span></dt><dd><p>Facility capacities.</p>
+</dd>
+<dt>f<span class="classifier">numpy array of float</span></dt><dd><p>Fixed facility costs.</p>
+</dd>
+<dt>c<span class="classifier">numpy 2d-array of float </span></dt><dd><p>c[j][i] is the total cost of supplying all of customer
+i’s demand from facility j, where 0&lt;=i&lt;m and 0&lt;=j&lt;n.</p>
+</dd>
+<dt>nodeLim: int (optional)</dt><dd><p>Limit on number of nodes (if 0, no limit is set).</p>
+</dd>
+<dt>screenOn: int (optional) </dt><dd><p>If 1, the solver sends information to the screen.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Returns<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>status<span class="classifier">int</span></dt><dd><p>Status of the result.</p>
+</dd>
+<dt>UB<span class="classifier">float</span></dt><dd><p>Best upper bound found in the search.</p>
+</dd>
+<dt>OPN: list of int</dt><dd><p>List of open facilities.</p>
+</dd>
+<dt>TIM: float</dt><dd><p>CPU time spent.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-pyloa.discrete.uflp">
+<span id="pyloa-discrete-uflp-module"></span><h2>pyloa.discrete.uflp module<a class="headerlink" href="#module-pyloa.discrete.uflp" title="Link to this heading"></a></h2>
+<p>Methods for solving the uncapacitated facility location problem.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.discrete.uflp.</span></span><span class="sig-name descname"><span class="pre">UFLP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'UFL-OR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/uflp.html#UFLP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.uflp.UFLP" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem" title="pyloa.discrete.dflprob.DFLProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFLProblem</span></code></a></p>
+<p>Class implementing methods for solving the uncapacitated facility
+location problem. Recall that class CFLP from discrete.cflp can
+be used to solve instances of the UFLP as well.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'UFL-OR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/uflp.html#UFLP.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.uflp.UFLP.__init__" title="Link to this definition"></a></dt>
+<dd><p>Creates an instance of the UFLP, cf. the base class ‘DFLProblem’ in 
+module dflprob.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP.alpha">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alpha</span></span><a class="headerlink" href="#pyloa.discrete.uflp.UFLP.alpha" title="Link to this definition"></a></dt>
+<dd><p>Step length parameter alpha in the subgradient procedure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP.default_subgr_params">
+<span class="sig-name descname"><span class="pre">default_subgr_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/uflp.html#UFLP.default_subgr_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.uflp.UFLP.default_subgr_params" title="Link to this definition"></a></dt>
+<dd><p>Set subgradient optimization parameters to default values.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP.half">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">half</span></span><a class="headerlink" href="#pyloa.discrete.uflp.UFLP.half" title="Link to this definition"></a></dt>
+<dd><p>Step size parameter H. The parameter alpha will be halved 
+after H iterations if this is larger than the number of 
+3% of the maximal number of iterations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP.itr">
+<span class="sig-name descname"><span class="pre">itr</span></span><a class="headerlink" href="#pyloa.discrete.uflp.UFLP.itr" title="Link to this definition"></a></dt>
+<dd><p>Iteration counter.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP.sg_iter">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sg_iter</span></span><a class="headerlink" href="#pyloa.discrete.uflp.UFLP.sg_iter" title="Link to this definition"></a></dt>
+<dd><p>The maximal number of subgradient iterations applied does exceed
+<span class="math notranslate nohighlight">\(\text{sg_iter} \times (m+n)\)</span></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.uflp.UFLP.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'LR'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/uflp.html#UFLP.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.uflp.UFLP.solve" title="Link to this definition"></a></dt>
+<dd><p>Obtain a solution to the UFLP using method ‘method’.</p>
+<section id="id13">
+<h3>Parameters<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>method<span class="classifier">str </span></dt><dd><p>Determines the method to be applied.</p>
+<ul class="simple">
+<li><p>‘LR’  : Lagrangian heuristic</p></li>
+<li><p>‘ADD’ : Greedy Add heuristic</p></li>
+<li><p>‘DROP’: Greedy Drop heuristic</p></li>
+<li><p>‘AI’  : Add followed by Interchange</p></li>
+<li><p>‘DI’  : Drop followed by Interchange</p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pyloa.discrete.tlcflp">
+<span id="pyloa-discrete-tlcflp-module"></span><h2>pyloa.discrete.tlcflp module<a class="headerlink" href="#module-pyloa.discrete.tlcflp" title="Link to this heading"></a></h2>
+<p>Methods for solving two-stage or two-level CFLPs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.MCFVubGen">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.discrete.tlcflp.</span></span><span class="sig-name descname"><span class="pre">MCFVubGen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#MCFVubGen"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.MCFVubGen" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Callback class that looks for violated variable upper bound constraints
+<span class="math notranslate nohighlight">\(\sum_i x_{ijk} \le y_j\)</span> and <span class="math notranslate nohighlight">\(\sum_j x_{ijk} \le z_i\)</span> for
+the case of the TLCFLP’s multi-commodity formulation. We add for each 
+facility i and j the most violated of these inequalities.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.MCFVubGen.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#MCFVubGen.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.MCFVubGen.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the class with the model, the number of plants, customers and 
+facilities, the allocation variables x, and location variables y and z.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.MCFVubGen.invoke">
+<span class="sig-name descname"><span class="pre">invoke</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#MCFVubGen.invoke"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.MCFVubGen.invoke" title="Link to this definition"></a></dt>
+<dd><p>Method called by Cplex’s solver using the single argument cplex.callbacks.Context.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.TLCFLP">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.discrete.tlcflp.</span></span><span class="sig-name descname"><span class="pre">TLCFLP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TSCFLP'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#TLCFLP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.TLCFLP" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyloa.discrete.dflprob.DFLProblem" title="pyloa.discrete.dflprob.DFLProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">DFLProblem</span></code></a></p>
+<p>Class implementing methods for solving the two-stage or two-level
+(un-)capacitated facility location problem.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.TLCFLP.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'TSCFLP'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unitCost</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mcf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#TLCFLP.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.TLCFLP.__init__" title="Link to this definition"></a></dt>
+<dd><p>Creates an instance of the two-stage or two-level CFLP; cf. the base class 
+‘DFLProblem’ in module dflprob.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.TLCFLP.cflp_solver">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cflp_solver</span></span><a class="headerlink" href="#pyloa.discrete.tlcflp.TLCFLP.cflp_solver" title="Link to this definition"></a></dt>
+<dd><p>Solver to be used for an underlying CFLP. Either Cplex or SG.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.TLCFLP.get_full_solution">
+<span class="sig-name descname"><span class="pre">get_full_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facilities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#TLCFLP.get_full_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.TLCFLP.get_full_solution" title="Link to this definition"></a></dt>
+<dd><p>Computes the min-cost network flow and all
+cost components to complete the partial solution given
+by the set of open facilities.</p>
+<section id="id14">
+<h3>Parameters<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>facilities<span class="classifier">list of int or 2-tuple of such lists</span></dt><dd><p>List of open depots in case of a TSCFLP and a tuple
+consisting of the list of open plants and the
+list of open depots in case of a TLCFLP.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.TLCFLP.heuristic">
+<span class="sig-name descname"><span class="pre">heuristic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#TLCFLP.heuristic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.TLCFLP.heuristic" title="Link to this definition"></a></dt>
+<dd><p>Applies a Lagrangian heuristic, resembling cross 
+decomposition’s subproblem phase, to the TSCFLP
+and TLCFLP.</p>
+<p>For a two-stage problem, the heuristic relies on
+dualizing the plant capacities. The Lagrangian
+subproblem then reduces to a CFLP. Initially,
+Lagrangian multipliers are set to zero and in
+subsequent iterations obtained as the node potentials
+of stage 1 facilities (plants) obtained from solving 
+the min-cost network flow problem for fixed facility
+locations.</p>
+<p>For a two-level problem (location decisions on
+both stages), the heuristic can only be applied
+if the multi-commodity formulation is not used.
+The flow conversation constraints are then relaxed. 
+This leads to a CFLP to be solved for the second 
+stage as well as a sequence of continuous knapsack 
+problems plus a single binary one on the first
+stage. Using then the plant and depot locations
+found this way, a min-cost network flow problem
+is solved for obtaining a complete feasible 
+solution. The node potentials of the stage 2
+facilities (depots) are then used as new multipliers 
+to relax again the flow conversation constraints and
+to repeat the step of solving the Lagrangian subproblem 
+and the min-cost network flow thereafter.</p>
+<section id="id15">
+<h3>Parameters<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>min_iter<span class="classifier">int, optional</span></dt><dd><p>Minimum number of iterations to be performed.
+Default is min_iter=1, that is actually no
+lower limit.</p>
+</dd>
+<dt>max_iter<span class="classifier">int, optional</span></dt><dd><p>If equal to 0, the method keeps iterating as 
+long as a not yet generated location solution
+is determined and either the lower or upper
+bound improves. If max_iter is positive, then 
+the iteration is stopped the latest after 
+max_iter iterations.</p>
+</dd>
+</dl>
+</section>
+<section id="remark">
+<h3>Remark<a class="headerlink" href="#remark" title="Link to this heading"></a></h3>
+<p>Note that solving a CFLPs can be time consuming.
+When solving the CFLPs, the number of nodes to
+be enumerated is thus limited to the number set
+in the attribute <em>nodeLim</em> (self.nodeLim) of this
+instance of the class TLCFLP. By default, this
+limit is basically unlimited. But, as the whole
+method is just a heuristic, it can be recommended
+to set this limit to some reasonable figure as,
+e.g., nodeLim=100. Moreover, as solver for the
+CFLPs, a MIPsolver (Cplex or GuRoBi) or a 
+Lagrangian-based branch-and-bound can be used. 
+Which CFLP solver should be used is determined 
+by the class property cflp_solver.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.TLCFLP.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#TLCFLP.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.TLCFLP.solve" title="Link to this definition"></a></dt>
+<dd><p>Apply the MIP solver for solving the instance of the two-stage 
+or two-level capacitated facility location problem.</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>keep_model: bool, optional </dt><dd><p>If True, the created instance of the MIP solver model is not
+destroyed but kept.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.VubGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyloa.discrete.tlcflp.</span></span><span class="sig-name descname"><span class="pre">VubGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#VubGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.VubGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Callback class that looks for violated variable upper bound constraints
+<span class="math notranslate nohighlight">\(x_{ij} \le y_j\)</span> and <span class="math notranslate nohighlight">\(v_{ij} \le p_i*y_j\)</span> and passes them 
+to the solver. We add for each facility j the most violated of these 
+inequalities.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.VubGenerator.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ucap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#VubGenerator.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.VubGenerator.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the class with the model, the number of plants, customers and 
+facilities, the plant and depot capacities s, the allocation variables x, 
+location variables y and the flow variables v. Argument ucap is True,
+if the first stage facilities are uncapacitated. In that case there
+are no VUBs involving variables v(i,j) to add.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyloa.discrete.tlcflp.VubGenerator.invoke">
+<span class="sig-name descname"><span class="pre">invoke</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/discrete/tlcflp.html#VubGenerator.invoke"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.discrete.tlcflp.VubGenerator.invoke" title="Link to this definition"></a></dt>
+<dd><p>Method called by Cplex’s solver using the single argument cplex.callbacks.Context.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyloa.net.html" class="btn btn-neutral float-left" title="pyloa.net package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyloa.mip.html" class="btn btn-neutral float-right" title="pyloa.mip package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Andreas Klose.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
