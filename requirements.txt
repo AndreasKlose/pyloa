@@ -6,4 +6,7 @@ pandas
 geopy
 scikit-learn
 tsplib95
+cplex
+docplex
+gurobi
 sphinx-rtd-theme
