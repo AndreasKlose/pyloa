@@ -126,7 +126,7 @@
 
 <span class="c1">#------------------------------------------------------------------</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_3circle</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span> <span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_3circle</span><span class="p">(</span> <span class="n">P</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">1</span> <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns radius and center of the circle enclosing the triangle </span>
 <span class="sd">    spanned by the three points P, Q and R. The triangle is assumed to </span>
@@ -136,6 +136,9 @@
 <span class="sd">    ----------</span>
 <span class="sd">    P, Q, R : 3 iterables of floats of length 2</span>
 <span class="sd">        The three points on the circle&#39;s boundary</span>
+<span class="sd">    w : int or float, optional</span>
+<span class="sd">        Positive common weight of the three points.</span>
+<span class="sd">        Default: w=1</span>
 <span class="sd">            </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -153,7 +156,7 @@
     <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
     <span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">P</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">C</span>
+    <span class="k">return</span> <span class="n">w</span><span class="o">*</span><span class="n">r</span><span class="p">,</span> <span class="n">C</span>
 
 <span class="c1">#------------------------------------------------------------------</span>
 
@@ -266,7 +269,7 @@
 <span class="sd">    thereby assumed that weighted distance from the center to</span>
 <span class="sd">    all these three points can be made equal.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">w</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">return</span> <span class="n">_3circle</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="n">w</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">return</span> <span class="n">_3circle</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     
     <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">w</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span>
     <span class="n">w_P</span><span class="p">,</span> <span class="n">w_Q</span><span class="p">,</span> <span class="n">w_R</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">w</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">w</span><span class="p">[</span><span class="n">order</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
@@ -631,7 +634,7 @@
         <span class="c1"># Check all 2-point solutions covering points Y[out]</span>
         <span class="c1"># and a single point from the current basis</span>
         <span class="n">B</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span> 
+        <span class="n">R</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
             <span class="n">j</span><span class="p">,</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">out</span> 
             <span class="n">r</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">_2points</span><span class="p">(</span> <span class="n">Y</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="n">w</span><span class="p">[</span><span class="n">B</span><span class="p">]</span> <span class="p">)</span>
@@ -652,10 +655,11 @@
 <span class="sd">            given by the set basis+{out}. The basis for the solution need </span>
 <span class="sd">            thereby to contain the point &#39;out&#39; together with one or two </span>
 <span class="sd">            points of the current 3-point basis &quot;&quot;&quot;</span> 
-        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">infty</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
         <span class="n">B</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">bdim</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="kc">None</span> 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
             <span class="n">b</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">basis</span><span class="p">[:]</span>
             <span class="c1"># Exclude point j=B[i] and include out</span>
@@ -669,6 +673,15 @@
                 <span class="n">B</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[:]</span> 
         <span class="c1"># Return the solution and the basis&#39; dimension</span>
         <span class="n">basis</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">B</span><span class="p">[:]</span>
+        <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="c1"># Write out data for debugging</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">data</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;debug.dat&#39;</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="s1">&#39;</span><span class="si">%.8f</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;;&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="s1">&#39;X;Y;weight&#39;</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">bdim</span>
              
     <span class="c1">#--------------------</span>
