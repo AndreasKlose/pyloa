@@ -292,7 +292,7 @@ def limitedDist (Y, w, max_dist, screen='off' ):
     g = lambda X : sum( w[i]*min(euclid(X, Y[i]),max_dist[i]) for i in range(m) )
     
     # best objective value and location    
-    best_objv = np.infty 
+    best_objv = float('inf')
     X_best = np.zeros(2,dtype=float)
         
     # Dictionary of sets S for which Fermat-Weber problem already solved

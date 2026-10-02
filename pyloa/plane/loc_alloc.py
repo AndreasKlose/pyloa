@@ -70,7 +70,7 @@ def _locAlloc( p, Y, w, X0=None, minisum=True, screen='off' ):
         p = X.shape[0]
         
     a = [0]*m
-    objv = np.Inf if minisum else np.full(p,np.Inf)
+    objv = float('inf') if minisum else np.full(p,float('inf'))
     costj = np.zeros(p,dtype=float)
     itr = 0
     epsilon = 1.0E-04
@@ -158,7 +158,7 @@ def locAlloc( p, Y, w=None, minisum=True, initLA='random', repeat=1,\
     initLA = initLA.lower()
     X = np.zeros((p,2))
     Xbest = np.zeros((p,2))
-    bestObj = np.Inf
+    bestObj = float('inf')
     tot_itr = 0
     if w is None : w = np.ones(len(Y),dtype=int)
     
@@ -459,7 +459,7 @@ def twoFacility( Y, w, minisum=False, screen='off'):
     m = len(Y)
     X = np.zeros((2,2),dtype=float )
     if w is None: w = np.ones(m,dtype=int)
-    best = np.infty if minisum else (np.infty,np.infty)
+    best = float('inf') if minisum else (float('inf'),float('inf'))
     X_best = np.zeros( (2,2),dtype=float )
     a = np.zeros(m, dtype=int )
     itr = 0

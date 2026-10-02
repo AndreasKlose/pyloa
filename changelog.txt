@@ -1,0 +1,20 @@
+Version 1.00
+============
+
+Sep 20, 2026
+------------
+- Corrected documentation
+- Corrected a bug in change_upper_bounds, module pyloa.mip.grb_mip
+
+Oct 1, 2026
+-----------
+Corrected bug in procedure charalambous, module plane.center.
+When finding the center for 3 points of equal weights, the
+weight was ignored. This is corrected by including an optional
+parameter equal to the common weight of 3 points in function
+_3circle.
+
+Oct 2, 2026
+-----------
+In all modules of subpackage pyloa.plane: np.inf, np.Inf, np.infty
+replaced by float('inf')

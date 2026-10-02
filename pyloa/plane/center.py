@@ -45,7 +45,7 @@ def _2points( Y, w ):
 
 #------------------------------------------------------------------
 
-def _3circle( P, Q, R ):
+def _3circle( P, Q, R, w=1 ):
     """
     Returns radius and center of the circle enclosing the triangle 
     spanned by the three points P, Q and R. The triangle is assumed to 
@@ -55,6 +55,9 @@ def _3circle( P, Q, R ):
     ----------
     P, Q, R : 3 iterables of floats of length 2
         The three points on the circle's boundary
+    w : int or float, optional
+        Positive common weight of the three points.
+        Default: w=1
             
     Returns
     -------
@@ -72,7 +75,7 @@ def _3circle( P, Q, R ):
     r = np.linalg.norm(C)
     C[0] += P[0]
     C[1] += P[1]
-    return r, C
+    return w*r, C
 
 #------------------------------------------------------------------
 
@@ -185,7 +188,7 @@ def _w_3circle( Y, w ):
     thereby assumed that weighted distance from the center to
     all these three points can be made equal.
     """
-    if w[0]==w[1] and w[1]==w[2]: return _3circle(Y[0],Y[1],Y[2])
+    if w[0]==w[1] and w[1]==w[2]: return _3circle(Y[0],Y[1],Y[2],w[0])
     
     order = np.argsort(w[:3])
     w_P, w_Q, w_R = w[order[0]], w[order[1]], w[order[2]]
@@ -542,7 +545,7 @@ def charalambous(Y, w, screen='off', Xlst=None):
         # Check all 2-point solutions covering points Y[out]
         # and a single point from the current basis
         B = basis.copy()
-        R = np.infty 
+        R = float('inf')
         for i in range(2):
             j, B[i] = B[i], out 
             r, x = _2points( Y[B], w[B] )
@@ -563,10 +566,11 @@ def charalambous(Y, w, screen='off', Xlst=None):
             given by the set basis+{out}. The basis for the solution need 
             thereby to contain the point 'out' together with one or two 
             points of the current 3-point basis """ 
-        R = np.infty
+        R = float('inf')
         B = basis.copy()
         b = [0,0,0]
         bdim = 0
+        X = None 
         for i in range(3):
             b[:] = basis[:]
             # Exclude point j=B[i] and include out
@@ -580,6 +584,15 @@ def charalambous(Y, w, screen='off', Xlst=None):
                 B[:] = b[:] 
         # Return the solution and the basis' dimension
         basis[:] = B[:]
+        if X is None: 
+            # Write out data for debugging
+            m = len(Y)
+            data = np.zeros((m,3),dtype=float)
+            data[:,0] = Y[:,0]
+            data[:,1] = Y[:,1]
+            data[:,2] = w
+            np.savetxt('debug.dat',data,'%.8f',delimiter=';',header='X;Y;weight')
+
         return R, X, bdim
              
     #--------------------
