@@ -132,7 +132,7 @@ def SOCPcenter( Y, w, screen='off'):
     
 #------------------------------------------------------------------
 
-def weber_mipq( p, Y, w=None, screen='off', strategy=0, timLim=None ):
+def weber_mipq( p, Y, w=None, screen='off', strategy=0, timLim=None, nodeLim=None ):
     """
     Formulates the multi-source Weber problem as a quadratically
     constrained MIP and solves it using the MIP solver.
@@ -156,6 +156,9 @@ def weber_mipq( p, Y, w=None, screen='off', strategy=0, timLim=None ):
         * 0 -> Decide automatically .
     timeLim : float 
         Time limit (seconds) to be used for the MIQCP solver.
+    nodeLim : int or None 
+        If not None, the maximal number of nodes the MIQCP solver
+        may enumerate.
 
     Returns
     -------
@@ -220,6 +223,9 @@ def weber_mipq( p, Y, w=None, screen='off', strategy=0, timLim=None ):
     # Set the time limit if one is given
     if not timLim is None: MWP.timelimit = timLim
     
+    # Set the node limit if one is given
+    if not nodeLim is None: MWP.nodelimit = nodeLim
+    
     # Call the solver
     MWP.log_output = not screen=='off'
     ok = MWP.optim( )
@@ -245,7 +251,7 @@ def weber_mipq( p, Y, w=None, screen='off', strategy=0, timLim=None ):
 
 #------------------------------------------------------------------
 
-def pcenter_mipq( p, Y, w, screen='off', strategy=0, timeLim=None ):
+def pcenter_mipq( p, Y, w, screen='off', strategy=0, timeLim=None, nodeLim=None ):
     """
     Formulates the planar p-center problem as a quadratically
     constrained MIP and solves it using a MIP solver.
@@ -267,8 +273,11 @@ def pcenter_mipq( p, Y, w, screen='off', strategy=0, timeLim=None ):
         * 0 -> Decide automatically 
         * 1 -> Solve the quadratic continuous relaxtion for obtaining lower bounds
         * 2 -> Use conical cuts (or outer approximation)
-    timeLim : float 
+    timeLim : float or NOne
         Time limit (seconds) to be used for the MIQCP solver.
+    nodeLim : int or None 
+        If not None, the maximal number of nodes the MIQCP solver may
+        enumerate.
 
     Returns
     -------
@@ -336,6 +345,9 @@ def pcenter_mipq( p, Y, w, screen='off', strategy=0, timeLim=None ):
     
     # Set time limit if one is given
     if not timeLim is None: PPCP.timelimit = timeLim
+    
+    # Set node limit if one is given
+    if not nodeLim is None: PPCP.nodelimit = nodeLim
         
     # Call the solver
     PPCP.log_output = not screen=='off'

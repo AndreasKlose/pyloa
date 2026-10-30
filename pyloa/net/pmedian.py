@@ -86,6 +86,9 @@ class PMedian( NetProblem ):
         # Objective: minimize sum of distances to representative
         M.minimize( M.sum( self._w[i]*self._d(i,j)*x[i,j] for i,j in x.keys() ) ) 
         
+        # Activate Benders if desired and variables x declared as continuous
+        if self.useBenders > 0 and x_continuous: M.doBenders = 3
+        
         # Remember the the model and the variables
         self.model = M 
         self.x = x 
@@ -111,6 +114,12 @@ class PMedian( NetProblem ):
         if not self.model is None: 
             # Initialize running time performance measures
             self._set_starttime( )
+            
+            # Set time limit if defined
+            if self.timeLim > 0: M.timelimit = self.timeLim 
+            
+            # Set node limit if defined 
+            if self.nodeLim >= 0: M.nodelimit = self.nodeLim
                                  
             # Solve model
             M.log_output = not self.silent
@@ -170,7 +179,7 @@ class PMedian( NetProblem ):
         if not talk: objv = eta.sum()
         self.wdist = objv 
         self.facilities = S[:p]
-        self._set_comptime( )
+        self._set_comptime( mip_time=False )
         self.itr = self._p 
             
     #---------------------------------------------
@@ -306,19 +315,19 @@ class PMedian( NetProblem ):
             Determines the solution method to be employed:
             
             method = 'weakMIP'
-                The weak problem formulation is solved using Cplex.
+                The weak problem formulation is solved using the MIP solver.
                 Allocation variables are declared as continuous.
             
             method = 'strongMIP'
-                The strong problem formulation is solved using Cplex.
+                The strong problem formulation is solved using the MIP solver.
                 Allocation variables are declared as continuous.
                 
             method = 'weakIP'
-                The weak problem formulation is solved using Cplex.
+                The weak problem formulation is solved using the MIP solver.
                 Allocation variables are declared as binary.
             
             method = 'strongIP'
-                The strong problem formulation is solved using Cplex.
+                The strong problem formulation is solved using MIP solver.
                 Allocation variables are declared as binary.
                 
             method = 'greedy'

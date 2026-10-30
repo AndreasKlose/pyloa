@@ -2,7 +2,7 @@
     Defines a wrapper class for the gurobipy Model class.
 """
 import numpy as np
-from gurobipy import Model, Column, GRB, quicksum as qsum
+from gurobipy import Model, Column, GRB, LinExpr, quicksum as qsum
             
 #--------------------------------------------------------------------------
 
@@ -649,7 +649,18 @@ class GRBmodel:
         constr : gurobipy.Constr
             The constraint to be adjusted.
         """
-        for d,c in coeffs: self.__model.chgCoeff(constr, d, c)
+        #for d,c in coeffs: self.__model.chgCoeff(constr, d, c)
+        rhs, sense, nme = constr.RHS, constr.Sense, constr.ConstrName 
+        self.__model.remove( constr )
+        x, a = zip(*coeffs) # variables and their coefficients
+        lhs = LinExpr( a,x ) 
+        if sense=='<':
+            cstr = self.__model.addConstr( lhs <= rhs, name=nme)
+        elif sense=='>':
+            cstr = self.__model.addConstr( lhs >= rhs, name=nme )
+        else:
+            cstr = self.__model.addConstr( lhs == rhs, name=nme )
+        return cstr
          
     #---------------------------------------------
       

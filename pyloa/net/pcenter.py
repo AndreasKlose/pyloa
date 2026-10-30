@@ -103,6 +103,21 @@ class PCenter( NetProblem ):
     
         # Objective function
         M.minimize( r )
+        
+        # Set time limit if defined
+        if self.timeLim > 0: M.timelimit = self.timeLim 
+        
+        # Set node limit if defined 
+        if self.nodeLim >= 0: M.nodelimit = self.nodeLim 
+        
+        # Activate Benders if desired and variables x declared as continuous 
+        # Doing Benders is the time being only possible with Cplex
+        if self.useBenders > 0 and self.__x_continuous: 
+            M.doBenders=2
+            # Put variable r in the master
+            r.benders_annotation = 0
+            for j in y: y[j].benders_annotation = 0 
+            for i,j in x: x[i,j].benders_annotation = i+1
                                  
         # Solve model
         self._set_starttime( )
@@ -164,6 +179,15 @@ class PCenter( NetProblem ):
                                
         # Objective function
         M.minimize( M.sum( (C[k]-C[k-1])*z[k] for k in range(1,K) ) )
+        
+        # Set time limit if defined
+        if self.timeLim > 0: M.timelimit = self.timeLim 
+        
+        # Set node limit if defined 
+        if self.nodeLim >= 0: M.nodelimit = self.nodeLim 
+        
+        # Activate Benders if desired and variables z declared as continuous
+        if self.useBenders > 0 and self.__x_continuous: M.doBenders=3
                                  
         # Solve model
         self._set_starttime( )
@@ -205,9 +229,12 @@ class PCenter( NetProblem ):
     def __adjust_scp( self, r, scp ):
         """
         Adjust the covering constraints to the new radius r in the current
-        set covering model scp.
+        set covering model scp. When GuRoBi is the MIP solver, we remove
+        all old constraints and add the modified constraints as new ones
+        as this is faster as to change single coefficients.
         """
-        for i, c in enumerate(scp.constr):
+        all_cstrs = scp.constr if self.mipSolver == 'cplex' else scp.getConstraints()
+        for i, c in enumerate(all_cstrs):
             coeffs = zip( scp.y.values(), (int(self._w[i]*self._d(i,j) <= r) for j in range(self._n) ) )
             scp.chgCoeffs( c, coeffs )
             

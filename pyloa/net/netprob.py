@@ -157,6 +157,17 @@ class NetProblem:
         self.nodeCount = 0
         """Number of nodes processed in total when solving with a MIP solver.""" 
         
+        self.__timeLim = 0
+        """Time limit for the MIP solver."""
+        
+        self.__nodeLim = -1
+        """Node limit for the MIP solver."""
+        
+        self.__useBenders = 0 
+        """Indicates if Benders' decomposition should be applied. Possible values
+        are 0 -> no Benders' decomposition, 1 -> use Cplex's built in Benders' method,
+        2 -> use dedicated Benders' decomposition (not yet implemented!)."""
+        
         self._is_matrix = False 
         
         if fname is None:  
@@ -354,6 +365,36 @@ class NetProblem:
     def model(self): 
         if not self.__model is None: self.__model.end() 
         self.__model = None 
+        
+    @property 
+    def timeLim(self):
+        """Property: Limit on the computation time a solver may use.""" 
+        return self.__timeLim 
+    
+    @timeLim.setter 
+    def timeLim(self, value : int ): 
+        self.__timeLim = max(0,value)
+    
+    @property 
+    def nodeLim(self):
+        """Property: Limit on the number of nodes the MIP solver may enumerate""" 
+        return self.__nodeLim 
+    
+    @nodeLim.setter 
+    def nodeLim(self, value : int ): 
+        self.__nodeLim = value 
+        
+    @property
+    def useBenders(self):
+        """Use of Benders' decomposition."""
+        return self.__useBenders  
+    
+    @useBenders.setter
+    def useBenders( self, value : bool ): 
+        if value in (0,1,2):
+            self.__useBenders = value
+            if value==1 and not self.model is None and not self.model.mipModel is None:
+                self.__model.doBenders(3)
         
     @property 
     def x(self):

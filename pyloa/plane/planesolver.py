@@ -13,7 +13,7 @@ from pyloa.plane.center import elzinga_hearn, charalambous, welzl, growRadius
 from pyloa.plane.mip import weber_mipq, pcenter_mipq, SOCPcenter, SOCPweber
 from pyloa.plane.loc_alloc import locAlloc, pmedian_heuristic, weber_vns, twoFacility
 from pyloa.plane.weber_cg import colgen, set_optTol 
-from pyloa.plot import plot_points
+from pyloa.plot import plot_points, setMapTiles, setPointSize
 
 #--------------------------------------------------------------------------
 
@@ -123,6 +123,10 @@ class PlaneSolver:
         """Time limit to be applied when solving a problem as a MIQCP using 
         a MIP solver."""
         
+        self.__nodeLim = None 
+        """Limit on number of nodes of the branch-and-cut tree when solving
+        a problem instance by means of the MIQCP solver."""
+        
         self.__strategy = 0 
         """Strategy to be used by the MIQCP solver: If 0, the solver decides 
         automatically; if 1 the quadratic continuous relaxation is used 
@@ -132,6 +136,12 @@ class PlaneSolver:
         
         self.__nodes_processed = 0
         """Number of nodes processed in total for solving a problem with the MIP solver."""
+        
+        self.__point_size = 10 
+        """Radius of the circle representing a customer point in map"""
+        
+        self.__map_tiles = 0 
+        """Defines the map tiles employed when drawing a map with folium."""
 
         if not fname is None:
             Y, w, names = read_points(fname) 
@@ -368,6 +378,17 @@ class PlaneSolver:
         self.__timLimit = value 
         
     @property 
+    def nodeLim(self):
+        """
+        Limit on the number of branch-and-cut nodes for the MIQCP solver.
+        """
+        return self.__nodeLim
+    
+    @nodeLim.setter 
+    def nodeLim( self, value ):
+        self.__nodeLim = max(0, value)
+        
+    @property 
     def miqcp_strategy(self):
         """
         The MIP solver's MIQCP solving strategy.
@@ -431,7 +452,33 @@ class PlaneSolver:
         tolerance to the given value.
         """
         set_optTol(value)
+        
+    @property 
+    def mapTiles(self):
+        """Fixes the tiles to be used in a folium map. If equal to 0,
+        openstreetmap.org tiles are used; if equal to 1, tiles
+        from arcgisonline are used. Otherwise, this property is
+        a tuple of two strings, the first one giving the link
+        to the tile-server, the second one specifying the copyright
+        attribution."""
+        return self.__map_tiles 
     
+    @mapTiles.setter 
+    def mapTiles(self, value):
+        setMapTiles( value )
+        
+    @property 
+    def pointSize(self):
+        """
+        Defines the radius of a circle representing a customer point
+        in a folium map.
+        """
+        return self.__point_size
+    
+    @pointSize.setter 
+    def pointSize(self, value ):
+        setPointSize(value)
+
     #---------------------------------------------
     
     def solve(self, p=1, minisum=True, method=None, silent=False):
@@ -551,17 +598,17 @@ class PlaneSolver:
             elif 'mip' in meth[0]:
                 if minisum:
                     _, X, a, tim, nnodes = weber_mipq( p, self.__Y, self.__w, screen,\
-                                                       self.__strategy, self.__timLimit)
+                                                       self.__strategy, self.__timLimit, self.__nodeLim)
                 else: 
                     _, X, a, tim, nnodes = pcenter_mipq( p, self.__Y, self.__w, screen,\
-                                                         self.__strategy, self.__timLimit)
+                                                         self.__strategy, self.__timLimit, self.__nodeLim)
                 self.__mip_time = tim 
                 self.__nodes_processed = nnodes
             elif 'col' in meth[0] and minisum:
                 #_, LB, X, a, _ = colgen( p, self.__Y, self.__w, mip_pricing=False, screen=screen)
                 _, LB, X, a, _ = colgen( p, self.__Y, self.__w, screen=screen,\
                                          mip_pricing = 'MI' in self.__pricing_method,\
-                                         max_iter=self.__cg_iter )
+                                         max_iter=self.__cg_iter, timeLim = self.__timLimit )
                 self.__lobnd = LB 
             elif p==2:
                 _, X, a = twoFacility( self.__Y, self.__w, minisum, screen )   

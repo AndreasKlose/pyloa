@@ -1,6 +1,7 @@
 """
     Methods for the 1-center problem in Euclidean plane.
 """
+import sys
 import numpy as np
 from pyloa.util import euclid
 
@@ -726,6 +727,7 @@ def welzl( Y, w, screen='off' ):
     if talk:
         print("------ Computing 1-center in plane -----")
         print("Iter  Current Radius  Current Center")
-    
+
+    sys.setrecursionlimit( min(10**6, 10*n) )
     return _welzl_recursion(P, [], n)
          

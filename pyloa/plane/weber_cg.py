@@ -2,6 +2,7 @@
     Column generation for solving the multi-source Weber problem.
 """
 import numpy as np
+from timeit import time
 from pyloa.util import euclid
 from pyloa.plane.loc_alloc import locAlloc, pmedian_heuristic
 from pyloa.mip.model import Model
@@ -358,6 +359,7 @@ class Master:
         new_y = self.__model.addVar(obj=column['cost'], constr=self.__constr[rows], \
                                   coeffs=1.0 )  
         ncols = len(self.__y)
+        self.__columns.append(column)
         self.__y[ncols] = new_y
              
     #----------------------------------------------
@@ -369,7 +371,12 @@ class Master:
         """
         objv = self.__model.ObjVal
         selected = self.__model.get_solution( self.__y, keep_zeros=False, precision=0.5 ).keys()
-        Xsol = np.array( [ self.__columns[j]['X'] for j in selected] )
+        try:
+            Xsol = np.array( [ self.__columns[j]['X'] for j in selected] )
+        except:
+            print('Length column list:',len(self.__columns))
+            print('Number y-variables:',len(self.__y))
+            exit()
         a = np.zeros( len(self.__Y), dtype=int )
         for num, j in enumerate(selected):
             cust_lst = list(self.__columns[j]['subset'])
@@ -405,15 +412,17 @@ class Master:
          
     #----------------------------------------------
     
-    def solve_as_IP( self ):
+    def solve_as_IP( self, timeLim ):
         """
         Solve the final master as an integer program.
         """
-        #if self.__master_integer(): return self.__get_sol()
+        if self.__master_integer(): return self.__get_sol()
         
         self.__model.log_output = self.__talk 
         self.__model.change_upper_bounds( self.__y.values(), 1.0 )
         self.__model.change_var_types( self.__y.values(), 'B' )
+        if timeLim < float('inf'):
+            self.__model.timelimit = max(0,timeLim)
         if self.__talk: print("Solving the integer master program")
         if self.__model.optim( ): return self.__get_sol(  )
         if self.__talk: print("Merde alors! No integer master solution")
@@ -456,7 +465,7 @@ def set_optTol( value = None ):
 
 #------------------------------------------------------------------
 
-def colgen( p, Y, w, mip_pricing=True, max_iter=float('inf'), screen='off' ):
+def colgen( p, Y, w, mip_pricing=True, max_iter=float('inf'), timeLim=None, screen='off' ):
     """
     Solves multi-source Weber problem by means of column generation.
         
@@ -475,6 +484,10 @@ def colgen( p, Y, w, mip_pricing=True, max_iter=float('inf'), screen='off' ):
     max_iter : int or float
         Maximal number of column generation iterations (solving a
         restricted linear master problem) to be applied.
+    timeLim : None or int 
+        If not None, the maximal number of computation time in seconds
+        to be spend on the column generation including the time
+        to solve the subsequent integer set covering problem.
     screen: 
         If 'on', intermediate output on the state of the computations 
         is printed to stdout.
@@ -520,10 +533,15 @@ def colgen( p, Y, w, mip_pricing=True, max_iter=float('inf'), screen='off' ):
         print("-"*72)
         print("Iter   columns   current_LB   lower_bound   upper_bound   reduced_cost")
         print("-"*72)
+        
+    stime = 0 if timeLim is None else time.time() 
+    max_time = float('inf') if timeLim is None else timeLim
             
     
     LB = 0.0 # lower bound on the linear master problem's objective
     while True:
+        # Stop if time limit is reached
+        if time.time()-stime > max_time: break 
         # Solve master problem
         UB, price_prob.prices = master.solve()
         if UB is None:
@@ -547,7 +565,7 @@ def colgen( p, Y, w, mip_pricing=True, max_iter=float('inf'), screen='off' ):
     price_prob.end()
     
     # Solve the master as an integer program 
-    objv, Xsol, a = master.solve_as_IP()
+    objv, Xsol, a = master.solve_as_IP( max_time - (time.time()-stime) )
     
     # Release master IP model
     master.end()

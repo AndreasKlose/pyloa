@@ -11,11 +11,87 @@ from tempfile import _get_candidate_names as tmpName
 
 from pyloa.util import euclid, xy2lla
 from pyloa.plane.parser import return_lola
+from numpy.core.defchararray import isnumeric
 
+# Colors used for map icons showing facility locations
 __icon_colors = ['red', 'green', 'blue', 'black', 'purple', 'gray', 'darkred', 'darkblue',\
                  'darkgreen', 'darkpurple', 'cadetblue', 'lightgreen', 'lightgray',\
                  'lightred', 'lightblue', 'white', 'beige', 'pink', 'orange']
 
+# Link to the tiles from openstreetmap.org
+__osm_tiles = "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+__copy_osm  = "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+
+# Link to the tiles 
+__arcGIS_tiles = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}"
+__copy_arcgis = "Tiles &copy; Esri"
+
+# Variable keeping the link to the tiles and the copyright attribute
+__tile_link = __osm_tiles 
+__copy_attr = __copy_osm
+__ref_policy= "strict-origin-when-cross-origin"
+
+# Size of the circle to represent customer points in map
+__point_size = 10
+
+#----------------------------------------------------------------------
+
+def setMapDefaults( point_size, tiles, copy_attr ):
+    """
+    Set some map parameters to their default values.
+    
+    Parameters
+    ----------
+    point_size : int 
+        Size of a customer point in a map. Default=10
+    tiles : str 
+        Tiles used within a map. Default=openstreet.
+    """
+    global __tile_link 
+    global __copy_attr 
+    global __point_size 
+    global __ref_policy
+    __tile_link = __osm_tiles 
+    __copy_attr = __copy_osm 
+    __point_size = 10
+    __ref_policy = "strict-origin-when-cross-origin"
+
+#----------------------------------------------------------------------
+
+def setMapTiles ( tiles ):
+    """
+    Set the link to the map tiles for drawing a map with folium.
+    
+    Parameters
+    ----------
+    tiles : int or tuple of str 
+        If tiles = 0, then the tiles from openstreetmaps.org are used.
+        If tiles = 1, then the tiles from arcgisonline ar used.
+        Otherwise, tiles should be a tuple of two strings. The first
+        one gives the link to the tiles and the second one the required
+        copyright attribution. 
+    """
+    global __tile_link 
+    global __copy_attr 
+    global __ref_policy
+    __ref_policy = None
+    if isinstance( tiles, tuple ):
+        __tile_link, __copy_attr = tiles 
+    elif tiles==0:
+        __tile_link, __copy_attr = __osm_tiles, __copy_osm 
+        __ref_policy = "strict-origin-when-cross-origin"
+    else: 
+        __tile_link, __copy_attr = __arcGIS_tiles, __copy_arcgis
+         
+#----------------------------------------------------------------------
+
+def setPointSize( size ): 
+    """
+    Set to the radius of the circle representing a customer point in a map.
+    """        
+    global __point_size
+    if size > 0: __point_size = size  
+        
 #----------------------------------------------------------------------
 
 def plot_points( Y=None, X=None, lola=None, cust_id=None ):
@@ -70,13 +146,14 @@ def plot_points( Y=None, X=None, lola=None, cust_id=None ):
     else:
         origin = (min(lo),min(la))
         m = folium.Map( tiles = None )
-        folium.TileLayer( tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",\
-                          attr="&copy; OpenStreetMap contributors",\
-                          options={"referrerPolicy": "strict-origin-when-cross-origin"} ).add_to(m)
+        if __ref_policy is None: 
+            folium.TileLayer(tiles = __tile_link, attr = __copy_attr).add_to(m)
+        else: 
+            folium.TileLayer(tiles=__tile_link, attr=__copy_attr, options={"referrerPolicy":__ref_policy}).add_to(m)
         m.fit_bounds([ (origin[1],origin[0]),(max(la),max(lo))])
         if X is None or type(X)==tuple or len(X.shape)==1 or X.shape[0]==1:
             for lat,lon,name in zip(la, lo, names):
-                folium.Circle(radius=10,location=[lat, lon], popup=name,color="blue",fill=True).add_to(m)
+                folium.Circle(radius=__point_size,location=[lat, lon], popup=name,color="blue",fill=True).add_to(m)
             if not X is None:
                 lon, lat = xy2lla(X[0],X[1],origin) if type(X)==tuple or len(X.shape)==1 \
                          else xy2lla(X[0][0],X[0][1], origin)

@@ -255,7 +255,7 @@ def limitedDist (Y, w, max_dist, screen='off' ):
 
     .. math::
     
-        g(X) = \\sum_i w_i \\min\{ \\lVert X-Y_i \\rVert, D_i \}
+        g(X) = \\sum_i w_i \\min\\{ \\lVert X-Y_i \\rVert, D_i \\}
           
     **Reference**: Drezner, Z. (1984). The Planar Two-Center and 
     Two-Median Problems. Transportation Science 8, 351–361.

@@ -653,8 +653,9 @@ class CPXmodel:
         constr : docplex.mp.constr.LinearConstraint
             The constraint to be adjusted.
         """
-        for d,c in coeffs: constr.lhs.set_coefficient(d,c)
-    
+        #for d,c in coeffs: constr.lhs.set_coefficient(d,c)
+        constr.lhs._set_coefficients(coeffs)
+        
     #---------------------------------------------
     
     def export_model ( self, lp_file ):

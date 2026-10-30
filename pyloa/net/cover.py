@@ -139,7 +139,18 @@ class MaxCover( NetProblem ):
         # Objective: maximize total demand covered
         M.maximize( M.sum( w[i]*z[i] for i in range(m) ) )
              
-        M.log_output = not self.silent                    
+        M.log_output = not self.silent 
+        
+        # Set time limit if defined
+        if self.timeLim > 0 : M.timelimit = self.timeLim 
+        
+        # Set node limit if defined
+        if self.nodeLim >= 0: M.nodelimit = self.nodeLim
+        
+        # Activate Benders if variables z are continuous.
+        # Note that Benders is the time being only done if Cplex is the MIP solver
+        if self.useBenders > 0 and self.__z_continuous: M.doBenders = 3
+                           
         # Solve model
         self._set_starttime( )
         if M.optim(  ):
