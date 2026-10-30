@@ -92,11 +92,96 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclid</span><span class="p">,</span> <span class="n">xy2lla</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">return_lola</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.core.defchararray</span><span class="w"> </span><span class="kn">import</span> <span class="n">isnumeric</span>
 
+<span class="c1"># Colors used for map icons showing facility locations</span>
 <span class="n">__icon_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="s1">&#39;darkred&#39;</span><span class="p">,</span> <span class="s1">&#39;darkblue&#39;</span><span class="p">,</span>\
                  <span class="s1">&#39;darkgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;darkpurple&#39;</span><span class="p">,</span> <span class="s1">&#39;cadetblue&#39;</span><span class="p">,</span> <span class="s1">&#39;lightgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;lightgray&#39;</span><span class="p">,</span>\
                  <span class="s1">&#39;lightred&#39;</span><span class="p">,</span> <span class="s1">&#39;lightblue&#39;</span><span class="p">,</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="s1">&#39;beige&#39;</span><span class="p">,</span> <span class="s1">&#39;pink&#39;</span><span class="p">,</span> <span class="s1">&#39;orange&#39;</span><span class="p">]</span>
 
+<span class="c1"># Link to the tiles from openstreetmap.org</span>
+<span class="n">__osm_tiles</span> <span class="o">=</span> <span class="s2">&quot;https://tile.openstreetmap.org/</span><span class="si">{z}</span><span class="s2">/</span><span class="si">{x}</span><span class="s2">/</span><span class="si">{y}</span><span class="s2">.png&quot;</span>
+<span class="n">__copy_osm</span>  <span class="o">=</span> <span class="s2">&quot;&amp;copy; &lt;a href=&#39;https://www.openstreetmap.org/copyright&#39;&gt;OpenStreetMap&lt;/a&gt; contributors&quot;</span>
+
+<span class="c1"># Link to the tiles </span>
+<span class="n">__arcGIS_tiles</span> <span class="o">=</span> <span class="s2">&quot;https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/</span><span class="si">{z}</span><span class="s2">/</span><span class="si">{y}</span><span class="s2">/</span><span class="si">{x}</span><span class="s2">&quot;</span>
+<span class="n">__copy_arcgis</span> <span class="o">=</span> <span class="s2">&quot;Tiles &amp;copy; Esri&quot;</span>
+
+<span class="c1"># Variable keeping the link to the tiles and the copyright attribute</span>
+<span class="n">__tile_link</span> <span class="o">=</span> <span class="n">__osm_tiles</span> 
+<span class="n">__copy_attr</span> <span class="o">=</span> <span class="n">__copy_osm</span>
+<span class="n">__ref_policy</span><span class="o">=</span> <span class="s2">&quot;strict-origin-when-cross-origin&quot;</span>
+
+<span class="c1"># Size of the circle to represent customer points in map</span>
+<span class="n">__point_size</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="setMapDefaults">
+<a class="viewcode-back" href="../../modules.html#pyloa.plot.setMapDefaults">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setMapDefaults</span><span class="p">(</span> <span class="n">point_size</span><span class="p">,</span> <span class="n">tiles</span><span class="p">,</span> <span class="n">copy_attr</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set some map parameters to their default values.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    point_size : int </span>
+<span class="sd">        Size of a customer point in a map. Default=10</span>
+<span class="sd">    tiles : str </span>
+<span class="sd">        Tiles used within a map. Default=openstreet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">__tile_link</span> 
+    <span class="k">global</span> <span class="n">__copy_attr</span> 
+    <span class="k">global</span> <span class="n">__point_size</span> 
+    <span class="k">global</span> <span class="n">__ref_policy</span>
+    <span class="n">__tile_link</span> <span class="o">=</span> <span class="n">__osm_tiles</span> 
+    <span class="n">__copy_attr</span> <span class="o">=</span> <span class="n">__copy_osm</span> 
+    <span class="n">__point_size</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">__ref_policy</span> <span class="o">=</span> <span class="s2">&quot;strict-origin-when-cross-origin&quot;</span></div>
+
+
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="setMapTiles">
+<a class="viewcode-back" href="../../modules.html#pyloa.plot.setMapTiles">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setMapTiles</span> <span class="p">(</span> <span class="n">tiles</span> <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set the link to the map tiles for drawing a map with folium.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tiles : int or tuple of str </span>
+<span class="sd">        If tiles = 0, then the tiles from openstreetmaps.org are used.</span>
+<span class="sd">        If tiles = 1, then the tiles from arcgisonline ar used.</span>
+<span class="sd">        Otherwise, tiles should be a tuple of two strings. The first</span>
+<span class="sd">        one gives the link to the tiles and the second one the required</span>
+<span class="sd">        copyright attribution. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">__tile_link</span> 
+    <span class="k">global</span> <span class="n">__copy_attr</span> 
+    <span class="k">global</span> <span class="n">__ref_policy</span>
+    <span class="n">__ref_policy</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">tiles</span><span class="p">,</span> <span class="nb">tuple</span> <span class="p">):</span>
+        <span class="n">__tile_link</span><span class="p">,</span> <span class="n">__copy_attr</span> <span class="o">=</span> <span class="n">tiles</span> 
+    <span class="k">elif</span> <span class="n">tiles</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">__tile_link</span><span class="p">,</span> <span class="n">__copy_attr</span> <span class="o">=</span> <span class="n">__osm_tiles</span><span class="p">,</span> <span class="n">__copy_osm</span> 
+        <span class="n">__ref_policy</span> <span class="o">=</span> <span class="s2">&quot;strict-origin-when-cross-origin&quot;</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">__tile_link</span><span class="p">,</span> <span class="n">__copy_attr</span> <span class="o">=</span> <span class="n">__arcGIS_tiles</span><span class="p">,</span> <span class="n">__copy_arcgis</span></div>
+
+         
+<span class="c1">#----------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="setPointSize">
+<a class="viewcode-back" href="../../modules.html#pyloa.plot.setPointSize">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">setPointSize</span><span class="p">(</span> <span class="n">size</span> <span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set to the radius of the circle representing a customer point in a map.</span>
+<span class="sd">    &quot;&quot;&quot;</span>        
+    <span class="k">global</span> <span class="n">__point_size</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">__point_size</span> <span class="o">=</span> <span class="n">size</span>  </div>
+
+        
 <span class="c1">#----------------------------------------------------------------------</span>
 
 <div class="viewcode-block" id="plot_points">
@@ -153,13 +238,14 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">origin</span> <span class="o">=</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">lo</span><span class="p">),</span><span class="nb">min</span><span class="p">(</span><span class="n">la</span><span class="p">))</span>
         <span class="n">m</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span> <span class="n">tiles</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">)</span>
-        <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span> <span class="n">tiles</span><span class="o">=</span><span class="s2">&quot;https://tile.openstreetmap.org/</span><span class="si">{z}</span><span class="s2">/</span><span class="si">{x}</span><span class="s2">/</span><span class="si">{y}</span><span class="s2">.png&quot;</span><span class="p">,</span>\
-                          <span class="n">attr</span><span class="o">=</span><span class="s2">&quot;&amp;copy; OpenStreetMap contributors&quot;</span><span class="p">,</span>\
-                          <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;referrerPolicy&quot;</span><span class="p">:</span> <span class="s2">&quot;strict-origin-when-cross-origin&quot;</span><span class="p">}</span> <span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">__ref_policy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span><span class="n">tiles</span> <span class="o">=</span> <span class="n">__tile_link</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">__copy_attr</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">folium</span><span class="o">.</span><span class="n">TileLayer</span><span class="p">(</span><span class="n">tiles</span><span class="o">=</span><span class="n">__tile_link</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="n">__copy_attr</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;referrerPolicy&quot;</span><span class="p">:</span><span class="n">__ref_policy</span><span class="p">})</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
         <span class="n">m</span><span class="o">.</span><span class="n">fit_bounds</span><span class="p">([</span> <span class="p">(</span><span class="n">origin</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">origin</span><span class="p">[</span><span class="mi">0</span><span class="p">]),(</span><span class="nb">max</span><span class="p">(</span><span class="n">la</span><span class="p">),</span><span class="nb">max</span><span class="p">(</span><span class="n">lo</span><span class="p">))])</span>
         <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">==</span><span class="nb">tuple</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">,</span><span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">la</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
-                <span class="n">folium</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">],</span> <span class="n">popup</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+                <span class="n">folium</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="n">__point_size</span><span class="p">,</span><span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">],</span> <span class="n">popup</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="n">xy2lla</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">origin</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">==</span><span class="nb">tuple</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span> \
                          <span class="k">else</span> <span class="n">xy2lla</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">origin</span><span class="p">)</span>

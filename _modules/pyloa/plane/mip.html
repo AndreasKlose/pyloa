@@ -221,7 +221,7 @@
 
 <div class="viewcode-block" id="weber_mipq">
 <a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.mip.weber_mipq">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">weber_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timLim</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">weber_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timLim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeLim</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Formulates the multi-source Weber problem as a quadratically</span>
 <span class="sd">    constrained MIP and solves it using the MIP solver.</span>
@@ -245,6 +245,9 @@
 <span class="sd">        * 0 -&gt; Decide automatically .</span>
 <span class="sd">    timeLim : float </span>
 <span class="sd">        Time limit (seconds) to be used for the MIQCP solver.</span>
+<span class="sd">    nodeLim : int or None </span>
+<span class="sd">        If not None, the maximal number of nodes the MIQCP solver</span>
+<span class="sd">        may enumerate.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -309,6 +312,9 @@
     <span class="c1"># Set the time limit if one is given</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">timLim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">MWP</span><span class="o">.</span><span class="n">timelimit</span> <span class="o">=</span> <span class="n">timLim</span>
     
+    <span class="c1"># Set the node limit if one is given</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodeLim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">MWP</span><span class="o">.</span><span class="n">nodelimit</span> <span class="o">=</span> <span class="n">nodeLim</span>
+    
     <span class="c1"># Call the solver</span>
     <span class="n">MWP</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;off&#39;</span>
     <span class="n">ok</span> <span class="o">=</span> <span class="n">MWP</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">)</span>
@@ -337,7 +343,7 @@
 
 <div class="viewcode-block" id="pcenter_mipq">
 <a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.mip.pcenter_mipq">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">pcenter_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeLim</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pcenter_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeLim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodeLim</span><span class="o">=</span><span class="kc">None</span> <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Formulates the planar p-center problem as a quadratically</span>
 <span class="sd">    constrained MIP and solves it using a MIP solver.</span>
@@ -359,8 +365,11 @@
 <span class="sd">        * 0 -&gt; Decide automatically </span>
 <span class="sd">        * 1 -&gt; Solve the quadratic continuous relaxtion for obtaining lower bounds</span>
 <span class="sd">        * 2 -&gt; Use conical cuts (or outer approximation)</span>
-<span class="sd">    timeLim : float </span>
+<span class="sd">    timeLim : float or NOne</span>
 <span class="sd">        Time limit (seconds) to be used for the MIQCP solver.</span>
+<span class="sd">    nodeLim : int or None </span>
+<span class="sd">        If not None, the maximal number of nodes the MIQCP solver may</span>
+<span class="sd">        enumerate.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -428,6 +437,9 @@
     
     <span class="c1"># Set time limit if one is given</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">timeLim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">timelimit</span> <span class="o">=</span> <span class="n">timeLim</span>
+    
+    <span class="c1"># Set node limit if one is given</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">nodeLim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">PPCP</span><span class="o">.</span><span class="n">nodelimit</span> <span class="o">=</span> <span class="n">nodeLim</span>
         
     <span class="c1"># Call the solver</span>
     <span class="n">PPCP</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">screen</span><span class="o">==</span><span class="s1">&#39;off&#39;</span>

@@ -174,6 +174,9 @@
         <span class="c1"># Objective: minimize sum of distances to representative</span>
         <span class="n">M</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">)</span> <span class="p">)</span> 
         
+        <span class="c1"># Activate Benders if desired and variables x declared as continuous</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">useBenders</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">x_continuous</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">doBenders</span> <span class="o">=</span> <span class="mi">3</span>
+        
         <span class="c1"># Remember the the model and the variables</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">M</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span> 
@@ -202,6 +205,12 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
             <span class="c1"># Initialize running time performance measures</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_starttime</span><span class="p">(</span> <span class="p">)</span>
+            
+            <span class="c1"># Set time limit if defined</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeLim</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">timelimit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeLim</span> 
+            
+            <span class="c1"># Set node limit if defined </span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodeLim</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">nodelimit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodeLim</span>
                                  
             <span class="c1"># Solve model</span>
             <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span>
@@ -262,7 +271,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">talk</span><span class="p">:</span> <span class="n">objv</span> <span class="o">=</span> <span class="n">eta</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wdist</span> <span class="o">=</span> <span class="n">objv</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="n">S</span><span class="p">[:</span><span class="n">p</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_comptime</span><span class="p">(</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_comptime</span><span class="p">(</span> <span class="n">mip_time</span><span class="o">=</span><span class="kc">False</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> 
             
     <span class="c1">#---------------------------------------------</span>
@@ -400,19 +409,19 @@
 <span class="sd">            Determines the solution method to be employed:</span>
 <span class="sd">            </span>
 <span class="sd">            method = &#39;weakMIP&#39;</span>
-<span class="sd">                The weak problem formulation is solved using Cplex.</span>
+<span class="sd">                The weak problem formulation is solved using the MIP solver.</span>
 <span class="sd">                Allocation variables are declared as continuous.</span>
 <span class="sd">            </span>
 <span class="sd">            method = &#39;strongMIP&#39;</span>
-<span class="sd">                The strong problem formulation is solved using Cplex.</span>
+<span class="sd">                The strong problem formulation is solved using the MIP solver.</span>
 <span class="sd">                Allocation variables are declared as continuous.</span>
 <span class="sd">                </span>
 <span class="sd">            method = &#39;weakIP&#39;</span>
-<span class="sd">                The weak problem formulation is solved using Cplex.</span>
+<span class="sd">                The weak problem formulation is solved using the MIP solver.</span>
 <span class="sd">                Allocation variables are declared as binary.</span>
 <span class="sd">            </span>
 <span class="sd">            method = &#39;strongIP&#39;</span>
-<span class="sd">                The strong problem formulation is solved using Cplex.</span>
+<span class="sd">                The strong problem formulation is solved using MIP solver.</span>
 <span class="sd">                Allocation variables are declared as binary.</span>
 <span class="sd">                </span>
 <span class="sd">            method = &#39;greedy&#39;</span>

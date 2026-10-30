@@ -83,7 +83,7 @@
 <span class="sd">    Defines a wrapper class for the gurobipy Model class.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gurobipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">GRB</span><span class="p">,</span> <span class="n">quicksum</span> <span class="k">as</span> <span class="n">qsum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gurobipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Column</span><span class="p">,</span> <span class="n">GRB</span><span class="p">,</span> <span class="n">LinExpr</span><span class="p">,</span> <span class="n">quicksum</span> <span class="k">as</span> <span class="n">qsum</span>
             
 <span class="c1">#--------------------------------------------------------------------------</span>
 
@@ -827,7 +827,18 @@
 <span class="sd">        constr : gurobipy.Constr</span>
 <span class="sd">            The constraint to be adjusted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">d</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="n">coeffs</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">chgCoeff</span><span class="p">(</span><span class="n">constr</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span></div>
+        <span class="c1">#for d,c in coeffs: self.__model.chgCoeff(constr, d, c)</span>
+        <span class="n">rhs</span><span class="p">,</span> <span class="n">sense</span><span class="p">,</span> <span class="n">nme</span> <span class="o">=</span> <span class="n">constr</span><span class="o">.</span><span class="n">RHS</span><span class="p">,</span> <span class="n">constr</span><span class="o">.</span><span class="n">Sense</span><span class="p">,</span> <span class="n">constr</span><span class="o">.</span><span class="n">ConstrName</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span> <span class="n">constr</span> <span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">coeffs</span><span class="p">)</span> <span class="c1"># variables and their coefficients</span>
+        <span class="n">lhs</span> <span class="o">=</span> <span class="n">LinExpr</span><span class="p">(</span> <span class="n">a</span><span class="p">,</span><span class="n">x</span> <span class="p">)</span> 
+        <span class="k">if</span> <span class="n">sense</span><span class="o">==</span><span class="s1">&#39;&lt;&#39;</span><span class="p">:</span>
+            <span class="n">cstr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span> <span class="n">lhs</span> <span class="o">&lt;=</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nme</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">sense</span><span class="o">==</span><span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
+            <span class="n">cstr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span> <span class="n">lhs</span> <span class="o">&gt;=</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nme</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cstr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">addConstr</span><span class="p">(</span> <span class="n">lhs</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">nme</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">cstr</span></div>
 
          
     <span class="c1">#---------------------------------------------</span>

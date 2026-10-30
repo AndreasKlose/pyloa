@@ -83,6 +83,7 @@
 <span class="sd">    Column generation for solving the multi-source Weber problem.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">timeit</span><span class="w"> </span><span class="kn">import</span> <span class="n">time</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">euclid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.loc_alloc</span><span class="w"> </span><span class="kn">import</span> <span class="n">locAlloc</span><span class="p">,</span> <span class="n">pmedian_heuristic</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.mip.model</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
@@ -458,6 +459,7 @@
         <span class="n">new_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">addVar</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">column</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">],</span> <span class="n">constr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__constr</span><span class="p">[</span><span class="n">rows</span><span class="p">],</span> \
                                   <span class="n">coeffs</span><span class="o">=</span><span class="mf">1.0</span> <span class="p">)</span>  
         <span class="n">ncols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">column</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">[</span><span class="n">ncols</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_y</span></div>
 
              
@@ -470,7 +472,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">objv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">ObjVal</span>
         <span class="n">selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">get_solution</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mf">0.5</span> <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="n">Xsol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Xsol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">selected</span><span class="p">]</span> <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Length column list:&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number y-variables:&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="p">))</span>
+            <span class="n">exit</span><span class="p">()</span>
         <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span> <span class="p">)</span>
         <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">selected</span><span class="p">):</span>
             <span class="n">cust_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__columns</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s1">&#39;subset&#39;</span><span class="p">])</span>
@@ -511,15 +518,17 @@
     
 <div class="viewcode-block" id="Master.solve_as_IP">
 <a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.Master.solve_as_IP">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">solve_as_IP</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_as_IP</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">timeLim</span> <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Solve the final master as an integer program.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#if self.__master_integer(): return self.__get_sol()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__master_integer</span><span class="p">():</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_sol</span><span class="p">()</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">change_upper_bounds</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="mf">1.0</span> <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">change_var_types</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="s1">&#39;B&#39;</span> <span class="p">)</span>
+        <span class="k">if</span> <span class="n">timeLim</span> <span class="o">&lt;</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">timelimit</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">timeLim</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Solving the integer master program&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__model</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span> <span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_sol</span><span class="p">(</span>  <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__talk</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merde alors! No integer master solution&quot;</span><span class="p">)</span>
@@ -572,7 +581,7 @@
 
 <div class="viewcode-block" id="colgen">
 <a class="viewcode-back" href="../../../pyloa.plane.html#pyloa.plane.weber_cg.colgen">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">colgen</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">mip_pricing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">colgen</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">mip_pricing</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">timeLim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="s1">&#39;off&#39;</span> <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Solves multi-source Weber problem by means of column generation.</span>
 <span class="sd">        </span>
@@ -591,6 +600,10 @@
 <span class="sd">    max_iter : int or float</span>
 <span class="sd">        Maximal number of column generation iterations (solving a</span>
 <span class="sd">        restricted linear master problem) to be applied.</span>
+<span class="sd">    timeLim : None or int </span>
+<span class="sd">        If not None, the maximal number of computation time in seconds</span>
+<span class="sd">        to be spend on the column generation including the time</span>
+<span class="sd">        to solve the subsequent integer set covering problem.</span>
 <span class="sd">    screen: </span>
 <span class="sd">        If &#39;on&#39;, intermediate output on the state of the computations </span>
 <span class="sd">        is printed to stdout.</span>
@@ -636,10 +649,15 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter   columns   current_LB   lower_bound   upper_bound   reduced_cost&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">72</span><span class="p">)</span>
+        
+    <span class="n">stime</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">timeLim</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> 
+    <span class="n">max_time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">timeLim</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">timeLim</span>
             
     
     <span class="n">LB</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># lower bound on the linear master problem&#39;s objective</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Stop if time limit is reached</span>
+        <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">stime</span> <span class="o">&gt;</span> <span class="n">max_time</span><span class="p">:</span> <span class="k">break</span> 
         <span class="c1"># Solve master problem</span>
         <span class="n">UB</span><span class="p">,</span> <span class="n">price_prob</span><span class="o">.</span><span class="n">prices</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">UB</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -663,7 +681,7 @@
     <span class="n">price_prob</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
     
     <span class="c1"># Solve the master as an integer program </span>
-    <span class="n">objv</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">solve_as_IP</span><span class="p">()</span>
+    <span class="n">objv</span><span class="p">,</span> <span class="n">Xsol</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">solve_as_IP</span><span class="p">(</span> <span class="n">max_time</span> <span class="o">-</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">stime</span><span class="p">)</span> <span class="p">)</span>
     
     <span class="c1"># Release master IP model</span>
     <span class="n">master</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>

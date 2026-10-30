@@ -94,7 +94,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.mip</span><span class="w"> </span><span class="kn">import</span> <span class="n">weber_mipq</span><span class="p">,</span> <span class="n">pcenter_mipq</span><span class="p">,</span> <span class="n">SOCPcenter</span><span class="p">,</span> <span class="n">SOCPweber</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.loc_alloc</span><span class="w"> </span><span class="kn">import</span> <span class="n">locAlloc</span><span class="p">,</span> <span class="n">pmedian_heuristic</span><span class="p">,</span> <span class="n">weber_vns</span><span class="p">,</span> <span class="n">twoFacility</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plane.weber_cg</span><span class="w"> </span><span class="kn">import</span> <span class="n">colgen</span><span class="p">,</span> <span class="n">set_optTol</span> 
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyloa.plot</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_points</span><span class="p">,</span> <span class="n">setMapTiles</span><span class="p">,</span> <span class="n">setPointSize</span>
 
 <span class="c1">#--------------------------------------------------------------------------</span>
 
@@ -208,6 +208,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Time limit to be applied when solving a problem as a MIQCP using </span>
 <span class="sd">        a MIP solver.&quot;&quot;&quot;</span>
         
+        <span class="bp">self</span><span class="o">.</span><span class="n">__nodeLim</span> <span class="o">=</span> <span class="kc">None</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Limit on number of nodes of the branch-and-cut tree when solving</span>
+<span class="sd">        a problem instance by means of the MIQCP solver.&quot;&quot;&quot;</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span> <span class="o">=</span> <span class="mi">0</span> 
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Strategy to be used by the MIQCP solver: If 0, the solver decides </span>
 <span class="sd">        automatically; if 1 the quadratic continuous relaxation is used </span>
@@ -217,6 +221,12 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">__nodes_processed</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of nodes processed in total for solving a problem with the MIP solver.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__point_size</span> <span class="o">=</span> <span class="mi">10</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Radius of the circle representing a customer point in map&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__map_tiles</span> <span class="o">=</span> <span class="mi">0</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines the map tiles employed when drawing a map with folium.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">fname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">Y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="n">read_points</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> 
@@ -457,6 +467,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span> <span class="o">=</span> <span class="n">value</span> 
         
     <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">nodeLim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Limit on the number of branch-and-cut nodes for the MIQCP solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nodeLim</span>
+    
+    <span class="nd">@nodeLim</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">nodeLim</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__nodeLim</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
     <span class="k">def</span><span class="w"> </span><span class="nf">miqcp_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The MIP solver&#39;s MIQCP solving strategy.</span>
@@ -520,7 +541,33 @@
 <span class="sd">        tolerance to the given value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">set_optTol</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mapTiles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fixes the tiles to be used in a folium map. If equal to 0,</span>
+<span class="sd">        openstreetmap.org tiles are used; if equal to 1, tiles</span>
+<span class="sd">        from arcgisonline are used. Otherwise, this property is</span>
+<span class="sd">        a tuple of two strings, the first one giving the link</span>
+<span class="sd">        to the tile-server, the second one specifying the copyright</span>
+<span class="sd">        attribution.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__map_tiles</span> 
     
+    <span class="nd">@mapTiles</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">mapTiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">setMapTiles</span><span class="p">(</span> <span class="n">value</span> <span class="p">)</span>
+        
+    <span class="nd">@property</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">pointSize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the radius of a circle representing a customer point</span>
+<span class="sd">        in a folium map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__point_size</span>
+    
+    <span class="nd">@pointSize</span><span class="o">.</span><span class="n">setter</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">pointSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="p">):</span>
+        <span class="n">setPointSize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
     <span class="c1">#---------------------------------------------</span>
     
 <div class="viewcode-block" id="PlaneSolver.solve">
@@ -642,17 +689,17 @@
             <span class="k">elif</span> <span class="s1">&#39;mip&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">minisum</span><span class="p">:</span>
                     <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">tim</span><span class="p">,</span> <span class="n">nnodes</span> <span class="o">=</span> <span class="n">weber_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span>\
-                                                       <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span><span class="p">)</span>
+                                                       <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nodeLim</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span> 
                     <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">tim</span><span class="p">,</span> <span class="n">nnodes</span> <span class="o">=</span> <span class="n">pcenter_mipq</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span>\
-                                                         <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span><span class="p">)</span>
+                                                         <span class="bp">self</span><span class="o">.</span><span class="n">__strategy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nodeLim</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__mip_time</span> <span class="o">=</span> <span class="n">tim</span> 
                 <span class="bp">self</span><span class="o">.</span><span class="n">__nodes_processed</span> <span class="o">=</span> <span class="n">nnodes</span>
             <span class="k">elif</span> <span class="s1">&#39;col&#39;</span> <span class="ow">in</span> <span class="n">meth</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">minisum</span><span class="p">:</span>
                 <span class="c1">#_, LB, X, a, _ = colgen( p, self.__Y, self.__w, mip_pricing=False, screen=screen)</span>
                 <span class="n">_</span><span class="p">,</span> <span class="n">LB</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">colgen</span><span class="p">(</span> <span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span>\
                                          <span class="n">mip_pricing</span> <span class="o">=</span> <span class="s1">&#39;MI&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pricing_method</span><span class="p">,</span>\
-                                         <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__cg_iter</span> <span class="p">)</span>
+                                         <span class="n">max_iter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__cg_iter</span><span class="p">,</span> <span class="n">timeLim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__timLimit</span> <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__lobnd</span> <span class="o">=</span> <span class="n">LB</span> 
             <span class="k">elif</span> <span class="n">p</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
                 <span class="n">_</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="n">twoFacility</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__w</span><span class="p">,</span> <span class="n">minisum</span><span class="p">,</span> <span class="n">screen</span> <span class="p">)</span>   

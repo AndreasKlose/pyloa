@@ -68,6 +68,9 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pyloa.plot">pyloa.plot module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pyloa.plot.plot_points"><code class="docutils literal notranslate"><span class="pre">plot_points()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plot.setMapDefaults"><code class="docutils literal notranslate"><span class="pre">setMapDefaults()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plot.setMapTiles"><code class="docutils literal notranslate"><span class="pre">setMapTiles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyloa.plot.setPointSize"><code class="docutils literal notranslate"><span class="pre">setPointSize()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -356,6 +359,44 @@ is assumed to be obtained from mapping these data
 to Euclidean coordinates using the most south-west
 point as origin.</p>
 </section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plot.setMapDefaults">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plot.</span></span><span class="sig-name descname"><span class="pre">setMapDefaults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy_attr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plot.html#setMapDefaults"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plot.setMapDefaults" title="Link to this definition"></a></dt>
+<dd><p>Set some map parameters to their default values.</p>
+<section id="id16">
+<h3>Parameters<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>point_size<span class="classifier">int </span></dt><dd><p>Size of a customer point in a map. Default=10</p>
+</dd>
+<dt>tiles<span class="classifier">str </span></dt><dd><p>Tiles used within a map. Default=openstreet.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plot.setMapTiles">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plot.</span></span><span class="sig-name descname"><span class="pre">setMapTiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tiles</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plot.html#setMapTiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plot.setMapTiles" title="Link to this definition"></a></dt>
+<dd><p>Set the link to the map tiles for drawing a map with folium.</p>
+<section id="id17">
+<h3>Parameters<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tiles<span class="classifier">int or tuple of str </span></dt><dd><p>If tiles = 0, then the tiles from openstreetmaps.org are used.
+If tiles = 1, then the tiles from arcgisonline ar used.
+Otherwise, tiles should be a tuple of two strings. The first
+one gives the link to the tiles and the second one the required
+copyright attribution.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyloa.plot.setPointSize">
+<span class="sig-prename descclassname"><span class="pre">pyloa.plot.</span></span><span class="sig-name descname"><span class="pre">setPointSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plot.html#setPointSize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plot.setPointSize" title="Link to this definition"></a></dt>
+<dd><p>Set to the radius of the circle representing a customer point in a map.</p>
 </dd></dl>
 
 </section>

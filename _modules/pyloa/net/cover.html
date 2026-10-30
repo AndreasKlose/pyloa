@@ -225,7 +225,18 @@
         <span class="c1"># Objective: maximize total demand covered</span>
         <span class="n">M</span><span class="o">.</span><span class="n">maximize</span><span class="p">(</span> <span class="n">M</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span> <span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">z</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="p">)</span> <span class="p">)</span>
              
-        <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span>                    
+        <span class="n">M</span><span class="o">.</span><span class="n">log_output</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span> 
+        
+        <span class="c1"># Set time limit if defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeLim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">timelimit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeLim</span> 
+        
+        <span class="c1"># Set node limit if defined</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodeLim</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">nodelimit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodeLim</span>
+        
+        <span class="c1"># Activate Benders if variables z are continuous.</span>
+        <span class="c1"># Note that Benders is the time being only done if Cplex is the MIP solver</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">useBenders</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">__z_continuous</span><span class="p">:</span> <span class="n">M</span><span class="o">.</span><span class="n">doBenders</span> <span class="o">=</span> <span class="mi">3</span>
+                           
         <span class="c1"># Solve model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_starttime</span><span class="p">(</span> <span class="p">)</span>
         <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">optim</span><span class="p">(</span>  <span class="p">):</span>

@@ -70,10 +70,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.mip_work"><code class="docutils literal notranslate"><span class="pre">NetProblem.mip_work</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.model"><code class="docutils literal notranslate"><span class="pre">NetProblem.model</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.nodeCount"><code class="docutils literal notranslate"><span class="pre">NetProblem.nodeCount</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.nodeLim"><code class="docutils literal notranslate"><span class="pre">NetProblem.nodeLim</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.prob_name"><code class="docutils literal notranslate"><span class="pre">NetProblem.prob_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.reset"><code class="docutils literal notranslate"><span class="pre">NetProblem.reset()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.set_data"><code class="docutils literal notranslate"><span class="pre">NetProblem.set_data()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.silent"><code class="docutils literal notranslate"><span class="pre">NetProblem.silent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.timeLim"><code class="docutils literal notranslate"><span class="pre">NetProblem.timeLim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.useBenders"><code class="docutils literal notranslate"><span class="pre">NetProblem.useBenders</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.wdist"><code class="docutils literal notranslate"><span class="pre">NetProblem.wdist</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.x"><code class="docutils literal notranslate"><span class="pre">NetProblem.x</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyloa.net.netprob.NetProblem.y"><code class="docutils literal notranslate"><span class="pre">NetProblem.y</span></code></a></li>
@@ -320,6 +323,12 @@ thread.</p>
 <dd><p>Number of nodes processed in total when solving with a MIP solver.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.nodeLim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nodeLim</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.nodeLim" title="Link to this definition"></a></dt>
+<dd><p>Property: Limit on the number of nodes the MIP solver may enumerate</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.prob_name">
 <span class="sig-name descname"><span class="pre">prob_name</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.prob_name" title="Link to this definition"></a></dt>
@@ -386,6 +395,18 @@ d(i,j).</p>
 <dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.silent">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">silent</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.silent" title="Link to this definition"></a></dt>
 <dd><p>If silent is True, solution methods do not give log-output.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.timeLim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeLim</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.timeLim" title="Link to this definition"></a></dt>
+<dd><p>Property: Limit on the computation time a solver may use.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pyloa.net.netprob.NetProblem.useBenders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">useBenders</span></span><a class="headerlink" href="#pyloa.net.netprob.NetProblem.useBenders" title="Link to this definition"></a></dt>
+<dd><p>Use of Benders’ decomposition.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -735,16 +756,16 @@ self.assigned.</p>
 <dl>
 <dt>method<span class="classifier">str </span></dt><dd><p>Determines the solution method to be employed:</p>
 <dl class="simple">
-<dt>method = ‘weakMIP’</dt><dd><p>The weak problem formulation is solved using Cplex.
+<dt>method = ‘weakMIP’</dt><dd><p>The weak problem formulation is solved using the MIP solver.
 Allocation variables are declared as continuous.</p>
 </dd>
-<dt>method = ‘strongMIP’</dt><dd><p>The strong problem formulation is solved using Cplex.
+<dt>method = ‘strongMIP’</dt><dd><p>The strong problem formulation is solved using the MIP solver.
 Allocation variables are declared as continuous.</p>
 </dd>
-<dt>method = ‘weakIP’</dt><dd><p>The weak problem formulation is solved using Cplex.
+<dt>method = ‘weakIP’</dt><dd><p>The weak problem formulation is solved using the MIP solver.
 Allocation variables are declared as binary.</p>
 </dd>
-<dt>method = ‘strongIP’</dt><dd><p>The strong problem formulation is solved using Cplex.
+<dt>method = ‘strongIP’</dt><dd><p>The strong problem formulation is solved using MIP solver.
 Allocation variables are declared as binary.</p>
 </dd>
 <dt>method = ‘greedy’</dt><dd><p>A heuristic solution is obtained using the greedy
