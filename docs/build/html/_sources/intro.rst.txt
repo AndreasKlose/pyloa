@@ -91,10 +91,10 @@ The following Python snippet illustrates how to solve a planar location problem:
     
 Remark
 ------
-When geospatial coordinates are available the plotting function above tries to plot the solution using a *folium* map and
+When geospatial coordinates are available, the plotting function above tries to plot the solution using a *folium* map and
 calls the default web browser for displaying the html file created by `folium <https://realpython.com/python-folium-web-maps-from-data/>`_.
 Depending on the employed browser, it can happen that the browser refuses to display the html file. In this case, either
-just another browser to pen the created html file or, for instance, use Python's http server to display this html file on local host's address.
+just try another browser to open the created html file or use, for instance, Python's http server to display this html file on the local host's address.
 
 Network location
 ================

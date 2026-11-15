@@ -94,7 +94,7 @@ def setPointSize( size ):
         
 #----------------------------------------------------------------------
 
-def plot_points( Y=None, X=None, lola=None, cust_id=None ):
+def plot_points( Y=None, X=None, lola=None, cust_id=None, a=None ):
     """
     Plots the customer points and the facilities. If geographical
     coordinates are available, a folium map is created. Otherwise,
@@ -111,6 +111,9 @@ def plot_points( Y=None, X=None, lola=None, cust_id=None ):
         the latitude data of the customer points.
     cust_id : list or numpy array of str
         Names/id's of customer points.
+    a : numpy array of int, optional
+      If not None, a[i] must give the facililty point X[i] to
+      which customer point Y[i] is assigned.
         
     Remark
     ------
@@ -162,8 +165,9 @@ def plot_points( Y=None, X=None, lola=None, cust_id=None ):
             # Assignment to the facilities
             n = Y.shape[0]
             p = X.shape[0]
-            a = np.array([np.argmin(np.fromiter((euclid(X[j,:], Y[i,:]) for j in range(p)),float)) \
-                for i in range(n) ])
+            if a is None:
+                a = np.array([np.argmin(np.fromiter((euclid(X[j,:], Y[i,:]) for j in range(p)),float)) \
+                    for i in range(n) ])
             ncolors = len(__icon_colors)
             for j,x in enumerate(X):
                 color = __icon_colors[j % ncolors]

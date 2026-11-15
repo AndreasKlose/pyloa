@@ -144,6 +144,21 @@ class PCenter( NetProblem ):
             return np.unique( np.vstack(self._w)*self._dmat )
         D = list(self._w[i]*self._d(j,i) for i,j in combinations(range(self._m),2))
         return np.unique( D )
+
+#----------------------------------------------
+
+    def __min_possible_radius( self ):
+        """
+        Return the maximum of the smallest weighted
+        distances customers have to the possible facility
+        locations.
+        """
+        if self._is_matrix:
+            r_min = (self._w*self._dmat.min(axis=1)).max()
+        else:
+            di = lambda i : self._w[i]*np.fromiter( map(lambda j : self._d(i,j), range(self._n)), dtype=self._dst_type).min()
+            r_min = np.fromiter( map(lambda i : di(i), range(self._m) ), dtype = self._dst_type ).max()
+        return r_min
      
 #------------------------------------------------------------------------------
 
@@ -259,7 +274,7 @@ class PCenter( NetProblem ):
         return (self.min_wdist(S)).max(), S
 
     #----------------------------------------------
-    
+        
     def __elloumi( self ):
         """
         Implements Elloumi et al.'s set covering based solution 
@@ -273,9 +288,13 @@ class PCenter( NetProblem ):
         """    
         # Sorted list of weighted distances
         C = self.__get_wdist_list( )
-    
+
+        # Radius of the solution must be at least the largest
+        # of the smallest weighted distances each customer
+        # has to the nearest facility
+        l = np.searchsorted( C, self.__min_possible_radius() )-1
+
         # First phase: Find lower bound on the minimal radius
-        l = -1       # strict lower bound
         u = len(C)-1 # upper bound on (non-integer) minimal radius
         U = C[-1]    # upper bound on integer minimal radius
         k = (l+u)//2 # C[k] curent trial radius
@@ -305,6 +324,8 @@ class PCenter( NetProblem ):
             if objv < U:
                 U = objv
                 self.facilities = facLst
+                if C[u] > U:
+                    u = np.searchsorted(C,U)
             if not self.silent: 
                 L = -1 if l < 0 else C[l]
                 print('{0:5d}   {1:4d}   {2:11.0f}   {3:11.0f}   {4:11.0f}'.format(1,itr,L,C[u],U) )       

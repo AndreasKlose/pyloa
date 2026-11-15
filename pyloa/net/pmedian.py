@@ -305,7 +305,7 @@ class PMedian( NetProblem ):
     
     #---------------------------------------------
     
-    def pmp_solve(self, method='weak_MIP', keep_model=False ):
+    def pmp_solve(self, method='weakMIP', keep_model=False ):
         """
         Computes a solution to the p-median problem.
         

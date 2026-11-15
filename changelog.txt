@@ -55,3 +55,15 @@ Replaced the loop in function chgCoeffs, module cpx_mip and grb_mip, as this is 
 In case of Cplex, set_coefficients is used instead to adjust all coefficients, whereas
 in case of GuRoBi, the old constraint is removed and replaced by the adjusted one.
 
+Nov 14, 2026
+------------
+Removed a bug in function __elloumi, module pyloa.net.pcenter. Strict lower bound of l=-1
+on the index of the minimal radius could lead to cover constraints 0 >= 1, when not all
+nodes are possible facility locations. It has instead to be guaranteed that the lower
+bound on the radius is at least the largest of the weighted distances each customer has
+to the nearest node where a facility can be placed. 
+
+Additionally, if in Phase 1 of the method, a feasible solution of radius equal to the
+lower bound is found, the computations are now stopped, whereas before Phase 1 was
+first completed.
+
