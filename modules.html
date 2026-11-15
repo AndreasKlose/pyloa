@@ -334,7 +334,7 @@ return longitude and latitude by reversing above transformation.</p>
 in a matplot figure.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyloa.plot.plot_points">
-<span class="sig-prename descclassname"><span class="pre">pyloa.plot.</span></span><span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lola</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cust_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plot.html#plot_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plot.plot_points" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyloa.plot.</span></span><span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lola</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cust_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyloa/plot.html#plot_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyloa.plot.plot_points" title="Link to this definition"></a></dt>
 <dd><p>Plots the customer points and the facilities. If geographical
 coordinates are available, a folium map is created. Otherwise,
 a matplotlib figure is displayed.</p>
@@ -349,6 +349,9 @@ a matplotlib figure is displayed.</p>
 the latitude data of the customer points.</p>
 </dd>
 <dt>cust_id<span class="classifier">list or numpy array of str</span></dt><dd><p>Names/id’s of customer points.</p>
+</dd>
+<dt>a<span class="classifier">numpy array of int, optional</span></dt><dd><p>If not None, a[i] must give the facililty point X[i] to
+which customer point Y[i] is assigned.</p>
 </dd>
 </dl>
 </section>

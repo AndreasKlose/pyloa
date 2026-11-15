@@ -230,6 +230,21 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span> <span class="p">)</span>
         <span class="n">D</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">),</span><span class="mi">2</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span> <span class="n">D</span> <span class="p">)</span>
+
+<span class="c1">#----------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__min_possible_radius</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the maximum of the smallest weighted</span>
+<span class="sd">        distances customers have to the possible facility</span>
+<span class="sd">        locations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_matrix</span><span class="p">:</span>
+            <span class="n">r_min</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dmat</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">di</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_w</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">j</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dst_type</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+            <span class="n">r_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fromiter</span><span class="p">(</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span> <span class="p">:</span> <span class="n">di</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m</span><span class="p">)</span> <span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dst_type</span> <span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">r_min</span>
      
 <span class="c1">#------------------------------------------------------------------------------</span>
 
@@ -345,7 +360,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_wdist</span><span class="p">(</span><span class="n">S</span><span class="p">))</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">S</span>
 
     <span class="c1">#----------------------------------------------</span>
-    
+        
     <span class="k">def</span><span class="w"> </span><span class="nf">__elloumi</span><span class="p">(</span> <span class="bp">self</span> <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Implements Elloumi et al.&#39;s set covering based solution </span>
@@ -359,9 +374,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>    
         <span class="c1"># Sorted list of weighted distances</span>
         <span class="n">C</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_wdist_list</span><span class="p">(</span> <span class="p">)</span>
-    
+
+        <span class="c1"># Radius of the solution must be at least the largest</span>
+        <span class="c1"># of the smallest weighted distances each customer</span>
+        <span class="c1"># has to the nearest facility</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span> <span class="n">C</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__min_possible_radius</span><span class="p">()</span> <span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+
         <span class="c1"># First phase: Find lower bound on the minimal radius</span>
-        <span class="n">l</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>       <span class="c1"># strict lower bound</span>
         <span class="n">u</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">C</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span> <span class="c1"># upper bound on (non-integer) minimal radius</span>
         <span class="n">U</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>    <span class="c1"># upper bound on integer minimal radius</span>
         <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span><span class="o">+</span><span class="n">u</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span> <span class="c1"># C[k] curent trial radius</span>
@@ -391,6 +410,8 @@
             <span class="k">if</span> <span class="n">objv</span> <span class="o">&lt;</span> <span class="n">U</span><span class="p">:</span>
                 <span class="n">U</span> <span class="o">=</span> <span class="n">objv</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">facilities</span> <span class="o">=</span> <span class="n">facLst</span>
+                <span class="k">if</span> <span class="n">C</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">U</span><span class="p">:</span>
+                    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">C</span><span class="p">,</span><span class="n">U</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span> 
                 <span class="n">L</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">C</span><span class="p">[</span><span class="n">l</span><span class="p">]</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0:5d}</span><span class="s1">   </span><span class="si">{1:4d}</span><span class="s1">   </span><span class="si">{2:11.0f}</span><span class="s1">   </span><span class="si">{3:11.0f}</span><span class="s1">   </span><span class="si">{4:11.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">itr</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="n">u</span><span class="p">],</span><span class="n">U</span><span class="p">)</span> <span class="p">)</span>       
